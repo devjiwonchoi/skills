@@ -9,3 +9,4 @@ description: Always use when preparing or creating commits.
 - Order commits by dependency and keep the project working after each commit.
 - Briefly explain what changed, why, and how in each commit message.
 - Preserve unrelated working-tree and staged changes, and commit only when authorized.
+- Always consider the overall commit architecture when deciding whether to append a new commit or reshape existing commits.
