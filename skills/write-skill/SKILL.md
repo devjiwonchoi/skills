@@ -5,34 +5,41 @@ description: Always use when writing a skill.
 
 ## Rules
 
-- Write one short sentence per requested behavior.
-- Preserve the user's actions and completion conditions.
-- Leave routine implementation details to the agent.
-- Omit defaults and instructions already covered elsewhere.
-- Use Steps for workflows, Rules for standalone guidance, and Template for fixed output.
-- Keep branches, repeats, and stopping conditions in the steps that handle them.
-- Link details needed only in some cases with explicit reading conditions.
+- Prefer one short sentence per requested behavior, adding detail only to prevent a consequential misinterpretation.
+- Leave routine execution and verification to the agent.
 
 ## Steps
 
-1. Write description as `Use when <main task>.` or `Always use when <main task>.`, excluding inspected inputs, supporting actions, and completion conditions.
-2. Draft from the user's request and agreed clarifications.
-3. Delete added actions and conditions, then merge repeated behaviors.
+1. Write description as `Use when <main task>.` or `Always use when <main task>.`
+   - Exclude inspected inputs, supporting actions, and completion conditions.
+   - Retain only context needed to distinguish the invocation, such as a file format.
+2. Draft from the request and agreed clarifications.
+   - Preserve actions, constraints, and completion conditions.
+   - Ask only when a consequential ambiguity needs user judgment.
+3. Choose the needed sections.
+   - Use Steps for ordered or repeated work, keeping every action, branch, and stop in its relevant step.
+   - Reserve Rules for independent guidance.
+   - Reserve Template for fixed output.
+   - Link occasional details with explicit reading conditions.
+4. Trim the draft.
+   - Remove scope expansion, invented policies, routine procedures, and rules already loaded elsewhere.
+   - Keep necessary clarifications.
+   - Merge repetition and shorten each remaining instruction.
+5. Walk through a realistic use and a relevant branch.
+   - Check that required behavior and stopping conditions survive the cuts.
 
 ## Description examples
 
-- Good: `Use when asked to translate text.`
 - Good: `Always use when preparing commits.`
-- Good: `Use when asked to debug a test.`
-- Bad: `Use when asked to debug a test's logs and stack traces.`
-- Bad: `Use when asked to translate text, preserve tone, and return a polished translation.`
+- Good: `Use when translating PDF documents.`
+- Good: `Use when monitoring a PR.`
 
 ## Template
 
 ```markdown
 ---
 name: <skill-name>
-description: <Use when or Always use followed by the main task only>
+description: <Use when or Always use when followed by the main task only>
 ---
 
 <instructions using only the needed sections>
