@@ -9,13 +9,14 @@ description: Always use when writing a skill.
 - Preserve the user's actions and completion conditions.
 - Leave routine implementation details to the agent.
 - Omit defaults and instructions already covered elsewhere.
-- Use Steps for sequences and loops, Rules for constraints, and Template for fixed output.
+- Use Steps for workflows, Rules for standalone guidance, and Template for fixed output.
+- Keep branches, repeats, and stopping conditions in the steps that handle them.
 - Link details needed only in some cases with explicit reading conditions.
 
 ## Steps
 
 1. Write description as `Use when <main task>.` or `Always use when <main task>.`, excluding inspected inputs, supporting actions, and completion conditions.
-2. Draft instructions directly from the user's request.
+2. Draft from the user's request and agreed clarifications.
 3. Delete added actions and conditions, then merge repeated behaviors.
 
 ## Description examples
