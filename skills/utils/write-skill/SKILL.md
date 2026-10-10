@@ -6,6 +6,8 @@ description: Always use when writing a skill.
 ## Rules
 
 - Prefer one short sentence per requested behavior, adding detail only to prevent a consequential misinterpretation.
+- Use separate sentences instead of semicolons.
+- Use nested lists for supporting details when needed.
 - Leave routine execution and verification to the agent.
 
 ## Steps
