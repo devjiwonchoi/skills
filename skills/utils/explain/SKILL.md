@@ -14,7 +14,8 @@ description: Use when explaining current context or results.
    - Lead with the main point, then include only the background, cause, and consequence needed to understand it.
    - Use familiar words and a concrete example when helpful.
 2. Use all available visual methods that help understanding, combining them instead of choosing just one.
-   - Create and render an HTML visualization when relationships or behavior benefit from it.
+   - Always create and render an HTML visualization when HTML visualization is available.
+   - For frontend or UI changes, preview how the proposed or changed interface will look.
    - Capture and show screenshots when the actual interface or result matters.
    - Render Mermaid as a simple diagram with only the essential nodes, connections, and plain-language labels.
    - Show a focused file tree with a short comment explaining each file's role when file locations or responsibilities matter.
