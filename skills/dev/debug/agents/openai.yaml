@@ -1,0 +1,4 @@
+interface:
+  display_name: "Debug"
+  short_description: "Find bugs by testing approved possible causes"
+  default_prompt: "Use $debug to list 3 to 10 possible causes in easy words, wait for my approval, then check only the approved items."
