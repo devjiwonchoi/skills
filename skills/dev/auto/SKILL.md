@@ -5,25 +5,22 @@ description: Use when carrying a development task through completion.
 
 ## Rules
 
-- Keep a durable checkpoint after each transition with the current stage, document locations and versions, approved baselines, change revision, evidence, and pending decisions or next action.
+- Use `.jiwon/tasks/<task-id>/` at the worktree root, or project root otherwise. Reuse the same task's ID and read any `status.md`.
+- Update it at transitions, approvals, evidence changes, pauses, or completion with stage/state, current versions, applicable approved baselines and confirmations, working/verified revisions and evidence, pending decisions, and next action.
+- Preserve approved versions and append consequential decisions; status is not approval. Create only needed documents, link existing artifacts, and keep records local unless sharing is authorized. Mark done only when requested work is complete.
 
 ## Steps
 
-1. **Resume the task.** Read the request and any checkpoint. Check the current artifacts before reusing completed work.
-2. **Agree on the work.** Establish the problem, desired outcome, scope, constraints, success criteria, and delegated decisions from the user's request and available evidence.
-   - Reuse settled decisions without requiring documents in a particular format.
-   - Resolve consequential uncertainty with applicable sources or the user.
-   - Obtain explicit approval of new agreements before dependent work.
-   - Preserve approved intent. Present changed agreements with their diff, reason, and impact and wait for explicit approval before dependent work.
-3. **Plan the implementation.** Define executable work units, dependencies, checks, and permitted refinements. Obtain approval of the initial plan before implementation.
-   - Compare accumulated revisions with the last explicitly user-approved plan. Advance that baseline only through explicit approval of a specific version.
-   - Seek approval for changes beyond delegated boundaries, material approach or system changes, changed contracts, new external dependencies, weaker checks, changed delivery commitments, or material increases in cost, effort, or risk.
-4. **Implement and examine.** Make focused changes, execute the required checks, and collect evidence for each success criterion at the current revision.
-   - Keep inspection, tests, builds, runtime, and CI evidence distinct. Missing required evidence remains unresolved.
-   - Have a fresh reviewer examine the changes when available. Validate actionable findings against the changes and evidence and disclose limits on independent review.
-   - Correct supported failures and findings, then repeat affected checks and review. Reassess changed intent or plans before continuing affected work.
-   - If repeated attempts produce no new evidence or progress, report the blocker and the decision needed.
-5. **Deliver and report.** Prepare the requested delivery with coherent commits and a description of the final changes and verification.
-   - Pause dependent delivery while required decisions or evidence remain unresolved. Treat committing, pushing, opening a PR, merging, and deploying as distinct authorized actions.
-   - Prepare reviewable artifacts before asking for missing authorization. Use permission already provided in the conversation.
-   - Confirm the delivered revision and report evidence, resource links, and any remaining work or pending human decision.
+1. **Agree.** Read the request and current artifacts before reusing completed work. Establish the problem, outcome, scope, constraints, success criteria, and delegated decisions; reuse settled decisions and resolve consequential uncertainty through sources or the user.
+   - Obtain explicit approval for new agreements. Preserve approved intent; changes need a diff, reason, impact, and explicit approval before dependent work.
+2. **Plan.** Define executable units, dependencies, checks, and permitted refinements; obtain initial approval before implementation.
+   - Compare cumulative changes with the last explicitly approved plan; advance its baseline only through approval of a specific version.
+   - Seek approval beyond delegated boundaries, including material approach/system changes, changed contracts, new external dependencies, weaker checks, changed delivery commitments, or material increases in cost, effort, or risk.
+3. **Implement and examine.** Make focused changes, run required checks, and collect evidence for every success criterion at the current revision.
+   - Distinguish inspection, tests, builds, runtime, and CI evidence; missing required evidence remains unresolved.
+   - Use a fresh reviewer when available, validate actionable findings, and disclose independent-review limits.
+   - Correct supported failures and findings, repeat affected checks and review, and reassess changed intent or plans before affected work.
+   - If retries yield no new evidence or progress, report the blocker and needed decision.
+4. **Deliver.** Prepare coherent commits and reviewer-facing descriptions of the final changes and evidence.
+   - Pause dependent delivery for unresolved required decisions or evidence. Honor existing permissions; committing, pushing, opening a PR, merging, and deploying require distinct authorization.
+   - Prepare reviewable artifacts before requesting missing authorization. Confirm the delivered revision and report evidence, links, remaining work, and pending decisions.
