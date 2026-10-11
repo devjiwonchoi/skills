@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"When the user corrects, rejects, or expresses frustration with your previous work, apply the correction and follow the remember skill bundled with the jwn plugin. Judge from conversation context, excluding quotes and unrelated profanity. Learn only evidenced preferences that prevent repeated steering.\"",
+            "command": "echo \"When the user corrects, rejects, or expresses frustration with your previous work, follow the remember skill bundled with the jwn plugin.\"",
             "timeout": 5
           }
         ]
