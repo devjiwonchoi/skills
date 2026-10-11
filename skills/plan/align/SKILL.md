@@ -13,6 +13,7 @@ description: Always use when clarifying ambiguous requests or brainstorming.
    - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record and finish.
 2. **Clarify.** Resolve consequential uncertainty through focused questions, scenarios, counterexamples, and tradeoffs. Research factual gaps and settle prerequisite decisions first.
 3. **Agree.** Save a versioned agreement to a task-local file such as `ALIGN.md` using the template.
+   - When Auto supplies a task directory, use its versioned agreement path and [state contract](../../auto/references/state.md) to preserve prior versions and record the document and actual approval. Standalone invocation does not initialize Auto state.
    - Briefly restate in your own words the problem the user wants to solve, their goals, and consequential scope or constraints. Link the agreement and request explicit approval of that version.
    - Preserve approved intent. Changes need a diff, reason, impact, and explicit approval before dependent work.
    - Record the user's response and approved version; revisit affected work after approved changes.

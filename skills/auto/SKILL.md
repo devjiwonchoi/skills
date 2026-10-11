@@ -5,12 +5,17 @@ description: Use when carrying a development task through completion.
 
 ## Steps
 
+Before starting, read [state](references/state.md) to initialize the current root's `.jwn/` or [recover](references/recovery.md) an existing task. Move this task's existing agreement and plan into versioned paths and pass those paths to downstream skills. Record lifecycle transitions, approvals, blockers, delivery outcomes, and the final state using the state contract.
+
 1. **Align.** Establish the problem, outcome, scope, constraints, success criteria, and delegated decisions. Reuse settled decisions; resolve consequential uncertainty through code, sources, or the user.
+   - Follow [Align](../plan/align/SKILL.md) with the Auto task directory and versioned agreement path.
    - Obtain the user's explicit approval for new agreements. Preserve approved intent; changes need a diff, reason, impact, and explicit approval before dependent work.
 2. **Plan.** Define executable units, dependencies, checks, and permitted refinements; obtain initial approval before implementation.
+   - Follow [Plan](../plan/plan/SKILL.md) with the Auto task directory and versioned plan path.
    - Compare cumulative changes with the last explicitly approved plan; advance its baseline only through approval of a specific version.
    - Seek approval beyond delegated limits, including material approach/system changes, changed contracts, new external dependencies, weaker checks, changed delivery commitments, or material increases in cost, effort, or risk.
 3. **Execute.** Make focused changes, run required checks, and collect evidence for every success criterion at the current revision.
+   - Follow [Execute](../execute/execute/SKILL.md) with the Auto task directory so meaningful work starts and outcomes are recorded throughout implementation, verification, and review.
    - Distinguish inspection, tests, builds, runtime, and CI evidence; missing evidence remains unresolved.
    - Use a fresh reviewer who did not implement the changes; disclose limits if unavailable.
    - Validate findings, correct supported issues, and repeat affected checks and review within approved intent and plan limits. Reuse evidence only where changes cannot affect it.

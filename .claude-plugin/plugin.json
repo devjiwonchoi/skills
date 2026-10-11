@@ -1,7 +1,7 @@
 {
   "name": "jwn",
   "version": "0.0.0",
-  "description": "Development skills and a remember hook for learning from user corrections.",
+  "description": "Turn todos into reviewable PRs",
   "author": {
     "name": "devjiwonchoi"
   },

@@ -1,5 +1,17 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^compact$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"After compaction, resolve the current project/worktree root and check for .jwn. In a non-Git project, check ancestors for the nearest .jwn. If it exists, locate the installed auto skill and read its references/recovery.md before continuing. Preserve pending approvals and existing permissions. If no .jwn exists, do not create state or start Auto.\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [

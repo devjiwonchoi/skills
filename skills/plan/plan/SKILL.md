@@ -9,6 +9,7 @@ description: Use when planning development work.
    - Reuse an unchanged approved agreement.
    - Otherwise present a brief intent and scope draft for user review first. Follow [align](../align/SKILL.md) to discuss open decisions, revise with user feedback, and obtain explicit approval before detailed planning.
 2. **Design.** Write executable work as a versioned plan using the template.
+   - When Auto supplies a task directory, use its versioned plan path and [state contract](../../auto/references/state.md) to preserve prior versions and record revisions and actual approvals. Standalone invocation does not initialize Auto state.
 3. **Debate.** Always read and follow the [multi-agent debate](references/debate.md) to review and revise the plan before confirmation.
    - If consensus is incomplete, return the pending plan and unresolved issues without advancing to confirmation.
 4. **Assess drift.** Compare cumulative changes with agreed intent and the last explicitly approved plan.
