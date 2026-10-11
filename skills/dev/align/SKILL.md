@@ -5,55 +5,48 @@ description: Use when agreeing on a development task's intent and scope.
 
 ## Rules
 
-- Keep verified facts, user decisions, and assumptions distinct.
-- Preserve the user's reasoning, conditions, and exceptions when summarizing.
-- Keep user-fixed choices as constraints. Leave implementation choices open unless they affect the agreement.
-- Treat approved alignments as immutable.
+- Use `.jiwon/tasks/<task-id>/` at the worktree root, or project root otherwise. Reuse the same task's ID and read any `status.md`.
+- Update it at transitions, approvals, evidence changes, pauses, or completion with stage/state, current versions, applicable approved baselines and confirmations, working/verified revisions and evidence, pending decisions, and next action.
+- Preserve approved versions and append consequential decisions; status is not approval. Create only needed documents, link existing artifacts, and keep records local unless sharing is authorized. Mark done only when requested work is complete.
+- Distinguish verified facts, user decisions, and assumptions. Preserve the user's reasons, conditions, exceptions, and fixed choices; leave implementation open unless it affects the agreement.
 
 ## Steps
 
-1. **Ground the request.** Read the supplied context and existing alignment.
-   - Check unverified facts needed for agreement against local implementation, tests, documents, or authoritative sources applicable to the project. Ground questions in the findings.
-   - If new facts require changing an approved alignment, explain their impact and pause dependent work for the user's decision.
-   - If an approved version still covers the request without unresolved conflicts, provide its location, version, and approval record and finish without renewed approval.
-2. **Clarify the intent.** Establish the underlying problem, why it matters, and the desired observable outcome.
-   - Ask only questions that could materially change the agreement, settling prerequisite decisions first.
-   - Probe assumptions and boundaries with concrete scenarios, counterexamples, and tradeoffs.
-   - Repeat research when answers expose consequential factual gaps. Stop when no consequential decision remains unresolved.
-3. **Write the agreement.** Save the complete alignment as a versioned draft using the template below.
-4. **Confirm and hand off.** Present the full draft for the user's explicit approval.
-   - For changes, preserve the approved version and show the diff, reason, and impact on existing work.
-   - Record the user's actual response and approved version. Wait for approval before continuing dependent work.
-   - Provide the approved document's location and version as the basis for subsequent work. Recheck affected work after approved changes.
+1. **Ground.** Read the request and existing agreement. Verify consequential facts against local code, tests, documents, or authoritative sources.
+   - Reuse an unchanged approved agreement without unresolved conflicts; provide its location, version, and approval record and finish without renewed approval.
+2. **Clarify.** Resolve consequential uncertainty through focused questions, concrete scenarios, counterexamples, and tradeoffs. Research new factual gaps and settle prerequisite decisions first.
+3. **Agree.** Save a versioned draft using the template and present it in full for explicit approval.
+   - Preserve approved agreements. For changes, show the diff, reason, and impact and wait for approval before dependent work.
+   - Record the actual response and approved version, provide its location, and recheck affected work after approved changes.
 
 ## Template
 
 ```markdown
 # Alignment
 
-Version: <revision>
+Version: <version>
 Status: <draft or approved>
-Approval: <actual user confirmation and confirmed version, or pending>
+Approval: <actual confirmation and approved version, or pending>
 
 ## Problem and why
-<Current problem, supporting evidence, and why it matters.>
+<Problem, evidence, and why it matters.>
 
 ## Desired outcome
-<What should change for the user.>
+<Observable outcome.>
 
 ## Scope
-- In: <What this task covers.>
-- Out: <What this task excludes.>
+- In: <Included work.>
+- Out: <Excluded work.>
 
 ## Constraints
-<What must hold, including choices the user already fixed.>
+<Requirements and user-fixed choices.>
 
 ## Success criteria
-<Observable conditions that establish completion.>
+<Observable completion conditions.>
 
 ## Decision boundaries
-- Agent may decide: <Choices delegated to the agent.>
-- Ask the user: <Choices requiring a human decision.>
+- Agent may decide: <Delegated choices.>
+- Ask the user: <Reserved decisions.>
 
 ## Assumptions and open decisions
 <Unverified assumptions and unresolved decisions, or none.>
