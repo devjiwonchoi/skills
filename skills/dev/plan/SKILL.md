@@ -5,47 +5,42 @@ description: Use when planning development work.
 
 ## Rules
 
-- Preserve the last user-approved version as the comparison baseline. Advance it only through explicit approval of a specific version.
+- Use `.jiwon/tasks/<task-id>/` at the worktree root, or project root otherwise. Reuse the same task's ID and read any `status.md`.
+- Update it at transitions, approvals, evidence changes, pauses, or completion with stage/state, current versions, applicable approved baselines and confirmations, working/verified revisions and evidence, pending decisions, and next action.
+- Preserve approved versions and append consequential decisions; status is not approval. Create only needed documents, link existing artifacts, and keep records local unless sharing is authorized. Mark done only when requested work is complete.
+- Compare against the last explicitly approved plan; advance that baseline only through explicit approval of a specific version.
 
 ## Steps
 
-1. **Ground the plan.** Read the request, agreed intent, scope, constraints, success criteria, and any existing plan.
-   - Use the user's existing decisions without requiring a separate agreement document. Resolve consequential gaps before dependent planning.
-   - Check decision-relevant facts against local implementation, tests, documents, or authoritative sources applicable to the project.
-2. **Design the work.** Design executable work from the available evidence. Save a versioned plan using the template below.
-3. **Assess drift.** Compare the proposed plan with the agreed intent and approved baseline, including accumulated changes.
-   - If the intent or constraints must change, preserve the agreement and present the diff, reason, and impact for explicit approval before affected work.
-   - Revisions outside the agreed adaptation boundaries require approval.
-   - Require approval for material changes to the approach or affected systems, changed external contracts, new external dependencies, or weaker verification.
-   - Also require approval for changed delivery commitments, expanded delegation, or material increases in cost, effort, or delivery risk.
-4. **Confirm and hand off.**
-   - For initial plans or revisions requiring approval, present the full plan and wait for explicit approval before dependent execution.
-     - Record the actual user response and approved version as the new baseline.
-   - For permitted refinements, continue without renewed approval.
-   - Provide the current plan's location and version, approved baseline, and agreed intent as the basis for implementation.
+1. **Ground.** Read the request, agreed intent, constraints, success criteria, and existing plan. A separate agreement document is optional. Resolve consequential gaps against relevant sources or the user before dependent planning.
+2. **Design.** Save executable work as a versioned plan using the template.
+3. **Assess drift.** Compare accumulated changes with the agreed intent and approved baseline.
+   - Require approval for changed intent or constraints, changes outside delegated boundaries, material approach or system changes, changed external contracts, new external dependencies, weaker checks, changed delivery commitments, expanded delegation, or material increases in cost, effort, or risk.
+   - Preserve prior approvals and show the cumulative diff, reason, and impact before affected work.
+4. **Confirm.** Present initial plans and approval-required revisions in full; record the user's explicit confirmation and version before dependent execution. Continue permitted refinements without renewed approval. Hand off the current plan's location/version and approved baseline.
 
 ## Template
 
 ```markdown
 # Plan
 
-Version: <current revision>
-Intent: <agreed goal, constraints, and success criteria, or their source reference>
-Approved baseline: <preserved plan location, version, and actual user confirmation, or pending>
+Version: <current version>
+Intent: <Agreed goal, constraints, and success criteria or source.>
+Approved baseline: <Preserved version/location and actual confirmation, or pending.>
 
 ## Approach and evidence
-<Strategy, reasons, tradeoffs, sources, and unresolved factual gaps.>
+<Strategy, reasons, tradeoffs, sources, and factual gaps.>
 
 ## Work units
-<Executable units with intended changes, files or entry points, dependencies, and commit or PR boundaries where useful.>
+<Changes, files or entry points, dependencies, and useful commit/PR boundaries.>
 
 ## Verification
-<Checks, expected evidence, and commands where applicable for each success criterion.>
+<Checks, expected evidence, and applicable commands per success criterion.>
 
 ## Adaptation boundaries
-- Agent may refine: <Implementation choices delegated within this plan.>
-- Ask the user: <Changes requiring approval and any agreed limits.>
+- Agent may refine: <Delegated implementation choices.>
+- Ask the user: <Reserved changes and limits.>
 
 ## Changes from approved baseline
-<Cumulative diff, reason, and impact, or none. State whether approval is required and why.>
+<Cumulative diff, reason, impact, and whether approval is required and why, or none.>
 ```
