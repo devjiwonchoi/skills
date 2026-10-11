@@ -1,6 +1,6 @@
 {
   "name": "jwn",
-  "description": "Development skills and a remember hook for Codex and Claude Code.",
+  "description": "Turn todos into reviewable PRs",
   "owner": {
     "name": "devjiwonchoi"
   },
@@ -8,7 +8,7 @@
     {
       "name": "jwn",
       "source": "./",
-      "description": "Development skills and a remember hook for learning from user corrections."
+      "description": "Turn todos into reviewable PRs"
     }
   ]
 }
