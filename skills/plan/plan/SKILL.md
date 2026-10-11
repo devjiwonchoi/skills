@@ -19,6 +19,8 @@ description: Use when planning development work.
 
 ## Template
 
+Write in the user's language.
+
 ```markdown
 # Plan
 

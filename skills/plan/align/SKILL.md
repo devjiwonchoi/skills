@@ -20,6 +20,8 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 
 ## Template
 
+Write in the user's language.
+
 ```markdown
 # Alignment
 
