@@ -5,6 +5,8 @@ description: Always use when writing a skill.
 
 ## Rules
 
+- Include only instructions and supporting files needed to run the requested skill or explicitly requested as deliverables.
+- Never ship creation-time research notes, source comparisons, design rationale, or work logs unless explicitly requested as deliverables. Researching how to create a skill does not authorize adding that research to its files or workflow.
 - Prefer one short sentence per requested behavior, adding detail only to prevent a consequential misinterpretation.
 - Use separate sentences instead of semicolons.
 - Use nested lists for supporting details when needed.
