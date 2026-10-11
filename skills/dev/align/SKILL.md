@@ -7,15 +7,15 @@ description: Use when agreeing on a development task's intent and scope.
 
 - Keep verified facts, user decisions, and assumptions distinct.
 - Preserve the user's reasoning, conditions, and exceptions when summarizing.
-- Keep user-fixed choices as constraints and leave implementation details to `plan`.
+- Keep user-fixed choices as constraints. Leave implementation choices open unless they affect the agreement.
 - Treat approved alignments as immutable.
 
 ## Steps
 
 1. **Ground the request.** Read the supplied context and existing alignment.
-   - Use [$research](../../utils/research/SKILL.md) for unverified facts needed for agreement. Ground questions in its findings.
+   - Check unverified facts needed for agreement against local implementation, tests, documents, or authoritative sources applicable to the project. Ground questions in the findings.
    - If new facts require changing an approved alignment, explain their impact and pause dependent work for the user's decision.
-   - If an approved version still covers the request without unresolved conflicts, skip to the handoff in step 4.
+   - If an approved version still covers the request without unresolved conflicts, provide its location, version, and approval record and finish without renewed approval.
 2. **Clarify the intent.** Establish the underlying problem, why it matters, and the desired observable outcome.
    - Ask only questions that could materially change the agreement, settling prerequisite decisions first.
    - Probe assumptions and boundaries with concrete scenarios, counterexamples, and tradeoffs.
@@ -24,7 +24,7 @@ description: Use when agreeing on a development task's intent and scope.
 4. **Confirm and hand off.** Present the full draft for the user's explicit approval.
    - For changes, preserve the approved version and show the diff, reason, and impact on existing work.
    - Record the user's actual response and approved version. Wait for approval before continuing dependent work.
-   - Hand the approved document's location and version to `plan`. Recheck affected plans after approved changes.
+   - Provide the approved document's location and version as the basis for subsequent work. Recheck affected work after approved changes.
 
 ## Template
 
