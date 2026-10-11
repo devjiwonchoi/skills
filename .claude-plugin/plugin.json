@@ -14,5 +14,5 @@
     "./skills/remember",
     "./skills/utils"
   ],
-  "hooks": "./hooks/remember-user-steering/hooks.json"
+  "hooks": "./hooks/remember/hooks.json"
 }
