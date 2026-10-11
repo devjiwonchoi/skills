@@ -6,14 +6,15 @@ description: Always use when writing or updating a PR title or description.
 ## Rules
 
 - Write the PR description for a reviewer who has not read the conversation.
-- Start the title with an action verb and briefly name the change and its purpose.
+- Keep titles short: action verb + change. Put purpose and explanation in the description.
+- Base the title on the final diff and retain the details needed to identify the change.
 - Use `$commit` to review the commit history when preparing a PR.
 
 ## Examples
 
-- Add skill for writing skills
-- Add skill for handling commits
-- Add skill for handling PRs
+- Add `align` skill
+- Fix login redirect
+- Remove unused option
 
 ## Template
 
