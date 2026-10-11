@@ -20,7 +20,7 @@ Store `ALIGN.v<N>.md`, `PLAN.v<N>.md`, `status.json`, and `progress.jsonl` direc
 
 1. Move existing documents for this task into their versioned paths. Preserve their version numbers, semantic content, comments, and approval records. If unversioned, assign an unused version without implying approval.
 2. Adjust relative and incoming links to retain their targets. Do not overwrite conflicting destinations or move unrelated documents.
-3. Create a new numbered file for each substantive document revision. Keep previous versions and the last approved references until the user explicitly approves a specific successor. Updating a document's actual approval record does not require a new content version.
+3. Create a new numbered agreement file for each substantive agreement revision. For plans, follow [Plan](../../plan/plan/SKILL.md)'s version rule and update the current file for same-version refinements. Preserve the original plan and last approved content in task history before editing them. Keep previous versions and the last approved references until the user explicitly approves a specific successor. Updating a document's actual approval record does not require a new content version.
 4. Supply the absolute task directory and document paths to downstream skills. Record document changes and actual approvals as events.
 
 ## Events and status
