@@ -1,4 +1,4 @@
-# Remember
+# Hooks
 
 `hooks.json` configures a hook for every user prompt in Codex and Claude Code.
 It asks the agent to identify feedback on its previous work from the conversation
@@ -6,9 +6,11 @@ and follow Remember when the user corrects, rejects, or expresses frustration wi
 Remember applies the correction and judges whether the feedback reveals a concrete
 lesson useful in future tasks. It owns approval and storage.
 
-Merge the handler from [hooks.json](hooks.json)
+The plugin discovers [hooks.json](hooks.json) at its default location.
+For manual registration, merge its handler
 into `hooks.UserPromptSubmit` in `~/.codex/hooks.json` and `~/.claude/settings.json`,
-preserving existing hooks and other settings. Keep only one steering hook.
+preserving existing hooks and other settings. Keep only one copy across plugin
+and manual registration.
 
 The command uses only the shell's built-in `echo` and outputs plain context.
 It needs no Python, Node.js, JSON parser, script file, or checkout-specific path.
