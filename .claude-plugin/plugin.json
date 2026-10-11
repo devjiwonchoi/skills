@@ -13,6 +13,5 @@
     "./skills/ship",
     "./skills/remember",
     "./skills/utils"
-  ],
-  "hooks": "./hooks/remember/hooks.json"
+  ]
 }
