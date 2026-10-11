@@ -1,0 +1,6 @@
+interface:
+  display_name: "Skillify"
+  short_description: "Turn a session into a reusable skill"
+  default_prompt: "Use $skillify to turn the reusable procedure from this work into a skill."
+policy:
+  allow_implicit_invocation: true
