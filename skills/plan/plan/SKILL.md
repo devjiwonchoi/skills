@@ -14,7 +14,7 @@ description: Use when planning development work.
 4. **Assess drift.** Compare cumulative changes with agreed intent and the last explicitly approved plan.
    - Require approval for changed intent or constraints, changes beyond delegated limits, material approach or system changes, changed external contracts, new external dependencies, weaker checks, changed delivery commitments, expanded delegation, or material increases in cost, effort, or risk.
    - Preserve prior approvals and show the cumulative diff, reason, and impact before affected work.
-5. **Confirm.** Present initial plans and approval-required revisions in full; record the user's explicit confirmation of the specific version before dependent execution. Advance the approved baseline only through that confirmation. Continue permitted refinements without renewed approval.
+5. **Confirm.** Present initial plans and approval-required revisions in full. Follow [explain](../../utils/explain/SKILL.md) to explain the plan before requesting confirmation. Record the user's explicit confirmation of the specific version before dependent execution. Advance the approved baseline only through that confirmation. Continue permitted refinements without renewed approval.
 
 ## Template
 
