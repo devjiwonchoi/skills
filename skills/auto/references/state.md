@@ -8,6 +8,12 @@ Read this when Auto starts or when writing records for an Auto-managed task. Onl
 - For non-Git recovery, check the current directory and its ancestors for the nearest `.jwn/`. For a new task, use the known project directory. Establish that directory with the user if it is unclear.
 - One root holds one task. Before reusing state, validate `workflow: "auto"`, the recorded goal, and the current request. Another task or another active session requires a user decision. Same-session compaction retains ownership. Do not overwrite unrelated files or interleave writers.
 
+## Git ignore on initialization
+
+1. When first creating `.jwn/`, check `git rev-parse --is-inside-work-tree`. If `true`, run `git check-ignore -q -- .jwn/` from the working-tree root.
+2. On exit code `1`, automatically append `.jwn/` only if absent to the global `core.excludesFile`, defaulting to `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`. Preserve existing contents and Git configuration.
+3. Recheck exclusion after registration. Report unexpected Git errors, write errors, or failed exclusion before continuing dependent work.
+
 ## Documents
 
 Store `ALIGN.v<N>.md`, `PLAN.v<N>.md`, `status.json`, and `progress.jsonl` directly in `.jwn/`. Document references are relative to `.jwn/`. Use `null` until a document or its actual approval exists.
