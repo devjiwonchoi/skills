@@ -7,7 +7,7 @@ description: Always use when writing or updating a PR title or description.
 
 - Write the PR description for a reviewer who has not read the conversation.
 - Keep titles short: action verb + change. Put purpose and explanation in the description.
-- Use `$commit` to review the commit history when preparing a PR.
+- Review commit purposes, dependency order, and overall history when preparing a PR.
 
 ## Examples
 
