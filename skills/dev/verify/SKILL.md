@@ -3,17 +3,15 @@ name: verify
 description: Use when verifying development work.
 ---
 
+## Rules
+
+- Use `.jiwon/tasks/<task-id>/` at the worktree root, or project root otherwise. Reuse the same task's ID and read any `status.md`.
+- Update it at transitions, approvals, evidence changes, pauses, or completion with stage/state, current versions, applicable approved baselines and confirmations, working/verified revisions and evidence, pending decisions, and next action.
+- Preserve approved versions and append consequential decisions; status is not approval. Create only needed documents, link existing artifacts, and keep records local unless sharing is authorized. Mark done only when requested work is complete.
+
 ## Steps
 
-1. **Establish the target.** Read the requested behavior, success criteria, and any existing plan or implementation notes. Identify the revision and any uncommitted changes being checked.
-   - Derive the required checks from the request and relevant implementation when no plan or handoff exists.
-2. **Collect evidence.** Execute the required checks and establish evidence for each success criterion.
-   - Keep source inspection, builds, tests, runtime behavior, and CI results distinct. State what each result proves.
-   - Record the revision, checks performed, results, and relevant evidence.
-   - Treat missing or unavailable checks as unresolved. Do not replace required evidence with assumptions or unrelated passing checks.
-3. **Handle failures.** Record reproducible failures, supporting evidence, and what needs correction.
-   - Apply corrections only within existing authorization. A request to verify does not itself authorize implementation changes.
-   - Recheck affected criteria after corrections. Prior evidence remains usable only where changes cannot affect its result.
-   - Do not weaken required checks to claim success. Seek a human decision when necessary changes exceed agreed limits.
-4. **Report the outcome.** Present the checked revision, criterion-by-criterion results, evidence, failures, and unresolved gaps with their impact.
-   - Claim successful verification only when required checks pass and all success criteria are supported.
+1. Identify the requested behavior, success criteria, and checked revision, including uncommitted changes. Read available plans or notes; derive missing checks from the request and implementation.
+2. Run required checks and record evidence for each criterion. Distinguish source inspection, builds, tests, runtime, and CI results and what they prove. Missing checks remain unresolved; assumptions or unrelated passes cannot replace required evidence.
+3. Record reproducible failures and needed corrections. Verification alone does not authorize changes; correct only within existing authorization and seek a human decision beyond agreed limits. Never weaken required checks. Recheck affected criteria; reuse evidence only where changes cannot affect it.
+4. Report the checked revision, criterion results, evidence, failures, and unresolved gaps with their impact. Claim success only when required checks pass and every criterion has evidence.
