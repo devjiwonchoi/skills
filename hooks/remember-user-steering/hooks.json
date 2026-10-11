@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"When the user corrects or rejects your work, including directed frustration, apply it and follow remember. Exclude quotes and unrelated profanity. When the task completes or a PR merge is confirmed, ask whether to run remember unless already invoked or answered for this task.\"",
+            "command": "echo \"When the user corrects, rejects, or expresses frustration with your previous work, follow remember.\"",
             "timeout": 5
           }
         ]
