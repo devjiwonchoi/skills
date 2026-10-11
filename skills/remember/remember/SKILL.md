@@ -4,6 +4,8 @@ description: Use when saving durable lessons or learning from user corrections t
 user-invocable: true
 ---
 
+Apply user corrections first. Judge corrections, rejections, and directed frustration from conversation context, excluding quotes and unrelated profanity. For feedback-triggered use, propose remembering only when it reveals a concrete lesson that will help in future tasks.
+
 ## Steps
 
 1. Use [distill](../distill/SKILL.md) to extract durable lessons from the work and conversation, including corrections, failures, recoveries, and decisions.
