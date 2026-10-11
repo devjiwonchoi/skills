@@ -5,7 +5,7 @@ description: Always use when writing or updating a PR title or description.
 
 ## Rules
 
-- Write the PR description for a reviewer who has not read the conversation.
+- Explain the problem and solution in one or two sentences each for a reviewer who has not read the conversation. Keep only information needed for review and omit work logs.
 - Keep titles short: action verb + change. Put purpose and explanation in the description.
 - Review commit purposes, dependency order, and overall history when preparing a PR.
 
