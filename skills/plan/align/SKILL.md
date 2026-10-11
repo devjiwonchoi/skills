@@ -1,6 +1,6 @@
 ---
 name: align
-description: Use when agreeing on a development task's intent and scope.
+description: Always use when clarifying ambiguous requests or brainstorming.
 ---
 
 ## Rules
