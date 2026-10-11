@@ -17,8 +17,9 @@ description: Use when explaining current context or results.
    - Always create and render an HTML visualization when HTML visualization is available.
    - For frontend or UI changes, preview how the proposed or changed interface will look.
    - Capture and show screenshots when the actual interface or result matters.
+   - Whenever files or deliverable structure apply, always show the expected output file tree with a short comment explaining each file's role.
+   - Whenever a work sequence applies, always show a Mermaid diagram of how the work will proceed.
    - Render Mermaid as a simple diagram with only the essential nodes, connections, and plain-language labels.
-   - Show a focused file tree with a short comment explaining each file's role when file locations or responsibilities matter.
    - Present the visual itself instead of raw visualization source.
 3. End the explanation by asking whether the user wants a quiz to check their understanding.
 4. If they agree, ask a total of 3–10 questions suited to the explanation's scope, one question per response.
