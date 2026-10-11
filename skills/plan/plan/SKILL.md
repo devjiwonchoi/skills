@@ -6,6 +6,7 @@ description: Use when planning development work.
 ## Steps
 
 1. **Agree.** Read the request and existing agreement or plan.
+   - Before asking questions at any stage, follow [align](../align/SKILL.md)'s Ground and Clarify steps.
    - Reuse an unchanged approved agreement.
    - Otherwise present a brief intent and scope draft for user review first. Follow [align](../align/SKILL.md) to discuss open decisions, revise with user feedback, and obtain explicit approval before detailed planning.
 2. **Design.** Write executable work as a versioned plan using the template.

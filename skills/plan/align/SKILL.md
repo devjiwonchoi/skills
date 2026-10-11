@@ -9,9 +9,12 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 
 ## Steps
 
-1. **Ground.** Read the request and existing agreement. Verify consequential facts against code, tests, documents, or authoritative sources.
+1. **Ground.** Read the request and existing agreement. Before questioning, [research](../../utils/research/SKILL.md) likely answers in the codebase for brownfield work or current authoritative sources otherwise.
+   - Check that each question's premise, options, and recommendation fit the actual versions, constraints, and applicable best practices.
    - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record and finish.
-2. **Clarify.** Resolve consequential uncertainty through focused questions, scenarios, counterexamples, and tradeoffs. Research factual gaps and settle prerequisite decisions first.
+2. **Clarify.** Ask 3–10 non-redundant questions about consequential decisions left to the user after research. Choose the count by decision impact and task complexity. Settle prerequisite decisions first.
+   - Explain each option's meaning, candidacy, benefits, and tradeoffs without assuming prior knowledge. Ground the recommendation's rationale in research findings.
+   - For question tools, explain in chat first. Keep cards to short questions and option labels.
 3. **Agree.** Save a versioned agreement to a task-local file such as `ALIGN.md` using the template.
    - When Auto supplies a task directory, use its agreement path and [state contract](../../auto/references/state.md) for document versions and approval events.
    - Briefly restate in your own words the problem the user wants to solve, their goals, and consequential scope or constraints. Link the agreement and request explicit approval of that version.
