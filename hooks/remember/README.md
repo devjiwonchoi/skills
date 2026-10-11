@@ -1,4 +1,4 @@
-# Remember user steering
+# Remember
 
 `hooks.json` configures a hook for every user prompt in Codex and Claude Code.
 It asks the agent to identify feedback on its previous work from the conversation
