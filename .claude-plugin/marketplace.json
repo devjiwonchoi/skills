@@ -1,0 +1,14 @@
+{
+  "name": "jwn",
+  "description": "Development skills and a remember hook for Codex and Claude Code.",
+  "owner": {
+    "name": "devjiwonchoi"
+  },
+  "plugins": [
+    {
+      "name": "jwn",
+      "source": "./",
+      "description": "Development skills and a remember hook for learning from user corrections."
+    }
+  ]
+}

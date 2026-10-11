@@ -1,0 +1,18 @@
+{
+  "name": "jwn",
+  "version": "0.0.0",
+  "description": "Development skills and a remember hook for learning from user corrections.",
+  "author": {
+    "name": "devjiwonchoi"
+  },
+  "repository": "https://github.com/devjiwonchoi/skills",
+  "skills": [
+    "./skills/auto",
+    "./skills/plan",
+    "./skills/execute",
+    "./skills/ship",
+    "./skills/remember",
+    "./skills/utils"
+  ],
+  "hooks": "./hooks/remember-user-steering/hooks.json"
+}
