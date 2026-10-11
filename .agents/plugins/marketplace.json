@@ -1,0 +1,20 @@
+{
+  "name": "jwn",
+  "interface": {
+    "displayName": "jwn"
+  },
+  "plugins": [
+    {
+      "name": "jwn",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
