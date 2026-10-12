@@ -14,6 +14,7 @@ description: Use when explaining current context or results.
    - Lead with the main point, then include only the background, cause, and consequence needed to understand it.
    - Use familiar words and a concrete example when helpful.
 2. Use all available visual methods that help understanding, combining them instead of choosing just one.
+   - Read and follow the available `visualize` skill to create and display the required visuals.
    - Always create and render an HTML visualization when HTML visualization is available.
    - For frontend or UI changes, preview how the proposed or changed interface will look.
    - Capture and show screenshots when the actual interface or result matters.
@@ -27,3 +28,4 @@ description: Use when explaining current context or results.
    - Ask about the main idea, cause and effect, and applying the idea to a concrete situation.
    - Wait for their answer before revealing the solution or asking the next question.
    - Assess each answer, briefly explain any gaps, and check the corrected understanding.
+5. Before responding, check that the opening summary, required visuals, and closing question are present, and add any missing required output.
