@@ -16,6 +16,8 @@ description: Always use when writing or modifying code.
 - Separate code groups with blank lines.
 - Preserve existing comments unless there is a concrete reason to change or remove them.
 - Follow the repository's formatting and organization without unrelated style rewrites.
+- Prefer colocating unit tests with the tested source, such as `x.test.ts` next to `x.ts`, following repository conventions.
+- Prefer inline snapshots, fixtures, and similar test data over new files unless separate files improve behavior, readability, or reuse.
 - In TypeScript, prefer explicit `T | undefined` over optional `?:`.
 - Prefer `null` when explicitly assigning an absent value.
 - Preserve existing contracts and meaningful differences between absent values when applying style preferences.
