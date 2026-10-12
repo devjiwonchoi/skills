@@ -18,6 +18,7 @@ description: Use when planning development work.
    - Require approval for changed intent or constraints, changes beyond delegated limits, material approach or system changes, changed external contracts, new external dependencies, weaker checks, changed delivery commitments, expanded delegation, or material increases in cost, effort, or risk.
    - Preserve prior approvals and show the cumulative diff, reason, and impact before affected work.
 5. **Confirm.** Present initial plans and approval-required revisions in full. Follow [explain](../../utils/explain/SKILL.md) to explain the plan before requesting confirmation. Record the user's explicit confirmation of the specific version before dependent execution. Advance the approved baseline only through that confirmation. Continue permitted refinements without renewed approval.
+6. **Continue.** For standalone work, offer [Auto](../../auto/SKILL.md) after approval. If requested at any stage, hand off task documents and approval records.
 
 ## Template
 
