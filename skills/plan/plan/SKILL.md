@@ -5,7 +5,7 @@ description: Use when planning development work.
 
 ## Rules
 
-- Always follow [explain](../../utils/explain/SKILL.md) before asking a question or requesting approval.
+- Complete [explain](../../utils/explain/SKILL.md) and render its required visuals in chat before asking a question or requesting approval.
 
 ## Steps
 
