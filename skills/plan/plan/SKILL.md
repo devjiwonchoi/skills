@@ -10,7 +10,7 @@ description: Use when planning development work.
 ## Steps
 
 1. **Agree.** Read the request and existing agreement or plan.
-   - Before asking questions at any stage, follow [align](../align/SKILL.md)'s Ground and Clarify steps.
+   - For consequential open decisions, follow [align](../align/SKILL.md)'s Ground and Clarify steps.
    - Reuse an unchanged approved agreement.
    - Otherwise present a brief intent and scope draft for user review first. Follow [align](../align/SKILL.md) to discuss open decisions, revise with user feedback, and obtain explicit approval before detailed planning.
 2. **Design.** Use [three-steps](../../utils/three-steps/SKILL.md) before writing executable work as a versioned plan using the template.
@@ -21,7 +21,7 @@ description: Use when planning development work.
 4. **Assess drift.** Compare cumulative changes with agreed intent and the last explicitly approved plan.
    - Require approval for changed intent or constraints, changes beyond delegated limits, material approach or system changes, changed external contracts, new external dependencies, weaker checks, changed delivery commitments, expanded delegation, or material increases in cost, effort, or risk.
    - Preserve prior approvals and show the cumulative diff, reason, and impact before affected work.
-5. **Confirm.** Present initial plans and approval-required revisions in full. Follow [explain](../../utils/explain/SKILL.md) to explain the plan before requesting confirmation.
+5. **Confirm.** Present initial plans and approval-required revisions in full.
    - Stay in planning until the user explicitly approves the specific plan version. Agreement approval, agent consensus, and requests to refine the plan do not count as plan approval.
    - Record that approval before dependent execution. Advance the approved baseline only through that confirmation. Continue permitted refinements without renewed approval.
 6. **Continue.** For standalone work, offer [Auto](../../auto/SKILL.md) after approval. If requested at any stage, hand off task documents and approval records.

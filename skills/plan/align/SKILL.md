@@ -7,7 +7,6 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 
 - Distinguish facts, user decisions, and assumptions. Preserve the user's reasons, conditions, exceptions, and fixed choices; leave implementation open unless it affects the agreement.
 - Always follow [explain](../../utils/explain/SKILL.md) before asking a question or requesting approval.
-- Always use [socratic](../../utils/socratic/SKILL.md) before asking the user a question.
 
 ## Steps
 
@@ -15,14 +14,15 @@ description: Always use when clarifying ambiguous requests or brainstorming.
    - Check that each question's premise, options, and recommendation fit the actual versions, constraints, and applicable best practices.
    - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record, then continue to step 4.
    - When brainstorming, use [first-principle](../../utils/first-principle/SKILL.md) to frame the problem and explore options from verified facts and constraints.
-2. **Clarify.** Examine consequential decisions left open after research. Settle prerequisite decisions before dependent ones.
+2. **Clarify.** Use [socratic](../../utils/socratic/SKILL.md) to explore consequential decisions left open after research. Settle prerequisite decisions before dependent ones.
    - If conversation cannot settle an unknown, record it and how research or a prototype could resolve it. Do not replace uncertainty with a guessed decision.
    - Explain each option's meaning, candidacy, benefits, and tradeoffs without assuming prior knowledge. Ground the recommendation's rationale in research findings.
    - Keep question cards to short questions and option labels.
+   - Before planning, agree with the user on each success criterion's pass/fail boundary and required evidence.
    - Stop when intent, outcome, scope, constraints, success criteria, and decision boundaries are clear enough to agree. Record remaining uncertainty and what must be resolved before dependent work.
 3. **Agree.** Save a versioned agreement to a task-local file such as `ALIGN.md` using the template.
    - When Auto supplies a task directory, use its agreement path and [state contract](../../auto/references/state.md) for document versions and approval events.
-   - Before requesting approval, use [explain](../../utils/explain/SKILL.md) to summarize in chat the problem and why it matters, desired outcome, included and excluded scope, consequential constraints, success criteria, and decisions reserved for the user. Make the explanation sufficient to decide without reading the agreement. Then link the agreement and request explicit approval of that version.
+   - Summarize in chat the problem and why it matters, desired outcome, included and excluded scope, consequential constraints, success criteria and required evidence, and decisions reserved for the user. Make the explanation sufficient to decide without reading the agreement. Then link the agreement and request explicit approval of that version.
    - Preserve approved intent. Changes need a diff, reason, impact, and explicit approval before dependent work.
    - Record the user's response and approved version; revisit affected work after approved changes.
 4. **Continue.** For standalone work, offer [Auto](../../auto/SKILL.md) after approval. If requested at any stage, hand off task documents and approval records.
@@ -52,7 +52,7 @@ Approval: <actual confirmation and approved version, or pending>
 <Requirements and user-fixed choices.>
 
 ## Success criteria
-<Observable completion conditions.>
+<Observable completion conditions, pass/fail boundaries, and required evidence agreed with the user.>
 
 ## Decision boundaries
 - Agent may decide: <Delegated choices.>
