@@ -5,8 +5,8 @@ description: Use when explaining current context or results.
 
 ## Rules
 
-- Keep every response within three short paragraphs, including the closing question and quiz feedback.
-- Keep visuals compact instead of using them to bypass the paragraph limit.
+- Keep explanations concise without omitting context, tradeoffs, or required visuals needed to understand or decide.
+- Keep visuals compact and readable.
 
 ## Steps
 
@@ -22,8 +22,12 @@ description: Use when explaining current context or results.
    - Whenever a work sequence applies, always show a Mermaid diagram of how the work will proceed.
    - Render Mermaid as a simple diagram with only the essential nodes, connections, and plain-language labels.
    - Present the visual itself instead of raw visualization source.
-3. End the explanation by asking whether the user wants a quiz to check their understanding.
-4. If they agree, ask a total of 3–10 questions suited to the explanation's scope, one question per response.
+3. Finish the explanation and render its required visuals before asking for an answer or approval.
+   - Make the explanation sufficient to answer or approve without reading a linked document.
+   - Ask the decision question or approval request last, then stop and wait for the user's answer.
+   - When called by another skill, use that skill's closing question instead of offering a quiz.
+   - For standalone explanations, ask whether the user wants a quiz to check their understanding.
+4. If the user accepts the quiz, ask a total of 3–10 questions suited to the explanation's scope, one question per response.
    - Ask about the main idea, cause and effect, and applying the idea to a concrete situation.
    - Wait for their answer before revealing the solution or asking the next question.
    - Assess each answer, briefly explain any gaps, and check the corrected understanding.
