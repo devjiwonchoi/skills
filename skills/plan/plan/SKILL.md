@@ -9,7 +9,7 @@ description: Use when planning development work.
    - Before asking questions at any stage, follow [align](../align/SKILL.md)'s Ground and Clarify steps.
    - Reuse an unchanged approved agreement.
    - Otherwise present a brief intent and scope draft for user review first. Follow [align](../align/SKILL.md) to discuss open decisions, revise with user feedback, and obtain explicit approval before detailed planning.
-2. **Design.** Write executable work as a versioned plan using the template.
+2. **Design.** Use [three-steps](../../utils/three-steps/SKILL.md) before writing executable work as a versioned plan using the template.
    - Keep the version during agent review and refinements within the original plan. Increment it only when necessary changes diverge from that plan. Preserve the original plan and last approved content for cumulative comparison.
    - When Auto supplies a task directory, use its plan path and [state contract](../../auto/references/state.md) for document versions and approval events.
 3. **Debate.** Always read and follow the [multi-agent debate](references/debate.md) to review and revise the plan before confirmation.
