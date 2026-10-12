@@ -3,6 +3,10 @@ name: plan
 description: Use when planning development work.
 ---
 
+## Rules
+
+- Always follow [explain](../../utils/explain/SKILL.md) before asking a question or requesting approval.
+
 ## Steps
 
 1. **Agree.** Read the request and existing agreement or plan.
