@@ -6,16 +6,14 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 ## Rules
 
 - Distinguish facts, user decisions, and assumptions. Preserve the user's reasons, conditions, exceptions, and fixed choices; leave implementation open unless it affects the agreement.
+- Always use [socratic](../../utils/socratic/SKILL.md) before asking the user a question.
 
 ## Steps
 
 1. **Ground.** Read the request and existing agreement. Before questioning, [research](../../utils/research/SKILL.md) likely answers in the codebase for brownfield work or current authoritative sources otherwise.
    - Check that each question's premise, options, and recommendation fit the actual versions, constraints, and applicable best practices.
    - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record, then continue to step 4.
-2. **Clarify.** Clarify consequential decisions left open after research. Use each answer to choose the next question. Settle prerequisite decisions before dependent ones.
-   - Ask one focused question at a time. Group only brief, independent decisions.
-   - Follow vague answers with concrete examples, observed outcomes, or reasons. Stay on the same thread until the answer is specific enough to guide the agreement.
-   - Probe hidden assumptions, contradictions, counterexamples, and tradeoffs behind consequential answers. Revisit earlier answers when later evidence changes their meaning.
+2. **Clarify.** Examine consequential decisions left open after research. Settle prerequisite decisions before dependent ones.
    - If conversation cannot settle an unknown, record it and how research or a prototype could resolve it. Do not replace uncertainty with a guessed decision.
    - Explain each option's meaning, candidacy, benefits, and tradeoffs without assuming prior knowledge. Ground the recommendation's rationale in research findings.
    - For question tools, explain in chat first. Keep cards to short questions and option labels.
