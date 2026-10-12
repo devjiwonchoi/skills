@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Always use when writing or updating a PR title or description.
+description: Always use when handling PRs.
 ---
 
 ## Rules
@@ -9,6 +9,7 @@ description: Always use when writing or updating a PR title or description.
 - Keep titles short: action verb + change. Put purpose and explanation in the description.
 - Before creating or updating a PR, verify that commits have clear purposes, follow dependency order, and represent the final solution without superseded steps.
 - When scope changes, follow [commit](../commit/SKILL.md) to reconcile the commit structure before updating the PR title and description.
+- Open PRs as ready for review unless the user explicitly requests a draft.
 
 ## Examples
 
