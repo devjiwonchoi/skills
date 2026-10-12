@@ -12,9 +12,14 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 1. **Ground.** Read the request and existing agreement. Before questioning, [research](../../utils/research/SKILL.md) likely answers in the codebase for brownfield work or current authoritative sources otherwise.
    - Check that each question's premise, options, and recommendation fit the actual versions, constraints, and applicable best practices.
    - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record, then continue to step 4.
-2. **Clarify.** Ask 3–10 non-redundant questions about consequential decisions left to the user after research. Choose the count by decision impact and task complexity. Settle prerequisite decisions first.
+2. **Clarify.** Clarify consequential decisions left open after research. Use each answer to choose the next question. Settle prerequisite decisions before dependent ones.
+   - Ask one focused question at a time. Group only brief, independent decisions.
+   - Follow vague answers with concrete examples, observed outcomes, or reasons. Stay on the same thread until the answer is specific enough to guide the agreement.
+   - Probe hidden assumptions, contradictions, counterexamples, and tradeoffs behind consequential answers. Revisit earlier answers when later evidence changes their meaning.
+   - If conversation cannot settle an unknown, record it and how research or a prototype could resolve it. Do not replace uncertainty with a guessed decision.
    - Explain each option's meaning, candidacy, benefits, and tradeoffs without assuming prior knowledge. Ground the recommendation's rationale in research findings.
    - For question tools, explain in chat first. Keep cards to short questions and option labels.
+   - Stop when intent, outcome, scope, constraints, success criteria, and decision boundaries are clear enough to agree. Record remaining uncertainty and what must be resolved before dependent work.
 3. **Agree.** Save a versioned agreement to a task-local file such as `ALIGN.md` using the template.
    - When Auto supplies a task directory, use its agreement path and [state contract](../../auto/references/state.md) for document versions and approval events.
    - Before requesting approval, use [explain](../../utils/explain/SKILL.md) to summarize in chat the problem and why it matters, desired outcome, included and excluded scope, consequential constraints, success criteria, and decisions reserved for the user. Make the explanation sufficient to decide without reading the agreement. Then link the agreement and request explicit approval of that version.
