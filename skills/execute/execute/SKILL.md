@@ -3,6 +3,10 @@ name: execute
 description: Use when carrying development implementation through verification and review.
 ---
 
+## Rules
+
+- Complete [explain](../../utils/explain/SKILL.md) and render its required visuals in chat before asking a question or requesting approval.
+
 ## Steps
 
 When Auto supplies a task directory, follow its [state contract](../../auto/references/state.md) throughout implementation, verification, and review. Record meaningful work starts and outcomes before advancing, and the current state before yielding.

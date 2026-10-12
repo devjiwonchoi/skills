@@ -6,7 +6,7 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 ## Rules
 
 - Distinguish facts, user decisions, and assumptions. Preserve the user's reasons, conditions, exceptions, and fixed choices; leave implementation open unless it affects the agreement.
-- Always follow [explain](../../utils/explain/SKILL.md) before asking a question or requesting approval.
+- Complete [explain](../../utils/explain/SKILL.md) and render its required visuals in chat before asking a question or requesting approval.
 
 ## Steps
 
