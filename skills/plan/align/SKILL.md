@@ -13,6 +13,7 @@ description: Always use when clarifying ambiguous requests or brainstorming.
 1. **Ground.** Read the request and existing agreement. Before questioning, [research](../../utils/research/SKILL.md) likely answers in the codebase for brownfield work or current authoritative sources otherwise.
    - Check that each question's premise, options, and recommendation fit the actual versions, constraints, and applicable best practices.
    - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record, then continue to step 4.
+   - When brainstorming, use [first-principle](../../utils/first-principle/SKILL.md) to frame the problem and explore options from verified facts and constraints.
 2. **Clarify.** Examine consequential decisions left open after research. Settle prerequisite decisions before dependent ones.
    - If conversation cannot settle an unknown, record it and how research or a prototype could resolve it. Do not replace uncertainty with a guessed decision.
    - Explain each option's meaning, candidacy, benefits, and tradeoffs without assuming prior knowledge. Ground the recommendation's rationale in research findings.
