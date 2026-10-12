@@ -11,5 +11,6 @@ description: Use when carrying a development task through completion.
 3. Follow [Plan](../plan/plan/SKILL.md) with the versioned plan path.
 4. Follow [Execute](../execute/execute/SKILL.md) with the Auto task directory.
 5. Follow [Ship](../ship/ship/SKILL.md) for authorized delivery.
+   - Advance to `done`/`complete` only after Ship reports verified readiness for human review. Until then, retain the `ship` stage and its remaining work.
 
 Pass the task directory to each stage. Use the state contract to record stage changes, approvals, blockers, delivery outcomes, and the final state.
