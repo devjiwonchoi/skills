@@ -17,7 +17,8 @@ description: Use when explaining current context or results.
    - Always create and render an HTML visualization when HTML visualization is available.
    - For frontend or UI changes, preview how the proposed or changed interface will look.
    - Capture and show screenshots when the actual interface or result matters.
-   - Whenever files or deliverable structure apply, always show the expected output file tree with a short comment explaining each file's role.
+   - Whenever source files or user deliverables are needed to explain the task, always show their file tree with a short comment explaining each file's role.
+     - Exclude internal workflow records.
    - Whenever a work sequence applies, always show a Mermaid diagram of how the work will proceed.
    - Render Mermaid as a simple diagram with only the essential nodes, connections, and plain-language labels.
    - Present the visual itself instead of raw visualization source.
