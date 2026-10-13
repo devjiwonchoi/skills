@@ -22,6 +22,7 @@ description: Always use when clarifying ambiguous requests or brainstorming.
    - Stop when intent, outcome, scope, constraints, success criteria, and decision boundaries are clear enough to agree. Record remaining uncertainty and what must be resolved before dependent work.
 3. **Agree.** Save a versioned agreement to a task-local file such as `ALIGN.md` using the template.
    - When Auto supplies a task directory, use its agreement path and [state contract](../../auto/references/state.md) for document versions and approval events.
+   - Keep the version during questions, feedback, and refinements within the original agreement. Increment it only when changes materially diverge from that agreement. Preserve the original agreement and last approved content for cumulative comparison.
    - Summarize in chat the problem and why it matters, desired outcome, included and excluded scope, consequential constraints, success criteria and required evidence, and decisions reserved for the user. Make the explanation sufficient to decide without reading the agreement. Then link the agreement and request explicit approval of that version.
    - Preserve approved intent. Changes need a diff, reason, impact, and explicit approval before dependent work.
    - Record the user's response and approved version; revisit affected work after approved changes.
