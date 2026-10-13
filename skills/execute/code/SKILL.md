@@ -8,6 +8,7 @@ description: Always use when writing or modifying code.
 - Reuse existing code, types, and sources of truth.
 - Add abstractions, types, or state only when required behavior, meaningful reuse, or clarity justifies them.
 - Prefer type inference over redundant annotations or assertions.
+- In JavaScript and TypeScript, prefer a single destructured object parameter over multiple positional parameters, such as `({ a, b, c })` instead of `(a, b, c)`.
 - Prefer `type` over `interface` unless the codebase convention favors `interface`.
 - Name values and conditions after their purpose.
 - Use block bodies for control flow, even for a single statement.
