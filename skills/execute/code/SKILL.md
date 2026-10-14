@@ -13,6 +13,7 @@ description: Always use when writing or modifying code.
 - Prefer `type` over `interface` unless the codebase convention favors `interface`.
 - Name values and conditions after their purpose.
 - Use block bodies for control flow, even for a single statement.
+- Prefer explicit `if` checks with `throw` over `assert` for runtime validation.
 - Avoid default values in function parameters.
 - Place comments above cohesive code groups to explain what they do and why.
 - Separate code groups with blank lines.
