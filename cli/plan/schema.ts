@@ -11,7 +11,7 @@ const start = base
     content: text,
   })
   .describe(
-    "Save a complete candidate before asking approval. The recorder writes content to v<N>.md and pins its SHA-256 hash in v<N>.jsonl. Pin the current aligned event. Include goal/constraints, expected result and code-flow preview, approach, work units, verification, and fixed/adaptable decisions in content. Group edits into a new version. Earlier approvals and reviews do not carry forward.",
+    "Save a complete candidate before asking approval. Pin the current aligned event. Include goal/constraints, expected result and code-flow preview, approach, work units, verification, and fixed/adaptable decisions in content. Group edits into a new version. Earlier approvals and reviews do not carry forward.",
   );
 const approved = base
   .extend({
@@ -42,28 +42,12 @@ const review = base
   );
 const request = z.discriminatedUnion("type", [start, approved, review]);
 const metadata = { seq: z.int().positive(), version: z.int().positive() };
-const event = z.union([
+const event = z.discriminatedUnion("type", [
   start.extend({ ...metadata, session_id: text, schema_version: z.literal(1) }),
-  start.omit({ content: true }).extend({
-    ...metadata,
-    session_id: text,
-    schema_version: z.literal(2),
-    document: text,
-    content_sha256: z.string().regex(/^[a-f0-9]{64}$/),
-  }),
   approved.extend(metadata),
   review.safeExtend(metadata),
 ]);
-const recorderFields = [
-  "at",
-  "seq",
-  "version",
-  "session_id",
-  "schema_version",
-  "previous_version",
-  "document",
-  "content_sha256",
-];
+const recorderFields = ["at", "seq", "version", "session_id", "schema_version", "previous_version"];
 
 export type Request = z.infer<typeof request>;
 export type Event = z.infer<typeof event>;
@@ -77,7 +61,6 @@ export const schema = {
     };
   },
   rules: [
-    "Plan Markdown is canonical. Reads and writes verify the saved document hash. Do not edit saved candidates; submit changed content as a new version. Legacy embedded-content records remain unchanged.",
     "Execution needs current user approval and clear required reviews: low 0, medium 1, high 3 distinct reviewers. Each reviewer's latest verdict applies; any changes_requested blocks execution. A new candidate inherits neither approval nor reviews.",
     "The skill must check the pinned Align is still current and aligned. The Plan log cannot establish cross-command currency or real authorship.",
     "Use fresh IDs for new records; identical IDs/payloads are retries. Read on rejection. Preserve earlier versions and damaged logs. Check the lock owner stopped before removing a stale lock.",
