@@ -16,6 +16,9 @@ description: Use when planning development work.
 2. **Design.** Use [three-steps](../../utils/three-steps/SKILL.md) before writing executable work as a versioned plan using the template.
    - Keep the version during agent review and refinements within the original plan. Increment it only when necessary changes diverge from that plan. Preserve the original plan and last approved content for cumulative comparison.
    - When Auto supplies a task directory, use its plan path and [state contract](../../auto/references/state.md) for document versions and approval events.
+   - Before confirmation, build and show a lightweight prototype, PoC, or simulation of the proposed result and affected flow from start to finish.
+   - Limit pre-approval implementation to this preview. Distinguish observed behavior from simulated or unverified outcomes.
+   - Incorporate user feedback into the plan before approval.
 3. **Debate.** Always read and follow the [multi-agent debate](references/debate.md) to review and revise the plan before confirmation.
    - If consensus is incomplete, return the pending plan and unresolved issues without advancing to confirmation.
 4. **Assess drift.** Compare cumulative changes with agreed intent and the last explicitly approved plan.
