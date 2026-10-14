@@ -1,10 +1,10 @@
-import { test } from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { spawnSync } from "node:child_process";
 
 const script = fileURLToPath(new URL("./index.ts", import.meta.url));
 

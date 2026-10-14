@@ -1,5 +1,5 @@
-import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import {
   appendFileSync,
   existsSync,
@@ -13,8 +13,9 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { test, type TestContext } from "node:test";
 import { fileURLToPath } from "node:url";
-import { spawnSync } from "node:child_process";
+
 import { run as execute } from "../index.ts";
 import type { Event } from "./schema.ts";
 

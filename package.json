@@ -2,9 +2,11 @@
   "private": true,
   "scripts": {
     "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt:check": "oxfmt --check",
+    "lint": "oxlint cli"
   },
   "devDependencies": {
-    "oxfmt": "0.72.0"
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0"
   }
 }

@@ -2,8 +2,9 @@ import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { read, versions, withSessionLock, write } from "./jsonl.ts";
+
 import align from "./align/index.ts";
+import { read, versions, withSessionLock, write } from "./jsonl.ts";
 
 const commands = new Map([["align", align]]);
 
