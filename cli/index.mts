@@ -95,7 +95,7 @@ if (
 
     if (command === "--help") {
       process.stdout.write(
-        "Usage: node <jwn-root>/cli/index.mts <command> <args>\nCommands: align\nUse <command> --help or --schema.\n",
+        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align\nUse <command> --help or --schema.\n",
       );
     } else {
       const skill = commands.get(command);
@@ -117,7 +117,7 @@ if (
       });
       if (values.help) {
         process.stdout.write(
-          `Usage: node <jwn-root>/cli/index.mts ${command} <read|write> --session <id> [--root <project>] [--version <N>] [--offset <bytes>]\n\nread   Return records and nextOffset. Defaults to the latest version, offset 0.\nwrite  Validate and append stdin JSON; return the stored event.\n\nStorage: .jwn/<session-id>/${command}/v<N>.jsonl. Retain root/session. Resume with --version and --offset from the previous read; a new version starts at offset 0.\n--version is required for writes other than type:start. --schema shows record fields. Node 24+.\n`,
+          `Usage: node <jwn-root>/cli/dist/index.mjs ${command} <read|write> --session <id> [--root <project>] [--version <N>] [--offset <bytes>]\n\nread   Return records and nextOffset. Defaults to the latest version, offset 0.\nwrite  Validate and append stdin JSON; return the stored event.\n\nStorage: .jwn/<session-id>/${command}/v<N>.jsonl. Retain root/session. Resume with --version and --offset from the previous read; a new version starts at offset 0.\n--version is required for writes other than type:start. --schema shows record fields. Node 24+.\n`,
         );
       } else if (values.schema) {
         process.stdout.write(JSON.stringify(skill.schema, null, 2) + "\n");

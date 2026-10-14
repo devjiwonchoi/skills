@@ -2,7 +2,8 @@
   "name": "jwn",
   "private": true,
   "scripts": {
-    "typecheck": "tsc --project tsconfig.json"
+    "typecheck": "tsc --project tsconfig.json",
+    "build": "node build.mts"
   },
   "dependencies": {
     "zod": "^4.6.7"
