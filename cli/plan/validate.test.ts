@@ -1,5 +1,14 @@
 import assert from "node:assert/strict";
-import { appendFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import {
+  appendFileSync,
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test, type TestContext } from "node:test";
@@ -203,6 +212,8 @@ test("Plan rejects malformed reviews and caller metadata without changing the lo
   const before = readFileSync(path);
   for (const payload of [
     { ...start, at: "fake" },
+    { ...start, document: "v1.md" },
+    { ...start, content_sha256: "a".repeat(64) },
     { ...start, effort: "huge" },
     {
       id: "r1",
@@ -269,4 +280,117 @@ test("Plan rejects conflicting candidate IDs across version history before appen
     /duplicate candidate ID/,
   );
   assert.deepEqual(readFileSync(path), before);
+});
+
+test("Plan stores canonical Markdown and reads derive content without changing the log", (context) => {
+  const { root, start, first, read, path } = fixture({ context, effort: "medium" });
+  const document = join(root, ".jwn", "task", "plan", "v1.md");
+  assert.equal(readFileSync(document, "utf8"), start.content);
+  const saved = readFileSync(path, "utf8");
+  const header = JSON.parse(saved);
+  assert.equal(header.schema_version, 2);
+  assert.equal(header.document, "v1.md");
+  assert.equal(header.content_sha256, createHash("sha256").update(start.content).digest("hex"));
+  assert.equal("content" in header, false);
+  assert.deepEqual(header, first);
+  assert.equal(read({ version: 1, offset: 0 }).records[0]?.content, start.content);
+  assert.equal(readFileSync(path, "utf8"), saved);
+});
+
+test("Plan preserves Unicode bytes and rejects lossy text before publishing a candidate", (context) => {
+  const { root, start, write, read } = fixture({ context, effort: "low" });
+  const directory = join(root, ".jwn", "task", "plan");
+  const candidate = { ...start, id: "p2", content: "# 계획 📝\r\nKeep exact bytes.\r\n" };
+  const saved = write({ payload: candidate, version: undefined });
+  assert.deepEqual(write({ payload: candidate, version: undefined }), saved);
+  assert.equal(readFileSync(join(directory, "v2.md"), "utf8"), candidate.content);
+  assert.equal(read({ version: 2, offset: 0 }).records[0]?.content, candidate.content);
+  assert.throws(
+    () =>
+      write({
+        payload: { ...start, id: "p3", content: "Unpaired surrogate: \uD800" },
+        version: undefined,
+      }),
+    /well-formed Unicode/,
+  );
+  assert.equal(existsSync(join(directory, "v3.md")), false);
+  assert.equal(existsSync(join(directory, "v3.jsonl")), false);
+});
+
+test("Plan document changes block reads, cursor reads and approval without altering history", (context) => {
+  const { root, start, write, read, path } = fixture({ context, effort: "low" });
+  const initial = read({ version: 1, offset: 0 });
+  const before = readFileSync(path);
+  writeFileSync(join(root, ".jwn", "task", "plan", "v1.md"), "Changed outside the recorder.");
+  assert.throws(() => read({ version: 1, offset: 0 }), /hash mismatch/);
+  assert.throws(() => read({ version: 1, offset: initial.nextOffset }), /hash mismatch/);
+  assert.throws(
+    () =>
+      write({
+        payload: { id: "a1", type: "approved", candidate_id: "p1", value: "Approved." },
+        version: 1,
+      }),
+    /hash mismatch/,
+  );
+  assert.throws(() => write({ payload: start, version: undefined }), /hash mismatch/);
+  assert.deepEqual(readFileSync(path), before);
+});
+
+test("Plan rejects missing, redirected and duplicated document content", (context) => {
+  const { root, read, path } = fixture({ context, effort: "low" });
+  const document = join(root, ".jwn", "task", "plan", "v1.md");
+  const content = readFileSync(document);
+  const header = JSON.parse(readFileSync(path, "utf8"));
+  for (const patch of [{ document: "../escape.md" }, { content: "Untrusted duplicate." }]) {
+    writeFileSync(path, JSON.stringify({ ...header, ...patch }) + "\n");
+    assert.throws(() => read({ version: 1, offset: 0 }), /invalid plan document/);
+  }
+
+  writeFileSync(path, JSON.stringify(header) + "\n");
+  rmSync(document);
+  assert.throws(() => read({ version: 1, offset: 0 }), /ENOENT/);
+  const other = join(root, "other.md");
+  writeFileSync(other, content);
+  symlinkSync(other, document);
+  assert.throws(() => read({ version: 1, offset: 0 }), /regular file/);
+});
+
+test("Plan revisions preserve prior Markdown and do not overwrite orphan documents", (context) => {
+  const { root, start, write, path } = fixture({ context, effort: "low" });
+  const directory = join(root, ".jwn", "task", "plan");
+  const before = readFileSync(path);
+  writeFileSync(join(directory, "v2.md"), "Preserve this orphan.");
+  const next = { ...start, id: "p2", content: "Changed contract." };
+  assert.throws(() => write({ payload: next, version: undefined }), /EEXIST/);
+  assert.equal(readFileSync(join(directory, "v2.md"), "utf8"), "Preserve this orphan.");
+  assert.equal(existsSync(join(directory, "v2.jsonl")), false);
+  assert.deepEqual(readFileSync(path), before);
+  rmSync(join(directory, "v2.md"));
+  write({ payload: next, version: undefined });
+  assert.equal(readFileSync(join(directory, "v1.md"), "utf8"), start.content);
+  assert.equal(readFileSync(join(directory, "v2.md"), "utf8"), next.content);
+});
+
+test("Plan retains legacy embedded candidates through approval, retries and new versions", (context) => {
+  const { root, start, write, read, path } = fixture({ context, effort: "low" });
+  const header = JSON.parse(readFileSync(path, "utf8"));
+  delete header.document;
+  delete header.content_sha256;
+  const legacy = { ...header, schema_version: 1, content: start.content };
+  writeFileSync(path, JSON.stringify(legacy) + "\n");
+  rmSync(join(root, ".jwn", "task", "plan", "v1.md"));
+  assert.deepEqual(write({ payload: start, version: undefined }), legacy);
+  assert.equal(read({ version: 1, offset: 0 }).records[0]?.content, start.content);
+  write({
+    payload: { id: "a1", type: "approved", candidate_id: "p1", value: "Approved." },
+    version: 1,
+  });
+  const before = readFileSync(path);
+  write({ payload: { ...start, id: "p2", content: "A changed contract." }, version: undefined });
+  assert.deepEqual(readFileSync(path), before);
+  assert.equal(existsSync(join(root, ".jwn", "task", "plan", "v1.md")), false);
+  assert.equal(
+    readFileSync(join(root, ".jwn", "task", "plan", "v2.md"), "utf8"),
+    "A changed contract.",
+  );
 });
