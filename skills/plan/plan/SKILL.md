@@ -1,63 +1,18 @@
 ---
 name: plan
-description: Use when planning development work.
+description: Use when planning a task.
+argument-hint: "[--effort low|medium|high]"
 ---
 
-## Rules
+The goal is to turn the user's aligned intention into a concrete plan they can approve.
 
-- Complete [explain](../../utils/explain/SKILL.md) and render its required visuals in chat before asking a question or requesting approval.
+When running under Auto, read [Auto mode](references/auto-mode.md).
 
-## Steps
-
-1. **Agree.** Read the request and existing agreement or plan.
-   - For consequential open decisions, use [align](../align/SKILL.md) to clarify the user's intent.
-   - For JSONL alignment, read Align's records and require the latest record in the latest intention version to be `aligned`. Reuse an unchanged approved agreement only while it remains current.
-   - Otherwise present a brief intent and scope draft for user review first. Follow [align](../align/SKILL.md) to discuss open decisions, revise with user feedback, and obtain explicit approval before detailed planning.
-2. **Design.** Use [three-steps](../../utils/three-steps/SKILL.md) before writing executable work as a versioned plan using the template.
-   - Keep the version during agent review and refinements within the original plan. Increment it only when necessary changes diverge from that plan. Preserve the original plan and last approved content for cumulative comparison.
-   - When Auto supplies a task directory, use its plan path and [state contract](../../auto/references/state.md) for document versions and approval events.
-   - Before confirmation, build and show a lightweight prototype, PoC, or simulation of the proposed result and affected flow from start to finish.
-   - Limit pre-approval implementation to this preview. Distinguish observed behavior from simulated or unverified outcomes.
-   - Incorporate user feedback into the plan before approval.
-3. **Debate.** Always read and follow the [multi-agent debate](references/debate.md) to review and revise the plan before confirmation.
-   - If consensus is incomplete, return the pending plan and unresolved issues without advancing to confirmation.
-4. **Assess drift.** Compare cumulative changes with agreed intent and the last explicitly approved plan.
-   - Require approval for changed intent or constraints, changes beyond delegated limits, material approach or system changes, changed external contracts, new external dependencies, weaker checks, changed delivery commitments, expanded delegation, or material increases in cost, effort, or risk.
-   - Preserve prior approvals and show the cumulative diff, reason, and impact before affected work.
-5. **Confirm.** Present initial plans and approval-required revisions in full.
-   - Stay in planning until the user explicitly approves the specific plan version. Agreement approval, agent consensus, and requests to refine the plan do not count as plan approval.
-   - Record that approval before dependent execution. Advance the approved baseline only through that confirmation. Continue permitted refinements without renewed approval.
-6. **Continue.** For standalone work, offer [Auto](../../auto/SKILL.md) after approval. If requested at any stage, hand off task documents and approval records.
-
-## Template
-
-Write in the user's language.
-
-```markdown
-# Plan
-
-Version: <current version>
-Intent: <Agreed goal, constraints, and success criteria or source.>
-Approved baseline: <Preserved version/location and actual confirmation, or pending.>
-
-## Approach and evidence
-
-<Strategy, reasons, tradeoffs, sources, and factual gaps.>
-
-## Work units
-
-<Changes, files or entry points, dependencies, and useful commit/PR boundaries.>
-
-## Verification
-
-<Checks, expected evidence, and applicable commands per success criterion.>
-
-## Adaptation boundaries
-
-- Agent may refine: <Delegated implementation choices.>
-- Ask the user: <Reserved changes and limits.>
-
-## Changes from approved baseline
-
-<Cumulative diff, reason, impact, and whether approval is required and why, or none.>
-```
+1. Run [Align](../align/SKILL.md) or resume the current alignment.
+2. Measure task difficulty to choose effort, or use `--effort`.
+   - Low: quick write-up.
+   - Medium: one agent reviews the plan.
+   - High: an agent squad [debates the plan](references/debate.md).
+3. Draft the approach, work units, verification, and adaptation boundaries. Use [Explain](../../utils/explain/SKILL.md) to show the expected result and ask approval of the plan version. Iterate on requested changes.
+4. After approval, follow [plan review](references/review.md) for the chosen effort. Bring blockers back to the user immediately. If the plan changes, repeat step 3 before execution.
+5. Proceed to [Execute](../../execute/execute/SKILL.md) after required reviews clear.

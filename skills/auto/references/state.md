@@ -1,6 +1,6 @@
 # Auto state
 
-Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align does not record automatically. Preserve existing standalone records during recovery.
+Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align and Plan do not record automatically. Preserve existing standalone records during recovery.
 
 ## Root and ownership
 
@@ -16,13 +16,13 @@ Read this when Auto starts or when writing records for an Auto-managed task. Aut
 
 ## Documents
 
-Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/` and plans in its `plan/PLAN.v<N>.md`. Follow [Align recording](../../plan/align/references/auto-mode.md) guidance for its `align/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
+Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/`. Follow [Align recording](../../plan/align/references/auto-mode.md) for `align/v<N>.jsonl` and [Plan recording](../../plan/plan/references/auto-mode.md) for `plan/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
 
-Alignment references are `{ "path": "align/v<N>.jsonl", "event_id": "..." }`, with paths relative to `.jwn/<session-id>/`. `alignment` identifies the current version's `start` event. `approvedAlignment` identifies an actual `aligned` event. Keep historical approvals, but advance dependent work only when the latest record in the latest intention version is `aligned`. Plan references are `plan/PLAN.v<N>.md`, relative to the same task directory. Preserve existing legacy paths until explicitly migrated. Preserve legacy Markdown agreement references and their approvals when recovering existing tasks until explicitly migrated.
+Alignment references are `{ "path": "align/v<N>.jsonl", "event_id": "..." }`, with paths relative to `.jwn/<session-id>/`. `alignment` identifies the current version's `start` event. `approvedAlignment` identifies an actual `aligned` event. Keep historical approvals, but advance dependent work only when the latest record in the latest intention version is `aligned`. Plan references use the same `{ path, event_id }` shape: `plan` identifies the current `start` candidate and `approvedPlan` its actual `approved` event in `plan/v<N>.jsonl`. Approval precedes detailed review. Before execution, read the latest candidate and each reviewer's latest verdict: low needs none, medium one, high three distinct clear reviewers; any `changes_requested` blocks execution. Confirm the candidate's pinned Align is still current and aligned. Preserve historical approval while a blocker is unresolved. Legacy Markdown plan references remain strings such as `plan/PLAN.v<N>.md`; read them normally and preserve their actual approvals without implicit migration. Preserve existing legacy paths until explicitly migrated. Preserve legacy Markdown agreement references and their approvals when recovering existing tasks until explicitly migrated.
 
-1. Move existing documents for this task into their versioned paths. Preserve their version numbers, semantic content, comments, and approval records. If unversioned, assign an unused version without implying approval. Initialize current and approved references from these documents and actual confirmations, preserving pending approvals.
+1. Preserve existing Markdown plan paths, versions, contents, and approval records in place. Initialize references from actual documents and confirmations. New Plan candidates use the CLI without migrating or overwriting legacy documents.
 2. Adjust relative and incoming links to retain their targets. Do not overwrite conflicting destinations or move unrelated documents.
-3. Any change to Align's `intention` creates a new JSONL version. For plans, keep the version during refinements within the original plan and increment it when changes materially diverge. Preserve original and last approved content for cumulative comparison. Keep previous versions and approval references until an actual successor is approved. Updating a plan's approval record does not require a new content version.
+3. Any change to Align's `intention` creates a new JSONL version. For JSONL plans, group edits before saving a changed complete candidate as a new version. Bounded implementation refinements need not rewrite the plan; return changes to approved decisions to the user. Preserve the existing version policy for legacy Markdown plans. Preserve original and last approved content for cumulative comparison. Keep previous versions and approval references until an actual successor is approved. Updating a plan's approval record does not require a new content version.
 4. Supply the absolute task directory and document paths to downstream skills. Record document changes and actual approvals as events.
 
 ## Events and status
