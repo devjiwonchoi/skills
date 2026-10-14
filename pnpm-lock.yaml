@@ -15,11 +15,11 @@ importers:
   cli:
     dependencies:
       zod:
-        specifier: ^4.6.7
+        specifier: 4.6.7
         version: 4.6.7
     devDependencies:
       '@types/node':
-        specifier: ^24.19.2
+        specifier: 24.19.2
         version: 24.19.2
       esbuild:
         specifier: 0.28.2
