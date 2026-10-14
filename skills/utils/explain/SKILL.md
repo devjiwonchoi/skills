@@ -7,6 +7,9 @@ description: Use when explaining current context or results.
 
 - Keep explanations concise without omitting context, tradeoffs, or required visuals needed to understand or decide.
 - Keep visuals compact and readable.
+- For proposed changes, help the user picture the result and how they will use it.
+
+For code changes, show the expected filetree separately from the execution explanation. Follow [code flow](references/code-flow.md) for execution instead of the general visual and quiz instructions below.
 
 ## Steps
 
