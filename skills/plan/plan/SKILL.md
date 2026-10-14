@@ -41,18 +41,23 @@ Intent: <Agreed goal, constraints, and success criteria or source.>
 Approved baseline: <Preserved version/location and actual confirmation, or pending.>
 
 ## Approach and evidence
+
 <Strategy, reasons, tradeoffs, sources, and factual gaps.>
 
 ## Work units
+
 <Changes, files or entry points, dependencies, and useful commit/PR boundaries.>
 
 ## Verification
+
 <Checks, expected evidence, and applicable commands per success criterion.>
 
 ## Adaptation boundaries
+
 - Agent may refine: <Delegated implementation choices.>
 - Ask the user: <Reserved changes and limits.>
 
 ## Changes from approved baseline
+
 <Cumulative diff, reason, impact, and whether approval is required and why, or none.>
 ```
