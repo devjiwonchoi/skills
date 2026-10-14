@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, realpathSync } from "node:fs";
+import { randomUUID } from "node:crypto";
+import { existsSync, readFileSync, realpathSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -109,6 +110,21 @@ export function run({
         create: stored.seq === 1,
         retry,
       });
+
+      // Markdown is a replaceable view. Only the JSONL candidate controls approval and recovery.
+      if (command === "plan" && stored.type === "start") {
+        if (typeof stored.content !== "string") {
+          throw new Error("plan candidate content is missing");
+        }
+
+        const temporary = join(directory, `.plan-${randomUUID()}.tmp`);
+        try {
+          writeFileSync(temporary, stored.content, { flag: "wx", flush: true });
+          renameSync(temporary, join(directory, `v${stored.version}.md`));
+        } finally {
+          rmSync(temporary, { force: true });
+        }
+      }
 
       return stored;
     },

@@ -8,5 +8,7 @@ Record each plan step as it happens using those descriptions.
 Invoke `node <jwn-root>/cli/dist/index.mjs plan <read|write> --root <root> --session <id>`.
 For writes, provide stdin JSON with a quoted heredoc (`<<'JSON'`) and pass `--version <N>` except for `type: start`. Retain the returned version.
 
+Start writes and retries generate `plan/v<N>.md` from the stored `start.content`. Present a freshly generated view for approval. JSONL remains authoritative. Repeat the same start write to regenerate a missing or edited view. Submit plan changes through the CLI.
+
 For reads, retain `version` and `nextOffset` for subsequent calls with `--version` and `--offset`.
 Read the latest version from offset 0 after context loss or when `latestVersion` changes.
