@@ -15,7 +15,7 @@ description: Use when reviewing development changes.
    - In Codex, run Claude Code:
      ```sh
      claude -p --model claude-opus-5-5 --effort "$review_effort" --safe-mode \
-       --permission-mode dontAsk --permission-prompts none \
+       --permission-mode auto --permission-prompts none \
        --tools "Read,Glob,Grep,Bash" \
        --allowedTools "Read(/$PWD/**)" "Read(/$session_log)" "Read(/$review_dir/**)" \
          "Glob" "Grep" "Bash(git diff *)" "Bash(git show *)" \
