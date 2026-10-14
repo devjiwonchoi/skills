@@ -91,36 +91,18 @@ export function run({
         }
 
         const path = join(directory, file);
-        const result = read({ path, offset: offset ?? 0 });
-        if (command === "plan") {
-          const [records] = plan.load({
-            directory,
-            records: [read({ path, offset: 0 }).records],
-          });
-
-          // Check Markdown even when the requested offset skips the candidate header.
-          result.records = records!.slice(records!.length - result.records.length);
-        }
 
         return {
           path,
           version: selected,
           latestVersion: files.length,
-          ...result,
+          ...read({ path, offset: offset ?? 0 }),
         };
       }
 
       const records = files.map((name) => read({ path: join(directory, name), offset: 0 }).records);
-      const { record, retry } = skill.validate({
-        records: command === "plan" ? plan.load({ directory, records }) : records,
-        session,
-        request,
-        version,
-      });
+      const { record, retry } = skill.validate({ records, session, request, version });
       const stored = retry ? record : { ...record, at: new Date().toISOString() };
-      if (command === "plan") {
-        return plan.save({ directory, record: plan.parseEvent({ value: stored }), retry });
-      }
       write({
         path: join(directory, `v${stored.version}.jsonl`),
         record: stored,
