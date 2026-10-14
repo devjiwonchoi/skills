@@ -16,7 +16,7 @@ description: Always use when writing or modifying code.
 - Prefer explicit `if` checks with `throw` over `assert` for runtime validation.
 - Avoid default values in function parameters.
 - Place comments above cohesive code groups to explain what they do and why.
-- Separate code groups with blank lines.
+- Separate independent checks and logical phases with blank lines. Keep a declaration with its immediate validation, and separate the final return from preceding work.
 - Preserve existing comments unless there is a concrete reason to change or remove them.
 - Follow the repository's formatting and organization without unrelated style rewrites.
 - Prefer colocating unit tests with the tested source, such as `x.test.ts` next to `x.ts`, following repository conventions.

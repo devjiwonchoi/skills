@@ -5,9 +5,9 @@ description: Use when carrying a development task through completion.
 
 ## Steps
 
-1. Read [state](references/state.md) to initialize this root's `.jwn/` or [recover](references/recovery.md) existing work and continue from its recorded stage.
-   - Adopt standalone Align/Plan documents and approvals. Start at the first unfinished stage, reusing unchanged, unconflicted approvals consistent with the current agreement.
-2. Follow [Align](../plan/align/SKILL.md) with the versioned agreement path.
+1. Read [state](references/state.md) to initialize this session's `.jwn/<session-id>/` or [recover](references/recovery.md) existing work and continue from its recorded stage.
+   - Adopt this session's standalone Align records and Plan documents with their actual approvals. Start at the first unfinished stage, reusing unchanged, unconflicted approvals consistent with the current intention.
+2. Follow [Align](../plan/align/SKILL.md) with the project root and retained alignment session ID.
 3. Follow [Plan](../plan/plan/SKILL.md) with the versioned plan path.
 4. Follow [Execute](../execute/execute/SKILL.md) with the Auto task directory.
 5. Follow [Ship](../ship/ship/SKILL.md) for authorized delivery.

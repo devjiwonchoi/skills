@@ -5,7 +5,7 @@ description: Always use when clarifying ambiguous requests.
 
 The goal is to losslessly _tokenize_ the user's intention as an alignment so the agent can use it as the north star.
 
-When Auto supplies an agreement path, save the alignment there before confirmation and record the user's actual approval through its [state contract](../../auto/references/state.md). Start a new version when intention changes.
+When running under Auto, read [Auto mode](references/auto-mode.md).
 
 1. Break down the user's prompt and understand the user's intention.
 2. List the understanding and ambiguities.

@@ -11,7 +11,7 @@ description: Use when planning development work.
 
 1. **Agree.** Read the request and existing agreement or plan.
    - For consequential open decisions, use [align](../align/SKILL.md) to clarify the user's intent.
-   - Reuse an unchanged approved agreement.
+   - For JSONL alignment, read Align's records and require the latest record in the latest intention version to be `aligned`. Reuse an unchanged approved agreement only while it remains current.
    - Otherwise present a brief intent and scope draft for user review first. Follow [align](../align/SKILL.md) to discuss open decisions, revise with user feedback, and obtain explicit approval before detailed planning.
 2. **Design.** Use [three-steps](../../utils/three-steps/SKILL.md) before writing executable work as a versioned plan using the template.
    - Keep the version during agent review and refinements within the original plan. Increment it only when necessary changes diverge from that plan. Preserve the original plan and last approved content for cumulative comparison.
@@ -41,18 +41,23 @@ Intent: <Agreed goal, constraints, and success criteria or source.>
 Approved baseline: <Preserved version/location and actual confirmation, or pending.>
 
 ## Approach and evidence
+
 <Strategy, reasons, tradeoffs, sources, and factual gaps.>
 
 ## Work units
+
 <Changes, files or entry points, dependencies, and useful commit/PR boundaries.>
 
 ## Verification
+
 <Checks, expected evidence, and applicable commands per success criterion.>
 
 ## Adaptation boundaries
+
 - Agent may refine: <Delegated implementation choices.>
 - Ask the user: <Reserved changes and limits.>
 
 ## Changes from approved baseline
+
 <Cumulative diff, reason, impact, and whether approval is required and why, or none.>
 ```
