@@ -11,6 +11,7 @@ description: Always use when handling PRs.
 - Push changes to the related open PR.
 - When scope changes, follow [commit](../commit/SKILL.md) to reconcile the commit structure before updating the PR title and description.
 - Open PRs as ready for review unless the user explicitly requests a draft.
+- For dependent PRs, put `Stacked on #<parent PR>.` before `### Why?`. Preserve or update it whenever editing the description, and verify the saved body.
 
 ## Examples
 
@@ -20,7 +21,7 @@ description: Always use when handling PRs.
 
 ## Template
 
-Follow this exact template:
+Follow this exact template, preceded by the stack prefix for dependent PRs:
 
 ```markdown
 ### Why?
