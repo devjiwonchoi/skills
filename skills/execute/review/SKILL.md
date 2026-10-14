@@ -6,11 +6,11 @@ description: Use when reviewing development changes.
 ## Steps
 
 1. Prepare the request, agreed intent, constraints, repository instructions, target revision, raw diff, and verification evidence.
-2. Give this context to a fresh reviewer who did not implement the changes. Request correctness, regression, security, and maintainability findings with priorities, locations, evidence, and failure scenarios. Ask for review only, without file changes or further reviewer delegation.
-   - Run each pass in a new process from the repository root. Pass step 1's context through stdin. Use absolute review artifact paths outside the changeset and retain them as evidence.
+2. Give this context to a fresh reviewer who did not implement the changes. Request correctness, regression, security, and maintainability findings with priorities, locations, evidence, and failure scenarios. Request review only, without edits or further reviewer delegation.
+   - Use a new process from the repository root for each pass, with step 1's context on stdin. Retain artifacts under an absolute `review_dir` outside the changeset.
    - In Codex, run Claude Code:
      ```sh
-     claude -p --model claude-opus-5-5 --safe-mode \
+     claude -p --model claude-opus-5-5 --safe-mode --add-dir "$review_dir" \
        --tools Read,Glob,Grep --permission-mode dontAsk --permission-prompts none \
        --no-session-persistence --output-format stream-json --verbose \
        < "$review_input" > "$review_output"
@@ -18,7 +18,7 @@ description: Use when reviewing development changes.
      Check that `message.model` equals `claude-opus-5-5` in the assistant events.
    - In Claude Code, run Codex:
      ```sh
-     codex --no-daemon --ask-for-approval never exec --ignore-user-config \
+     codex --no-daemon --ask-for-approval never exec --ignore-user-config --ignore-rules \
        --model gpt-6.1-sol --sandbox read-only --ephemeral --color never - \
        < "$review_input" > "$review_output" 2> "$review_metadata"
      ```
