@@ -1,6 +1,6 @@
 # Auto state
 
-Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align can create its own `.jwn/<session-id>/align/` logs without starting Auto.
+Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align does not record automatically. Preserve existing standalone records during recovery.
 
 ## Root and ownership
 
@@ -16,7 +16,7 @@ Read this when Auto starts or when writing records for an Auto-managed task. Aut
 
 ## Documents
 
-Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/` and plans in its `plan/PLAN.v<N>.md`. Follow [Align](../../plan/align/SKILL.md)'s CLI guidance for its `align/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
+Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/` and plans in its `plan/PLAN.v<N>.md`. Follow [Align recording](../../plan/align/references/auto-mode.md) guidance for its `align/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
 
 Alignment references are `{ "path": "align/v<N>.jsonl", "event_id": "..." }`, with paths relative to `.jwn/<session-id>/`. `alignment` identifies the current version's `start` event. `approvedAlignment` identifies an actual `aligned` event. Keep historical approvals, but advance dependent work only when the latest record in the latest intention version is `aligned`. Plan references are `plan/PLAN.v<N>.md`, relative to the same task directory. Preserve existing legacy paths until explicitly migrated. Preserve legacy Markdown agreement references and their approvals when recovering existing tasks until explicitly migrated.
 

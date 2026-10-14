@@ -3,10 +3,9 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import { read, versions, withSessionLock, write } from "./jsonl.ts";
-import { parseRequest, schema } from "./align/schema.ts";
-import { validate } from "./align/validate.ts";
+import align from "./align/index.ts";
 
-const commands = new Map([["align", { schema, parseRequest, validate }]]);
+const commands = new Map([["align", align]]);
 
 export function run({
   command,
@@ -118,7 +117,7 @@ if (
       });
       if (values.help) {
         process.stdout.write(
-          `Usage: node <jwn-root>/cli/dist/index.mjs ${command} <read|write> --session <id> [--root <project>] [--version <N>] [--offset <bytes>]\n\nread   Return records and nextOffset. Defaults to the latest version, offset 0.\nwrite  Validate and append stdin JSON; return the stored event.\n\nStorage: .jwn/<session-id>/${command}/v<N>.jsonl. Retain root/session. Resume with --version and --offset from the previous read; a new version starts at offset 0.\n--version is required for writes other than type:start. --schema shows record fields. Node 24+.\n`,
+          `Usage: node <jwn-root>/cli/dist/index.mjs ${command} <read|write> --session <id> [--root <project>] [--version <N>] [--offset <bytes>]\nread: records and nextOffset. write: stdin JSON → stored event. --schema: event fields and descriptions. Node 24+.\n`,
         );
       } else if (values.schema) {
         process.stdout.write(JSON.stringify(skill.schema, null, 2) + "\n");

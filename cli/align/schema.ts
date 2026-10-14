@@ -35,7 +35,7 @@ const start = base
     source: source.optional(),
   })
   .describe(
-    "Start a version. Keep prompt verbatim; changed intention requires reason and preceding-version correction source.",
+    "Record the intention before clarification. Keep prompt verbatim. Changed intention starts a new version with reason and preceding-version correction source. Earlier approval does not carry forward.",
   );
 
 const understanding = base
@@ -52,11 +52,15 @@ const understanding = base
     "Declare open before resolving. Keep id/value unchanged; resolved_by cites relevant prior evidence in this version, using the latest response when citing an answer. Omitted items stay unchanged.",
   );
 
-const research = base.extend({
-  type: z.literal("research"),
-  value: text,
-  sources: z.array(text).min(1, "research needs sources"),
-});
+const research = base
+  .extend({
+    type: z.literal("research"),
+    value: text,
+    sources: z.array(text).min(1, "research needs sources"),
+  })
+  .describe(
+    "Record findings and sources after research, before using them to resolve ambiguities.",
+  );
 
 const context = base
   .extend({
