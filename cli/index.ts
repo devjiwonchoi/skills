@@ -5,8 +5,41 @@ import { parseArgs } from "node:util";
 
 import align from "./align/index.ts";
 import { read, versions, withSessionLock, write } from "./jsonl.ts";
+import plan from "./plan/index.ts";
 
-const commands = new Map([["align", align]]);
+type Input = {
+  records: unknown[][];
+  session: string;
+  request: unknown;
+  version: number | undefined;
+};
+type Result = {
+  record: Record<string, unknown> & { id: string; type: string; seq: number; version: number };
+  retry: boolean;
+};
+
+// Keep each command's inferred request type behind the same storage-facing interface.
+function command<T extends { id: string; type: string }>({
+  schema,
+  parseRequest,
+  validate,
+}: {
+  schema: unknown;
+  parseRequest: (input: { value: unknown }) => T;
+  validate: (input: Omit<Input, "request"> & { request: T }) => Result;
+}) {
+  return {
+    schema,
+    parseRequest,
+    validate: ({ request, ...input }: Input) =>
+      validate({ ...input, request: parseRequest({ value: request }) }),
+  };
+}
+
+const commands = new Map<string, ReturnType<typeof command>>([
+  ["align", command(align)],
+  ["plan", command(plan)],
+]);
 
 export function run({
   command,
@@ -96,7 +129,7 @@ if (
 
     if (command === "--help") {
       process.stdout.write(
-        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align\nUse <command> --help or --schema.\n",
+        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan\nUse <command> --help or --schema.\n",
       );
     } else {
       const skill = commands.get(command);

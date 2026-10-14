@@ -9,7 +9,13 @@ import { fileURLToPath } from "node:url";
 const script = fileURLToPath(new URL("./index.ts", import.meta.url));
 
 test("shared entry point and Align expose their own help without reading stdin", () => {
-  for (const args of [["--help"], ["align", "--help"], ["align", "--schema"]]) {
+  for (const args of [
+    ["--help"],
+    ["align", "--help"],
+    ["align", "--schema"],
+    ["plan", "--help"],
+    ["plan", "--schema"],
+  ]) {
     const result = spawnSync(process.execPath, [script, ...args], {
       encoding: "utf8",
       timeout: 5000,
@@ -20,7 +26,7 @@ test("shared entry point and Align expose their own help without reading stdin",
       assert.ok(JSON.parse(result.stdout).inputSchema);
     } else {
       assert.match(result.stdout, /Usage:/);
-      assert.match(result.stdout, args[0] === "align" ? /<read\|write>/ : /<command> <args>/);
+      assert.match(result.stdout, args[0] !== "--help" ? /<read\|write>/ : /<command> <args>/);
     }
   }
 });
