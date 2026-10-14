@@ -1,64 +1,17 @@
 ---
 name: align
-description: Always use when clarifying ambiguous requests or brainstorming.
+description: Always use when clarifying ambiguous requests.
 ---
 
-## Rules
+The goal is to losslessly _tokenize_ the user's intention as an alignment so the agent can use it as the north star.
 
-- Distinguish facts, user decisions, and assumptions. Preserve the user's reasons, conditions, exceptions, and fixed choices; leave implementation open unless it affects the agreement.
-- Complete [explain](../../utils/explain/SKILL.md) and render its required visuals in chat before asking a question or requesting approval.
+When Auto supplies an agreement path, save the alignment there before confirmation and record the user's actual approval through its [state contract](../../auto/references/state.md). Start a new version when intention changes.
 
-## Steps
-
-1. **Ground.** Read the request and existing agreement. Before questioning, [research](../../utils/research/SKILL.md) likely answers in the codebase for brownfield work or current authoritative sources otherwise.
-   - Check that each question's premise, options, and recommendation fit the actual versions, constraints, and applicable best practices.
-   - Reuse an unchanged, unconflicted approved agreement; return its file link, version, and approval record, then continue to step 4.
-   - When brainstorming, use [first-principle](../../utils/first-principle/SKILL.md) to frame the problem and explore options from verified facts and constraints.
-2. **Clarify.** Use [socratic](../../utils/socratic/SKILL.md) to explore consequential decisions left open after research. Settle prerequisite decisions before dependent ones.
-   - If conversation cannot settle an unknown, record it and how research or a prototype could resolve it. Do not replace uncertainty with a guessed decision.
-   - Explain each option's meaning, candidacy, benefits, and tradeoffs without assuming prior knowledge. Ground the recommendation's rationale in research findings.
-   - Keep question cards to short questions and option labels.
-   - Before planning, agree with the user on each success criterion's pass/fail boundary and required evidence.
-   - Stop when intent, outcome, scope, constraints, success criteria, and decision boundaries are clear enough to agree. Record remaining uncertainty and what must be resolved before dependent work.
-3. **Agree.** Save a versioned agreement to a task-local file such as `ALIGN.md` using the template.
-   - When Auto supplies a task directory, use its agreement path and [state contract](../../auto/references/state.md) for document versions and approval events.
-   - Keep the version during questions, feedback, and refinements within the original agreement. Increment it only when changes materially diverge from that agreement. Preserve the original agreement and last approved content for cumulative comparison.
-   - Summarize in chat the problem and why it matters, desired outcome, included and excluded scope, consequential constraints, success criteria and required evidence, and decisions reserved for the user. Make the explanation sufficient to decide without reading the agreement. Then link the agreement and request explicit approval of that version.
-   - Preserve approved intent. Changes need a diff, reason, impact, and explicit approval before dependent work.
-   - Record the user's response and approved version; revisit affected work after approved changes.
-4. **Continue.** For standalone work, offer [Auto](../../auto/SKILL.md) after approval. If requested at any stage, hand off task documents and approval records.
-
-## Template
-
-Write in the user's language.
-
-```markdown
-# Alignment
-
-Version: <version>
-Status: <draft or approved>
-Approval: <actual confirmation and approved version, or pending>
-
-## Problem and why
-<Problem, evidence, and why it matters.>
-
-## Desired outcome
-<Observable outcome.>
-
-## Scope
-- In: <Included work.>
-- Out: <Excluded work.>
-
-## Constraints
-<Requirements and user-fixed choices.>
-
-## Success criteria
-<Observable completion conditions, pass/fail boundaries, and required evidence agreed with the user.>
-
-## Decision boundaries
-- Agent may decide: <Delegated choices.>
-- Ask the user: <Reserved decisions.>
-
-## Assumptions and open decisions
-<Unverified assumptions and unresolved decisions, or none.>
-```
+1. Break down the user's prompt and understand the user's intention.
+2. List the understanding and ambiguities.
+3. Use [research](../../utils/research/SKILL.md) to fill the ambiguities.
+4. Create questions and recommended answers for the remaining ambiguities.
+5. Use [socratic](../../utils/socratic/SKILL.md) to ask until the ambiguities are cleared.
+6. Create and ask new questions when new ambiguities arise.
+7. Confirm the final alignment with the user.
+8. Briefly summarize the final alignment in your own words and ask whether to proceed to [Plan](../plan/SKILL.md).
