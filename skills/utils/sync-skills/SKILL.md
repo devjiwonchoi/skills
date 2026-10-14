@@ -12,6 +12,9 @@ description: Use when syncing personal skills.
 3. Run `git -C <checkout> pull --ff-only` only when the checkout is clean and on its default branch; otherwise preserve pending work and skip the pull.
 4. Refresh Codex's registered `jwn` marketplace and reinstall `jwn@jwn` through the plugin commands.
    - Preserve pending checkout edits and confirm the refreshed source contains intended changes before replacing the installed plugin.
+   - Verify the installed plugin's replacement hooks are enabled and trusted before removing legacy global hooks.
+   - Inspect `~/.codex/hooks.json` for legacy `jwn` handlers covered by those replacements. Back up the file before removing only those handlers.
+   - Preserve unrelated hooks, custom behavior not covered by the plugin, and other settings.
    - Remove standalone skill links belonging to this repository from `~/.agents/skills` and `~/.codex/skills` without recreating them.
    - Continue linking `skills/**/SKILL.md` folders by their unique frontmatter `name` into `~/.claude/skills` directly from the checkout.
    - Preserve displaced copies outside skill discovery paths and leave unrelated skills untouched.
