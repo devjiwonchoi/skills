@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseEvent, parseRequest, schema } from "./schema.mts";
+import { parseEvent, parseRequest, schema } from "./schema.ts";
 
 test("schema parsing preserves original text, extra fields, and absent versus null values", () => {
   const value = {

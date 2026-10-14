@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { appendFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseJsonl, read } from "./jsonl.mts";
+import { parseJsonl, read } from "./jsonl.ts";
 
 test("parses JSON values without interpreting alignment events", () => {
   const values = [null, 1, ["a"], { message: '한글\n"quotes"', arbitrary: true }];

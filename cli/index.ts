@@ -2,9 +2,9 @@ import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { read, versions, withSessionLock, write } from "./jsonl.mts";
-import { parseRequest, schema } from "./align/schema.mts";
-import { validate } from "./align/validate.mts";
+import { read, versions, withSessionLock, write } from "./jsonl.ts";
+import { parseRequest, schema } from "./align/schema.ts";
+import { validate } from "./align/validate.ts";
 
 const commands = new Map([["align", { schema, parseRequest, validate }]]);
 

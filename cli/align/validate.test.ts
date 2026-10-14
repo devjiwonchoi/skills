@@ -15,8 +15,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { run as execute } from "../index.mts";
-import type { Event } from "./schema.mts";
+import { run as execute } from "../index.ts";
+import type { Event } from "./schema.ts";
 
 const run = (input: Omit<Parameters<typeof execute>[0], "command" | "offset">) =>
   execute({ ...input, command: "align", offset: undefined });
@@ -65,7 +65,7 @@ function fixture(context: TestContext) {
 
 test("native TypeScript CLI accepts stdin JSON and returns one JSON result", (context) => {
   const { root } = fixture(context);
-  const script = fileURLToPath(new URL("../index.mts", import.meta.url));
+  const script = fileURLToPath(new URL("../index.ts", import.meta.url));
   const result = spawnSync(
     process.execPath,
     [script, "align", "write", "--root", root, "--session", "cli"],
@@ -93,7 +93,7 @@ test("CLI runs through a symlinked installed skill directory", (context) => {
   symlinkSync(fileURLToPath(new URL("../", import.meta.url)), installed, "dir");
   const result = spawnSync(
     process.execPath,
-    [join(installed, "index.mts"), "align", "write", "--root", root, "--session", "linked"],
+    [join(installed, "index.ts"), "align", "write", "--root", root, "--session", "linked"],
     {
       input: JSON.stringify({ id: "s1", type: "start", intention: "Use the installed skill." }),
       encoding: "utf8",

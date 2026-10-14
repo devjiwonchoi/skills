@@ -140,7 +140,7 @@ export type Ambiguity = z.infer<typeof ambiguity>;
 export type Question = Extract<Event, { type: "question" }>;
 export type Header = Extract<Event, { type: "start" }>;
 
-// Field shapes are loaded on demand; procedure checks remain in validate.mts.
+// Field shapes are loaded on demand; procedure checks remain in validate.ts.
 export const schema = {
   get inputSchema() {
     return {

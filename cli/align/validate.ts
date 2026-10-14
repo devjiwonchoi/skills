@@ -8,7 +8,7 @@ import {
   type Header,
   type Question,
   type Source,
-} from "./schema.mts";
+} from "./schema.ts";
 
 // Reconstruct validation state from the original records. Nothing is cached between calls.
 export function validate({

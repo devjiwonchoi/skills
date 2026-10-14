@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import { build } from "esbuild";
 
 await build({
-  entryPoints: [fileURLToPath(new URL("index.mts", import.meta.url))],
+  entryPoints: [fileURLToPath(new URL("index.ts", import.meta.url))],
   outfile: fileURLToPath(new URL("dist/index.mjs", import.meta.url)),
   bundle: true,
   platform: "node",

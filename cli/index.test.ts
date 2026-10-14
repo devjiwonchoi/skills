@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
-const script = fileURLToPath(new URL("./index.mts", import.meta.url));
+const script = fileURLToPath(new URL("./index.ts", import.meta.url));
 
 test("shared entry point and Align expose their own help without reading stdin", () => {
   for (const args of [["--help"], ["align", "--help"], ["align", "--schema"]]) {
@@ -146,8 +146,8 @@ test("the shared CLI records, finalizes and recovers an alignment", (context) =>
 test("importing the command and common entry point has no CLI side effects", (context) => {
   const root = mkdtempSync(join(tmpdir(), "jwn-import-"));
   context.after(() => rmSync(root, { recursive: true, force: true }));
-  const command = new URL("./align/validate.mts", import.meta.url).href;
-  const entry = new URL("./index.mts", import.meta.url).href;
+  const command = new URL("./align/validate.ts", import.meta.url).href;
+  const entry = new URL("./index.ts", import.meta.url).href;
   const result = spawnSync(
     process.execPath,
     [
