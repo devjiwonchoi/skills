@@ -69,14 +69,15 @@ export function run({
 
       const records = files.map((name) => read({ path: join(directory, name), offset: 0 }).records);
       const { record, retry } = skill.validate({ records, session, request, version });
+      const stored = retry ? record : { ...record, at: new Date().toISOString() };
       write({
-        path: join(directory, `v${record.version}.jsonl`),
-        record,
-        create: record.seq === 1,
+        path: join(directory, `v${stored.version}.jsonl`),
+        record: stored,
+        create: stored.seq === 1,
         retry,
       });
 
-      return record;
+      return stored;
     },
   });
 }

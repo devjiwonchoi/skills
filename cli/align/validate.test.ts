@@ -578,3 +578,33 @@ test("a declined final confirmation is answered without approving and permits re
 
   assert.deepEqual(read().records.at(-1), aligned);
 });
+
+test("the recorder timestamps new events, preserves retries, and accepts untimestamped history", (context) => {
+  const { path, read, record, call } = fixture(context);
+  const header = read().records[0]!;
+  assert.match(header.at!, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+
+  const { at, ...legacy } = header;
+  writeFileSync(path, JSON.stringify(legacy) + "\n");
+  assert.deepEqual(
+    call({
+      operation: "write",
+      version: undefined,
+      payload: { type: "start", id: "s1", intention: "Improve initial loading." },
+    }),
+    legacy,
+  );
+
+  const payload = { id: "r1", type: "response", value: "Clarification." };
+  const stored = record(payload);
+  assert.ok("at" in stored && typeof stored.at === "string");
+  assert.equal(new Date(stored.at).toISOString(), stored.at);
+  const before = readFileSync(path);
+  assert.deepEqual(record(payload), stored);
+  assert.throws(
+    () => record({ ...payload, id: "forged", at: "2000-01-01T00:00:00.000Z" }),
+    /metadata is assigned/,
+  );
+  assert.deepEqual(readFileSync(path), before);
+  assert.deepEqual(read().records[0], legacy);
+});

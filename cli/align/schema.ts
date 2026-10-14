@@ -3,6 +3,7 @@ import * as z from "zod";
 export type JsonObject = Record<string, unknown>;
 
 export const recorderFields = [
+  "at",
   "seq",
   "version",
   "session_id",
@@ -117,7 +118,7 @@ const request = z.discriminatedUnion("type", [
   response,
   aligned,
 ]);
-const metadata = { seq: z.int(), version: z.int() };
+const metadata = { seq: z.int(), version: z.int(), at: z.iso.datetime().optional() };
 const event = z.discriminatedUnion("type", [
   start.extend({
     ...metadata,
