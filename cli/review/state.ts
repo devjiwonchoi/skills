@@ -66,7 +66,7 @@ export function reconcile({
   state.pass = null;
 }
 
-// Report review facts. Execute decides whether to correct or request another pass.
+// Report review facts. Iterate decides whether to correct or request another pass.
 export function context({ state }: { state: State }) {
   const pass = state.pass;
   const findings = [...state.findings.values()];

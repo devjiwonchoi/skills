@@ -8,7 +8,7 @@ export type State = {
 export function create({ revision }: { revision: string | null }): State {
   return { revision, implementing: false, verification: null };
 }
-// Impl selects the first unfinished stage. Execute coordinates the outer review loop.
+// Impl selects the first unfinished stage. Iterate coordinates the outer review loop.
 export function next({ state }: { state: State }) {
   if (state.implementing || state.revision === null) {
     return { action: "impl", step: "quick-impl" };

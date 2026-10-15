@@ -41,7 +41,7 @@ const iteration = base
     reason: text.optional(),
   })
   .describe(
-    "Execute records the next consecutive correction round and its unresolved P0–P2 finding IDs before implementation. Restart completed execution only for newly authorized work with a reason. Resume an interrupted round instead of starting another.",
+    "Iterate records the next consecutive correction round and its unresolved P0–P2 finding IDs before implementation. Restart completed execution only for newly authorized work with a reason. Resume an interrupted round instead of starting another.",
   );
 const blocked = base
   .extend({ type: z.literal("blocked"), reason: text })
@@ -56,7 +56,7 @@ const resumed = base
 const completed = base
   .extend({ type: z.literal("completed") })
   .describe(
-    "Execute records completion only after next reports complete and the caller confirms that the actual working tree and approved scope still match. Execution completion does not complete Auto or authorize Ship.",
+    "Iterate records completion only after next reports complete and the caller confirms that the actual working tree and approved scope still match. Execution completion does not complete Auto or authorize Ship.",
   );
 
 const requests = [start, iteration, blocked, resumed, completed] as const;
@@ -93,7 +93,7 @@ type State = {
   round: number;
   blocker: string | null;
 };
-// Execute only coordinates stage readiness and correction rounds.
+// Iterate only coordinates stage readiness and correction rounds.
 function next({ state }: { state: State }) {
   const review = context({ state: state.review });
   const common = {
@@ -339,7 +339,7 @@ export default {
   parseRequest,
   validate,
   checkHistory,
-  directory: "execute",
+  directory: "iterate",
   next: ({
     records,
     session,

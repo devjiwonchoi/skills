@@ -12,7 +12,7 @@ Each session directory holds one task. Before reusing Auto state, validate `work
 
 Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/`. Follow [Align recording](../../plan/align/references/recording.md) for `align/v<N>.jsonl` and [Plan recording](../../plan/plan/references/recording.md) for `plan/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
 
-Execute and its stages share `execute/v<N>.jsonl` through [execution recording](../../execute/execute/references/recording.md). Reference detailed outcomes there from Auto progress rather than duplicating findings or coverage. Execution completion advances to Ship; only Ship can establish Auto's final readiness.
+Iterate and its stages share `iterate/v<N>.jsonl` through [execution recording](../../iterate/iterate/references/recording.md). Reference detailed outcomes there from Auto progress rather than duplicating findings or coverage. Execution completion advances to Ship; only Ship can establish Auto's final readiness.
 
 Alignment references are `{ "path": "align/v<N>.jsonl", "event_id": "..." }`, with paths relative to `.jwn/<session-id>/`. `alignment` identifies the current version's `start` event. `approvedAlignment` identifies an actual `aligned` event, preserving whether it relies on the request or explicit confirmation. Keep historical authorization, but advance dependent work only when the latest record in the latest intention version is `aligned`. Plan references use the same `{ path, event_id }` shape: `plan` identifies the current `start` candidate and `approvedPlan` its actual `approved` or `accepted` event in `plan/v<N>.jsonl`. These existing field names do not turn request-based acceptance into user approval. Acceptance or approval precedes detailed review. Before execution, read the latest candidate and each reviewer's latest verdict: low needs none, medium one, high three distinct clear reviewers; any `changes_requested` blocks execution. Confirm the candidate's pinned Align is still current and aligned. Preserve historical authorization while a blocker is unresolved. Legacy Markdown plan references remain strings such as `plan/PLAN.v<N>.md`; read them normally and preserve their actual approvals without implicit migration. Preserve existing legacy paths until explicitly migrated. Preserve legacy Markdown agreement references and their approvals when recovering existing tasks until explicitly migrated.
 
@@ -54,7 +54,7 @@ The example is formatted for reading:
 }
 ```
 
-- Stages are `align`, `plan`, `execute`, `ship`, and `done`. States are `running`, `awaiting_approval`, `blocked`, and `complete`.
+- Stages are `align`, `plan`, `iterate`, `ship`, and `done`. States are `running`, `awaiting_approval`, `blocked`, and `complete`.
 - Use the actual branch and available session identity. Use `null` for unavailable values, including a detached or non-Git branch.
 - Keep `status.lastEventSeq` equal to `seq` and `status.updatedAt` equal to `at`. Record the actual response and document version in approval events and documents.
 - Record meaningful starts before acting and observed outcomes before advancing. Include decisions, verification, review, retries, and blockers. Before yielding, handing off, or finishing, record the current state and next action. Only mark `complete` when required work is complete.
