@@ -9,6 +9,8 @@ description: Use when carrying development implementation through verification a
 
 ## Steps
 
+When running under Auto, read [execution recording](references/auto-mode.md) and initialize the execution journal before working stages record their outcomes.
+
 When Auto supplies a task directory, follow its [state contract](../../auto/references/state.md) throughout implementation, verification, and review. Record meaningful work starts and outcomes before advancing, and the current state before yielding.
 
 1. Read the authorized request, agreed intent, constraints, success criteria, and available plan. Without a plan, outline the approach and checks; wait for any required approval before implementation.

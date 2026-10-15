@@ -15,6 +15,10 @@ test("shared entry point and Align expose their own help without reading stdin",
     ["align", "--schema"],
     ["plan", "--help"],
     ["plan", "--schema"],
+    ["execute", "--help"],
+    ["execute", "--schema"],
+    ["impl", "--help"],
+    ["impl", "--schema"],
   ]) {
     const result = spawnSync(process.execPath, [script, ...args], {
       encoding: "utf8",
@@ -40,6 +44,9 @@ test("invalid commands and Align arguments fail before creating alignment state"
     ["align"],
     ["align", "start"],
     ["align", "unknown"],
+    ["align", "next"],
+    ["plan", "next"],
+    ["execute", "next"],
     ["align", "write", "--unknown"],
     ["align", "--action", "read"],
   ]) {
