@@ -5,12 +5,13 @@ description: Always use when handling PRs.
 
 ## Rules
 
-- Follow [Commit](../commit/SKILL.md) before creating or updating PRs.
-- Split independently reviewable outcomes into separate PRs by default. Group commits only when they share a review context and require joint review.
-- Base dependent PRs on their parent branches.
+- Before creating or updating PRs, follow [Commit](../commit/SKILL.md) to establish or reconcile the commit structure.
+- Map commits to review contexts and independently reviewable outcomes.
+- Split independently reviewable outcomes into separate PRs by default. Group commits in one PR only when they require joint review.
+- Stack dependent PRs on their parent branches in dependency order.
 - Keep only what a reviewer who has not read the conversation needs to understand the problem and solution, and omit work logs.
 - Keep titles short: action verb + change. Put purpose and explanation in the description.
-- Push changes to their owning PR.
+- Push each change to the PR that owns its review scope.
 - When scope changes, rewrite the PR title and description around the final solution.
 - Open PRs as ready for review unless the user explicitly requests a draft.
 - For dependent PRs, put `Stacked on #<parent PR>.` before `### Why?`. Preserve or update it whenever editing the description, and verify the saved body.
