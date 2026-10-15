@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"After compaction, resolve the current project/worktree root and check for .jwn. In a non-Git project, check ancestors for the nearest .jwn. If it exists, locate the installed auto skill and read its references/recovery.md before continuing. Preserve pending approvals and existing permissions. If no .jwn exists, do not create state or start Auto.\"",
+            "command": "echo \"After compaction, restore the current task, unfinished work, approvals, and permissions. If this task has .jwn records, read the installed Auto skill's references/recovery.md and recover the owning stage. Otherwise, continue from session context without creating records or starting Auto.\"",
             "timeout": 5
           }
         ]
