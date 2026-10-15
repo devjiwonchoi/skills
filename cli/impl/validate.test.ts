@@ -6,7 +6,7 @@ import { create, next } from "./state.ts";
 import { apply } from "./validate.ts";
 
 test("Impl resumes the first unfinished stage and never accepts failed verification", () => {
-  const state = create({ revision: null, sections: [], reason: undefined });
+  const state = create({ revision: null });
   assert.equal(next({ state }).step, "quick-impl");
   apply({
     state,
@@ -53,7 +53,7 @@ test("Impl resumes the first unfinished stage and never accepts failed verificat
 });
 
 test("Impl rejects predecessor mismatches without changing its revision", () => {
-  const state = create({ revision: "r1", sections: [], reason: undefined });
+  const state = create({ revision: "r1" });
   assert.throws(
     () =>
       apply({
