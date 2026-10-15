@@ -34,7 +34,7 @@ test("shared entry point and Align expose their own help without reading stdin",
       assert.match(result.stdout, /Usage:/);
       assert.match(
         result.stdout,
-        args[0] === "iterate"
+        ["iterate", "plan"].includes(args[0]!)
           ? /<read\|write\|next>/
           : args[0] !== "--help"
             ? /<read\|write>/

@@ -52,7 +52,7 @@ function command<T extends { id: string; type: string }>({
 
 const commands = new Map<string, ReturnType<typeof command>>([
   ["align", command({ ...align, next: undefined, directory: undefined, checkHistory: undefined })],
-  ["plan", command({ ...plan, next: undefined, directory: undefined, checkHistory: undefined })],
+  ["plan", command({ ...plan, directory: undefined, checkHistory: undefined })],
   ["iterate", command(iterate)],
   ["impl", command({ ...impl, next: undefined })],
   ["review", command({ ...review, next: undefined })],
@@ -105,6 +105,21 @@ export function run({
       create: request?.type === "start",
       task: () => {
         const files = versions({ directory });
+        if (alignment) {
+          const candidate =
+            request?.type === "start"
+              ? plan.parseRequest({ value: request })
+              : parsePlanEvent({
+                  value: read({ path: join(directory, files.at(-1)!), offset: 0 }).records[0],
+                });
+          if (
+            candidate.type !== "start" ||
+            candidate.alignment.version !== alignment.version ||
+            candidate.alignment.event_id !== alignment.event_id
+          ) {
+            throw new Error("Plan must reference the latest aligned event in this session");
+          }
+        }
         if (operation === "next") {
           const records = files.map(
             (name) => read({ path: join(directory, name), offset: 0 }).records,
@@ -137,20 +152,6 @@ export function run({
         const records = files.map(
           (name) => read({ path: join(directory, name), offset: 0 }).records,
         );
-        if (alignment) {
-          const candidate =
-            request.type === "start"
-              ? plan.parseRequest({ value: request })
-              : parsePlanEvent({ value: records.at(-1)?.[0] });
-          if (
-            candidate.type !== "start" ||
-            candidate.alignment.version !== alignment.version ||
-            candidate.alignment.event_id !== alignment.event_id
-          ) {
-            throw new Error("Plan must reference the latest aligned event in this session");
-          }
-        }
-
         const { record, retry } = skill.validate({ records, session, request, version });
         const stored = retry ? record : { ...record, at: new Date().toISOString() };
         write({
@@ -164,7 +165,7 @@ export function run({
       },
     });
 
-  if (command === "plan" && request) {
+  if (command === "plan" && operation !== "read") {
     const alignmentDirectory = join(resolve(root), ".jwn", session, "align");
     if (!existsSync(alignmentDirectory)) {
       throw new Error("Align records are required before writing Plan");

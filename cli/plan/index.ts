@@ -1,4 +1,4 @@
 import { parseRequest, schema } from "./schema.ts";
-import { validate } from "./validate.ts";
+import { readiness, validate } from "./validate.ts";
 
-export default { schema, parseRequest, validate };
+export default { schema, parseRequest, validate, next: readiness };

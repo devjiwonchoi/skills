@@ -2,18 +2,8 @@ import { isDeepStrictEqual } from "node:util";
 
 import { parseEvent, requestFields, type Candidate, type Event, type Request } from "./schema.ts";
 
-// Replay original records on writes. Authorization precedes review; neither carries to a new candidate.
-export function validate({
-  records,
-  session,
-  request,
-  version,
-}: {
-  records: unknown[][];
-  session: string;
-  request: Request;
-  version: number | undefined;
-}) {
+// Preserve historical authorization order. New authorizations require cleared reviews.
+function history({ records, session }: { records: unknown[][]; session: string }) {
   let previous: Candidate | null = null;
   let current: Event[] = [];
   const candidateIds = new Set<string>();
@@ -40,7 +30,6 @@ export function validate({
     }
 
     const ids = new Set<string>();
-    let authorized = false;
     for (const [position, event] of events.entries()) {
       if (event.seq !== position + 1 || event.version !== first.version) {
         throw new Error("sequence gap or event version mismatch");
@@ -55,18 +44,63 @@ export function validate({
         if (event.type === "start" || event.candidate_id !== first.id) {
           throw new Error("event must target the current candidate");
         }
-
-        if (event.type === "approved" || event.type === "accepted") {
-          authorized = true;
-        } else if (!authorized) {
-          throw new Error("acceptance or user approval is required before detailed review");
-        }
       }
     }
 
     previous = first;
     current = events;
   }
+  return { previous, current };
+}
+
+export function readiness({
+  records,
+  session,
+  version,
+}: {
+  records: unknown[][];
+  session: string;
+  version: number | undefined;
+}) {
+  const { previous, current } = history({ records, session });
+  if (!previous || (version !== undefined && version !== previous.version)) {
+    throw new Error("stale version: read the current plan");
+  }
+  const reviewers = new Map<string, Extract<Event, { type: "review" }>>();
+  for (const event of current) {
+    if (event.type === "review") {
+      reviewers.set(event.reviewer, event);
+    }
+  }
+  const required = { low: 0, medium: 1, high: 3 }[previous.effort];
+  const clear = [...reviewers.values()].filter((event) => event.verdict === "approved");
+  const blocked = [...reviewers.values()].filter((event) => event.verdict === "changes_requested");
+  const reviewsComplete = clear.length >= required && blocked.length === 0;
+  const authorization = [...current]
+    .reverse()
+    .find((event) => event.type === "approved" || event.type === "accepted");
+  return {
+    candidate: previous,
+    authorization: authorization ?? null,
+    reviewers: [...reviewers.values()],
+    requiredReviews: required,
+    reviewsComplete,
+    action: !reviewsComplete ? "review" : !authorization ? "authorize" : "iterate",
+  };
+}
+
+export function validate({
+  records,
+  session,
+  request,
+  version,
+}: {
+  records: unknown[][];
+  session: string;
+  request: Request;
+  version: number | undefined;
+}) {
+  const { previous, current } = history({ records, session });
 
   if (request.type === "start") {
     for (const values of records) {
@@ -119,10 +153,10 @@ export function validate({
   }
 
   if (
-    request.type === "review" &&
-    !current.some((event) => event.type === "approved" || event.type === "accepted")
+    (request.type === "approved" || request.type === "accepted") &&
+    !readiness({ records, session, version }).reviewsComplete
   ) {
-    throw new Error("acceptance or user approval is required before detailed review");
+    throw new Error("required Plan reviews must clear before final authorization");
   }
 
   return {

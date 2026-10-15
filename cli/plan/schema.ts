@@ -20,7 +20,7 @@ const approved = base
     value: text,
   })
   .describe(
-    "Record the actual user's approval of candidate_id after receiving it and before detailed review. Keep value verbatim. Never invent approval.",
+    "Record the actual user's final approval of candidate_id, including verification methods and scoped delivery permissions, after required detailed reviews clear. Keep value verbatim. Never invent approval.",
   );
 const accepted = base
   .extend({
@@ -48,7 +48,7 @@ const review = base
     "changes_requested needs findings; approved needs no unresolved findings",
   )
   .describe(
-    "Record each real reviewer's verdict on the current accepted or approved candidate after review. Report blockers immediately. Separate bugs and blockers from optional nits, which do not block execution. Never invent reviewer results.",
+    "Record each real reviewer's verdict on the current candidate before final authorization. Correct supported findings and re-review affected behavior before presenting the final candidate. Optional nits do not block execution. Never invent reviewer results.",
   );
 const request = z.discriminatedUnion("type", [start, approved, accepted, review]);
 const metadata = { seq: z.int().positive(), version: z.int().positive() };
@@ -72,7 +72,7 @@ export const schema = {
     };
   },
   rules: [
-    "Execution needs current acceptance from existing instructions or actual user approval, plus clear required reviews: low 0, medium 1, high 3 distinct reviewers. Each reviewer's latest verdict applies; any changes_requested blocks execution. A new candidate inherits neither authorization nor reviews. Records cannot prove whether the instructions actually settle the plan's choices.",
+    "New final acceptance or approval requires clear reviews first: low 0, medium 1, high 3 distinct reviewers. Each reviewer's latest verdict applies; any changes_requested blocks execution. Historical authorization-before-review journals remain readable. A new candidate inherits neither authorization nor reviews. Records cannot prove whether instructions settle the plan's choices or grant delivery permissions.",
     "Plan writes require the same session's latest Align version to be aligned and the candidate to pin that exact aligned event. The CLI holds Align's lock through the Plan write and replays its full history. Historical Plan reads remain available. Records cannot establish real authorship.",
     "Use fresh IDs for new records; identical IDs/payloads are retries. Read on rejection. Preserve earlier versions and damaged logs. Check the lock owner stopped before removing a stale lock.",
   ],

@@ -299,37 +299,116 @@ test("Plan rejects damaged or foreign Align history and an active Align writer",
   }
 });
 
-test("Plan records actual approval before detailed review at every effort", (context) => {
+test("Plan clears required distinct reviews before final authorization at every effort", (context) => {
   for (const effort of ["low", "medium", "high"] as const) {
-    const { write, read } = fixture({ context, effort });
-    const review = {
-      id: "r1",
-      type: "review",
+    const { root, write, read } = fixture({ context, effort });
+    const required = { low: 0, medium: 1, high: 3 }[effort];
+    const approval = {
+      id: "a1",
+      type: "approved",
       candidate_id: "p1",
-      reviewer: "reviewer-1",
-      verdict: "approved",
-      findings: [],
+      value: "Synthetic final approval including verification.",
     };
-    assert.throws(() => write({ payload: review, version: 1 }), /approval is required/);
+    if (required) {
+      assert.throws(() => write({ payload: approval, version: 1 }), /reviews must clear/);
+    }
+    for (let index = 0; index < required; index += 1) {
+      write({
+        payload: {
+          id: `review-${index}`,
+          type: "review",
+          candidate_id: "p1",
+          reviewer: `r-${index}`,
+          verdict: "approved",
+          findings: [],
+        },
+        version: 1,
+      });
+    }
+    write({ payload: approval, version: 1 });
+    assert.equal(read({ version: 1, offset: 0 }).records.at(-1)?.type, "approved");
+    const next = () =>
+      run({
+        command: "plan",
+        root,
+        session: "task",
+        operation: "next",
+        version: undefined,
+        offset: undefined,
+        payload: undefined,
+      });
+    assert.equal((next() as { state: { action: string } }).state.action, "iterate");
     write({
       payload: {
-        id: "a1",
-        type: "approved",
+        id: "adverse",
+        type: "review",
         candidate_id: "p1",
-        value: "Synthetic approval of candidate p1.",
+        reviewer: "late-review",
+        verdict: "changes_requested",
+        findings: ["The approved check misses a required scenario."],
       },
       version: 1,
     });
-    write({ payload: review, version: 1 });
-    assert.deepEqual(
-      read({ version: 1, offset: 0 }).records.map((record) => record.type),
-      ["start", "approved", "review"],
+    assert.equal((next() as { state: { action: string } }).state.action, "review");
+    assert.throws(
+      () => write({ payload: { ...approval, id: "again" }, version: 1 }),
+      /reviews must clear/,
     );
   }
 });
 
+test("Plan readiness preserves historical authorization order and rejects reopened Align", (context) => {
+  const { root, path, read, alignWrite } = fixture({ context, effort: "medium" });
+  appendFileSync(
+    path,
+    JSON.stringify({
+      id: "old-approval",
+      type: "approved",
+      candidate_id: "p1",
+      value: "Historical real approval.",
+      seq: 2,
+      version: 1,
+    }) + "\n",
+  );
+  appendFileSync(
+    path,
+    JSON.stringify({
+      id: "old-review",
+      type: "review",
+      candidate_id: "p1",
+      reviewer: "independent",
+      verdict: "approved",
+      findings: [],
+      seq: 3,
+      version: 1,
+    }) + "\n",
+  );
+  const next = () =>
+    run({
+      command: "plan",
+      root,
+      session: "task",
+      operation: "next",
+      version: undefined,
+      offset: undefined,
+      payload: undefined,
+    });
+  assert.equal((next() as { state: { action: string } }).state.action, "iterate");
+  alignWrite({
+    payload: {
+      id: "new-evidence",
+      type: "research",
+      value: "New information requires reconciliation.",
+      sources: ["source"],
+    },
+    version: 1,
+  });
+  assert.throws(next, /aligned/);
+  assert.equal(read({ version: 1, offset: 0 }).records.length, 3);
+});
+
 test("Plan candidate versions preserve prior approval but do not inherit it", (context) => {
-  const { write, read, start, path } = fixture({ context, effort: "medium" });
+  const { write, read, start, path } = fixture({ context, effort: "low" });
   write({
     payload: { id: "a1", type: "approved", candidate_id: "p1", value: "Synthetic approval." },
     version: 1,
@@ -342,21 +421,17 @@ test("Plan candidate versions preserve prior approval but do not inherit it", (c
   assert.equal(next.version, 2);
   assert.deepEqual(readFileSync(path), before);
   assert.equal(read({ version: undefined, offset: 0 }).records.length, 1);
-  assert.throws(
-    () =>
-      write({
-        payload: {
-          id: "r2",
-          type: "review",
-          candidate_id: "p2",
-          reviewer: "reviewer-1",
-          verdict: "approved",
-          findings: [],
-        },
-        version: 2,
-      }),
-    /approval is required/,
-  );
+  write({
+    payload: {
+      id: "r2",
+      type: "review",
+      candidate_id: "p2",
+      reviewer: "reviewer-1",
+      verdict: "approved",
+      findings: [],
+    },
+    version: 2,
+  });
   assert.throws(
     () =>
       write({
@@ -385,6 +460,20 @@ test("Plan distinguishes acceptance from existing instructions and actual user a
       value: "Rename the button to Save and check the visible label.",
       reason: "The requested label and observable check leave no consequential choice.",
     };
+    const required = { low: 0, medium: 1, high: 3 }[effort];
+    for (let index = 0; index < required; index += 1) {
+      write({
+        payload: {
+          id: `review-${index}`,
+          type: "review",
+          candidate_id: "p1",
+          reviewer: `r-${index}`,
+          verdict: "approved",
+          findings: [],
+        },
+        version: 1,
+      });
+    }
     const accepted = write({ payload, version: 1 });
     const before = readFileSync(path);
     assert.deepEqual(write({ payload, version: 1 }), accepted);
@@ -406,13 +495,13 @@ test("Plan distinguishes acceptance from existing instructions and actual user a
     });
     assert.deepEqual(
       read({ version: 1, offset: 0 }).records.map((event) => event.type),
-      ["start", "accepted", "review"],
+      ["start", ...Array(required).fill("review"), "accepted", "review"],
     );
   }
 });
 
 test("Plan acceptance needs an instruction and rationale and does not carry to a successor", (context) => {
-  const { write, read, start } = fixture({ context, effort: "medium" });
+  const { write, read, start } = fixture({ context, effort: "low" });
   const accepted = {
     id: "accepted",
     type: "accepted",
@@ -435,21 +524,17 @@ test("Plan acceptance needs an instruction and rationale and does not carry to a
     read({ version: undefined, offset: 0 }).records.map((event) => event.type),
     ["start"],
   );
-  assert.throws(
-    () =>
-      write({
-        payload: {
-          id: "review",
-          type: "review",
-          candidate_id: "p2",
-          reviewer: "reviewer",
-          verdict: "approved",
-          findings: [],
-        },
-        version: 2,
-      }),
-    /acceptance or user approval is required/,
-  );
+  write({
+    payload: {
+      id: "review",
+      type: "review",
+      candidate_id: "p2",
+      reviewer: "reviewer",
+      verdict: "approved",
+      findings: [],
+    },
+    version: 2,
+  });
   assert.throws(
     () => write({ payload: { ...accepted, id: "wrong-candidate" }, version: 2 }),
     /current candidate/,
@@ -486,7 +571,7 @@ test("Plan retries preserve bytes and original recorder timestamps", (context) =
 });
 
 test("Plan preserves adverse verdicts and later scoped fixes without erasing approval", (context) => {
-  const { write, read } = fixture({ context, effort: "high" });
+  const { write, read } = fixture({ context, effort: "low" });
   write({
     payload: { id: "a1", type: "approved", candidate_id: "p1", value: "Synthetic approval." },
     version: 1,
