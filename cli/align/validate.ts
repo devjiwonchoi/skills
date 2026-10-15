@@ -12,17 +12,7 @@ import {
 } from "./schema.ts";
 
 // Reconstruct validation state from the original records. Nothing is cached between calls.
-export function validate({
-  records,
-  session,
-  request,
-  version,
-}: {
-  records: unknown[][];
-  session: string;
-  request: Request;
-  version: number | undefined;
-}) {
+function replay({ records, session }: { records: unknown[][]; session: string }) {
   const references: Record<string, Reference> = {};
   const events: Event[] = [];
   let state: Alignment | null = null;
@@ -52,6 +42,31 @@ export function validate({
       events.push(event);
     }
   }
+
+  return { references, events, state };
+}
+
+export function readAligned({ records, session }: { records: unknown[][]; session: string }) {
+  const { state } = replay({ records, session });
+  if (!state?.aligned) {
+    throw new Error("the latest Align version must be aligned before writing Plan");
+  }
+
+  return { version: state.header.version, event_id: state.aligned.id };
+}
+
+export function validate({
+  records,
+  session,
+  request,
+  version,
+}: {
+  records: unknown[][];
+  session: string;
+  request: Request;
+  version: number | undefined;
+}) {
+  const { references, events, state } = replay({ records, session });
 
   if (request.type === "start") {
     for (const first of events.filter((event) => event.type === "start")) {
