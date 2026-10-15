@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
 
-import { parseJsonl, read } from "./jsonl.ts";
+import { parseJsonl, read } from "./journal.ts";
 
 test("parses JSON values without interpreting alignment events", () => {
   const values = [null, 1, ["a"], { message: '한글\n"quotes"', arbitrary: true }];

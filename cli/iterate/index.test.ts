@@ -6,11 +6,11 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { type TestContext } from "node:test";
 
-import { next as implementation } from "./impl/state.ts";
-import { run } from "./index.ts";
-import { readState } from "./iterate.ts";
-import { read, versions } from "./jsonl.ts";
-import { context as review } from "./review/state.ts";
+import { next as implementation } from "../impl/state.ts";
+import { run } from "../index.ts";
+import { context as review } from "../review/state.ts";
+import { read, versions } from "../shared/journal.ts";
+import { readState } from "./index.ts";
 
 function fixture({ context, revision }: { context: TestContext; revision: string | null }) {
   const root = mkdtempSync(join(tmpdir(), "jwn-iterate-"));

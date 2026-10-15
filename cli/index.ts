@@ -5,12 +5,12 @@ import { parseArgs } from "node:util";
 
 import align from "./align/index.ts";
 import { readAligned } from "./align/validate.ts";
-import * as impl from "./impl/schema.ts";
-import iterate, { validate, checkHistory } from "./iterate.ts";
-import { read, versions, withSessionLock, write } from "./jsonl.ts";
+import impl from "./impl/index.ts";
+import iterate from "./iterate/index.ts";
 import plan from "./plan/index.ts";
 import { parseEvent as parsePlanEvent } from "./plan/schema.ts";
-import * as review from "./review/schema.ts";
+import review from "./review/index.ts";
+import { read, versions, withSessionLock, write } from "./shared/journal.ts";
 
 type Input = {
   records: unknown[][];
@@ -54,8 +54,8 @@ const commands = new Map<string, ReturnType<typeof command>>([
   ["align", command({ ...align, next: undefined, directory: undefined, checkHistory: undefined })],
   ["plan", command({ ...plan, next: undefined, directory: undefined, checkHistory: undefined })],
   ["iterate", command(iterate)],
-  ["impl", command({ ...impl, validate, checkHistory, directory: "iterate", next: undefined })],
-  ["review", command({ ...review, validate, checkHistory, directory: "iterate", next: undefined })],
+  ["impl", command({ ...impl, next: undefined })],
+  ["review", command({ ...review, next: undefined })],
 ]);
 
 export function run({
