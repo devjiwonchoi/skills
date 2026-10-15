@@ -6,14 +6,14 @@ import { join } from "node:path";
 import { test } from "node:test";
 import { type TestContext } from "node:test";
 
-import { readState } from "./execute.ts";
 import { next as implementation } from "./impl/state.ts";
 import { run } from "./index.ts";
+import { readState } from "./iterate.ts";
 import { read, versions } from "./jsonl.ts";
 import { context as review } from "./review/state.ts";
 
 function fixture({ context, revision }: { context: TestContext; revision: string | null }) {
-  const root = mkdtempSync(join(tmpdir(), "jwn-execute-"));
+  const root = mkdtempSync(join(tmpdir(), "jwn-iterate-"));
   context.after(() => rmSync(root, { recursive: true, force: true }));
   let counter = 0;
   const invoke = ({
@@ -28,7 +28,7 @@ function fixture({ context, revision }: { context: TestContext; revision: string
     offset: number | undefined;
   }) =>
     run({
-      command: operation === "write" ? owner(payload) : "execute",
+      command: operation === "write" ? owner(payload) : "iterate",
       root,
       session: "task",
       operation,
@@ -48,7 +48,7 @@ function fixture({ context, revision }: { context: TestContext; revision: string
     return { payload, result };
   };
   const state = () => {
-    const directory = join(root, ".jwn/task/execute");
+    const directory = join(root, ".jwn/task/iterate");
     const records = versions({ directory }).map(
       (name) => read({ path: join(directory, name), offset: 0 }).records,
     );
@@ -82,7 +82,7 @@ function fixture({ context, revision }: { context: TestContext; revision: string
       verification: { outcome: string } | null;
     };
   };
-  const path = join(root, ".jwn/task/execute/v1.jsonl");
+  const path = join(root, ".jwn/task/iterate/v1.jsonl");
   const start = record({
     type: "start",
     goal: "Improve installation",
@@ -142,7 +142,7 @@ function fixture({ context, revision }: { context: TestContext; revision: string
   return {
     root,
     rawState: () => {
-      const directory = join(root, ".jwn/task/execute");
+      const directory = join(root, ".jwn/task/iterate");
       return readState({
         records: versions({ directory }).map(
           (name) => read({ path: join(directory, name), offset: 0 }).records,
@@ -172,7 +172,7 @@ function owner(value: unknown) {
   if (type === "scope" || type === "review_pass") {
     return "review";
   }
-  return "execute";
+  return "iterate";
 }
 
 function loopFixture(input: { context: TestContext; revision: string | null }) {
@@ -192,7 +192,7 @@ function loopFixture(input: { context: TestContext; revision: string | null }) {
   };
 }
 
-test("Execute groups deduplicated findings and retains unaffected coverage after correction", (context) => {
+test("Iterate groups deduplicated findings and retains unaffected coverage after correction", (context) => {
   const task = loopFixture({ context, revision: null });
   assert.equal(task.state().step, "quick-impl");
   task.record({ type: "iteration", round: 1, findings: [] });

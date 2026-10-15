@@ -9,7 +9,7 @@
   "skills": [
     "./skills/auto",
     "./skills/plan",
-    "./skills/execute",
+    "./skills/iterate",
     "./skills/ship",
     "./skills/utils"
   ]

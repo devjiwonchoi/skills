@@ -1,5 +1,5 @@
 ---
-name: execute
+name: iterate
 description: Use when carrying development implementation through verification and review.
 ---
 

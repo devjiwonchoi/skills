@@ -10,7 +10,7 @@ description: Use when implementing development work.
 
 ## Steps
 
-Follow [execution recording](../execute/references/recording.md) for every invocation, including standalone use.
+Follow [execution recording](../iterate/references/recording.md) for every invocation, including standalone use.
 
 1. Read the authorized request, constraints, and available plans or findings. Without a plan, outline the approach; an agent's outline is not approval. Pause work awaiting required approval.
 2. Keep approved intent fixed. Before and during implementation, compare cumulative changes with the last user-approved plan, or the original request and decisions.

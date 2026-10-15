@@ -5,8 +5,8 @@ import { parseArgs } from "node:util";
 
 import align from "./align/index.ts";
 import { readAligned } from "./align/validate.ts";
-import execute, { validate, checkHistory } from "./execute.ts";
 import * as impl from "./impl/schema.ts";
+import iterate, { validate, checkHistory } from "./iterate.ts";
 import { read, versions, withSessionLock, write } from "./jsonl.ts";
 import plan from "./plan/index.ts";
 import { parseEvent as parsePlanEvent } from "./plan/schema.ts";
@@ -53,9 +53,9 @@ function command<T extends { id: string; type: string }>({
 const commands = new Map<string, ReturnType<typeof command>>([
   ["align", command({ ...align, next: undefined, directory: undefined, checkHistory: undefined })],
   ["plan", command({ ...plan, next: undefined, directory: undefined, checkHistory: undefined })],
-  ["execute", command(execute)],
-  ["impl", command({ ...impl, validate, checkHistory, directory: "execute", next: undefined })],
-  ["review", command({ ...review, validate, checkHistory, directory: "execute", next: undefined })],
+  ["iterate", command(iterate)],
+  ["impl", command({ ...impl, validate, checkHistory, directory: "iterate", next: undefined })],
+  ["review", command({ ...review, validate, checkHistory, directory: "iterate", next: undefined })],
 ]);
 
 export function run({
@@ -200,7 +200,7 @@ if (
 
     if (command === "--help") {
       process.stdout.write(
-        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, execute, impl, review\nUse <command> --help or --schema.\n",
+        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, iterate, impl, review\nUse <command> --help or --schema.\n",
       );
     } else {
       const skill = commands.get(command);

@@ -15,8 +15,8 @@ test("shared entry point and Align expose their own help without reading stdin",
     ["align", "--schema"],
     ["plan", "--help"],
     ["plan", "--schema"],
-    ["execute", "--help"],
-    ["execute", "--schema"],
+    ["iterate", "--help"],
+    ["iterate", "--schema"],
     ["impl", "--help"],
     ["impl", "--schema"],
     ["review", "--help"],
@@ -34,7 +34,7 @@ test("shared entry point and Align expose their own help without reading stdin",
       assert.match(result.stdout, /Usage:/);
       assert.match(
         result.stdout,
-        args[0] === "execute"
+        args[0] === "iterate"
           ? /<read\|write\|next>/
           : args[0] !== "--help"
             ? /<read\|write>/
@@ -55,7 +55,7 @@ test("invalid commands and Align arguments fail before creating alignment state"
     ["align", "unknown"],
     ["align", "next"],
     ["plan", "next"],
-    ["execute", "next"],
+    ["iterate", "next"],
     ["align", "write", "--unknown"],
     ["align", "--action", "read"],
   ]) {
@@ -73,8 +73,8 @@ test("invalid commands and Align arguments fail before creating alignment state"
   }
 });
 
-test("Execute's public commands record and recover work without reading stdin for next", (context) => {
-  const root = mkdtempSync(join(tmpdir(), "jwn-execute-cli-"));
+test("Iterate's public commands record and recover work without reading stdin for next", (context) => {
+  const root = mkdtempSync(join(tmpdir(), "jwn-iterate-cli-"));
   context.after(() => rmSync(root, { recursive: true, force: true }));
   const invoke = ({
     command,
@@ -100,7 +100,7 @@ test("Execute's public commands record and recover work without reading stdin fo
     return JSON.parse(result.stdout);
   };
   invoke({
-    command: "execute",
+    command: "iterate",
     operation: "write",
     payload: {
       id: "start",
@@ -113,7 +113,7 @@ test("Execute's public commands record and recover work without reading stdin fo
     args: [],
   });
   assert.equal(
-    invoke({ command: "execute", operation: "next", payload: undefined, args: [] }).state.step,
+    invoke({ command: "iterate", operation: "next", payload: undefined, args: [] }).state.step,
     "verify",
   );
   invoke({
@@ -130,7 +130,7 @@ test("Execute's public commands record and recover work without reading stdin fo
     args: ["--version", "1"],
   });
   assert.equal(
-    invoke({ command: "execute", operation: "next", payload: undefined, args: ["--version", "1"] })
+    invoke({ command: "iterate", operation: "next", payload: undefined, args: ["--version", "1"] })
       .state.action,
     "review",
   );
@@ -151,14 +151,14 @@ test("Execute's public commands record and recover work without reading stdin fo
     args: ["--version", "1"],
   });
   assert.equal(
-    invoke({ command: "execute", operation: "next", payload: undefined, args: [] }).state.action,
+    invoke({ command: "iterate", operation: "next", payload: undefined, args: [] }).state.action,
     "complete",
   );
-  const read = invoke({ command: "execute", operation: "read", payload: undefined, args: [] });
+  const read = invoke({ command: "iterate", operation: "read", payload: undefined, args: [] });
   assert.equal(read.records.length, 3);
   assert.equal(
     invoke({
-      command: "execute",
+      command: "iterate",
       operation: "read",
       payload: undefined,
       args: ["--version", "1", "--offset", String(read.nextOffset)],
