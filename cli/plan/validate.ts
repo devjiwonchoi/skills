@@ -2,7 +2,7 @@ import { isDeepStrictEqual } from "node:util";
 
 import { parseEvent, requestFields, type Candidate, type Event, type Request } from "./schema.ts";
 
-// Replay original records on writes. Approval precedes review; neither carries to a new candidate.
+// Replay original records on writes. Authorization precedes review; neither carries to a new candidate.
 export function validate({
   records,
   session,
@@ -40,7 +40,7 @@ export function validate({
     }
 
     const ids = new Set<string>();
-    let hasApproval = false;
+    let authorized = false;
     for (const [position, event] of events.entries()) {
       if (event.seq !== position + 1 || event.version !== first.version) {
         throw new Error("sequence gap or event version mismatch");
@@ -56,10 +56,10 @@ export function validate({
           throw new Error("event must target the current candidate");
         }
 
-        if (event.type === "approved") {
-          hasApproval = true;
-        } else if (!hasApproval) {
-          throw new Error("user approval is required before detailed review");
+        if (event.type === "approved" || event.type === "accepted") {
+          authorized = true;
+        } else if (!authorized) {
+          throw new Error("acceptance or user approval is required before detailed review");
         }
       }
     }
@@ -118,8 +118,11 @@ export function validate({
     return { record: existing, retry: true };
   }
 
-  if (request.type === "review" && !current.some((event) => event.type === "approved")) {
-    throw new Error("user approval is required before detailed review");
+  if (
+    request.type === "review" &&
+    !current.some((event) => event.type === "approved" || event.type === "accepted")
+  ) {
+    throw new Error("acceptance or user approval is required before detailed review");
   }
 
   return {

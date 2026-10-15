@@ -375,6 +375,91 @@ test("Plan candidate versions preserve prior approval but do not inherit it", (c
   );
 });
 
+test("Plan distinguishes acceptance from existing instructions and actual user approval", (context) => {
+  for (const effort of ["low", "medium", "high"] as const) {
+    const { write, read, path } = fixture({ context, effort });
+    const payload = {
+      id: "accepted",
+      type: "accepted",
+      candidate_id: "p1",
+      value: "Rename the button to Save and check the visible label.",
+      reason: "The requested label and observable check leave no consequential choice.",
+    };
+    const accepted = write({ payload, version: 1 });
+    const before = readFileSync(path);
+    assert.deepEqual(write({ payload, version: 1 }), accepted);
+    assert.throws(
+      () => write({ payload: { ...payload, reason: "A different rationale." }, version: 1 }),
+      /conflicting event retry/,
+    );
+    assert.deepEqual(readFileSync(path), before);
+    write({
+      payload: {
+        id: "review",
+        type: "review",
+        candidate_id: "p1",
+        reviewer: "reviewer",
+        verdict: "approved",
+        findings: [],
+      },
+      version: 1,
+    });
+    assert.deepEqual(
+      read({ version: 1, offset: 0 }).records.map((event) => event.type),
+      ["start", "accepted", "review"],
+    );
+  }
+});
+
+test("Plan acceptance needs an instruction and rationale and does not carry to a successor", (context) => {
+  const { write, read, start } = fixture({ context, effort: "medium" });
+  const accepted = {
+    id: "accepted",
+    type: "accepted",
+    candidate_id: "p1",
+    value: "Rename the button to Save.",
+    reason: "The exact change is specified.",
+  };
+  for (const payload of [
+    { ...accepted, value: "" },
+    { ...accepted, reason: undefined },
+  ]) {
+    assert.throws(() => write({ payload, version: 1 }));
+  }
+  write({ payload: accepted, version: 1 });
+  write({
+    payload: { ...start, id: "p2", content: "A changed plan and verification method." },
+    version: undefined,
+  });
+  assert.deepEqual(
+    read({ version: undefined, offset: 0 }).records.map((event) => event.type),
+    ["start"],
+  );
+  assert.throws(
+    () =>
+      write({
+        payload: {
+          id: "review",
+          type: "review",
+          candidate_id: "p2",
+          reviewer: "reviewer",
+          verdict: "approved",
+          findings: [],
+        },
+        version: 2,
+      }),
+    /acceptance or user approval is required/,
+  );
+  assert.throws(
+    () => write({ payload: { ...accepted, id: "wrong-candidate" }, version: 2 }),
+    /current candidate/,
+  );
+  assert.throws(
+    () => write({ payload: { ...accepted, id: "stale", candidate_id: "p2" }, version: 1 }),
+    /stale version/,
+  );
+});
+
 test("Plan retries preserve bytes and original recorder timestamps", (context) => {
   const { write, path, start, first } = fixture({ context, effort: "low" });
   const before = readFileSync(path);

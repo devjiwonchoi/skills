@@ -11,7 +11,7 @@ const start = base
     content: text,
   })
   .describe(
-    "Save a complete candidate before asking approval. Pin the current aligned event. Include goal/constraints, expected result and code-flow preview, approach, work units, verification, and fixed/adaptable decisions in content. Group edits into a new version. Earlier approvals and reviews do not carry forward.",
+    "Save a complete candidate before acceptance or approval. Pin the current aligned event. Include goal/constraints, expected result and code-flow preview, approach, work units, verification, and fixed/adaptable decisions in content. Group edits into a new version. Earlier acceptance, approvals and reviews do not carry forward.",
   );
 const approved = base
   .extend({
@@ -21,6 +21,16 @@ const approved = base
   })
   .describe(
     "Record the actual user's approval of candidate_id after receiving it and before detailed review. Keep value verbatim. Never invent approval.",
+  );
+const accepted = base
+  .extend({
+    type: z.literal("accepted"),
+    candidate_id: text,
+    value: text,
+    reason: text,
+  })
+  .describe(
+    "Record proceeding from existing user instructions when no consequential plan or verification choice needs a decision. Keep the actual instruction verbatim in value and explain why it suffices in reason. This is not a new user approval. Never bypass an explicit approval request or pending decision.",
   );
 const review = base
   .extend({
@@ -38,13 +48,14 @@ const review = base
     "changes_requested needs findings; approved needs no unresolved findings",
   )
   .describe(
-    "Record each real reviewer's verdict on the current approved candidate after review. Report blockers immediately. Separate bugs and blockers from optional nits, which do not block execution. Never invent reviewer results.",
+    "Record each real reviewer's verdict on the current accepted or approved candidate after review. Report blockers immediately. Separate bugs and blockers from optional nits, which do not block execution. Never invent reviewer results.",
   );
-const request = z.discriminatedUnion("type", [start, approved, review]);
+const request = z.discriminatedUnion("type", [start, approved, accepted, review]);
 const metadata = { seq: z.int().positive(), version: z.int().positive() };
 const event = z.discriminatedUnion("type", [
   start.extend({ ...metadata, session_id: text, schema_version: z.literal(1) }),
   approved.extend(metadata),
+  accepted.extend(metadata),
   review.safeExtend(metadata),
 ]);
 const recorderFields = ["at", "seq", "version", "session_id", "schema_version", "previous_version"];
@@ -61,7 +72,7 @@ export const schema = {
     };
   },
   rules: [
-    "Execution needs current user approval and clear required reviews: low 0, medium 1, high 3 distinct reviewers. Each reviewer's latest verdict applies; any changes_requested blocks execution. A new candidate inherits neither approval nor reviews.",
+    "Execution needs current acceptance from existing instructions or actual user approval, plus clear required reviews: low 0, medium 1, high 3 distinct reviewers. Each reviewer's latest verdict applies; any changes_requested blocks execution. A new candidate inherits neither authorization nor reviews. Records cannot prove whether the instructions actually settle the plan's choices.",
     "Plan writes require the same session's latest Align version to be aligned and the candidate to pin that exact aligned event. The CLI holds Align's lock through the Plan write and replays its full history. Historical Plan reads remain available. Records cannot establish real authorship.",
     "Use fresh IDs for new records; identical IDs/payloads are retries. Read on rejection. Preserve earlier versions and damaged logs. Check the lock owner stopped before removing a stale lock.",
   ],
