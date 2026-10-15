@@ -62,7 +62,7 @@ export const schema = {
   },
   rules: [
     "Execution needs current user approval and clear required reviews: low 0, medium 1, high 3 distinct reviewers. Each reviewer's latest verdict applies; any changes_requested blocks execution. A new candidate inherits neither approval nor reviews.",
-    "The skill must check the pinned Align is still current and aligned. The Plan log cannot establish cross-command currency or real authorship.",
+    "Plan writes require the same session's latest Align version to be aligned and the candidate to pin that exact aligned event. The CLI holds Align's lock through the Plan write and replays its full history. Historical Plan reads remain available. Records cannot establish real authorship.",
     "Use fresh IDs for new records; identical IDs/payloads are retries. Read on rejection. Preserve earlier versions and damaged logs. Check the lock owner stopped before removing a stale lock.",
   ],
 };

@@ -4,10 +4,12 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
 import align from "./align/index.ts";
+import { readAligned } from "./align/validate.ts";
 import execute, { validate, checkHistory } from "./execute.ts";
 import * as impl from "./impl/schema.ts";
 import { read, versions, withSessionLock, write } from "./jsonl.ts";
 import plan from "./plan/index.ts";
+import { parseEvent as parsePlanEvent } from "./plan/schema.ts";
 import * as review from "./review/schema.ts";
 
 type Input = {
@@ -97,53 +99,91 @@ export function run({
   const request = operation === "write" ? skill.parseRequest({ value: payload }) : null;
   const directory = join(resolve(root), ".jwn", session, skill.directory ?? command);
 
-  return withSessionLock({
-    directory,
-    create: request?.type === "start",
-    task: () => {
-      const files = versions({ directory });
-      if (operation === "next") {
-        const records = files.map(
-          (name) => read({ path: join(directory, name), offset: 0 }).records,
-        );
-        return { version: files.length, state: skill.next!({ records, session, version }) };
-      }
-      if (!request) {
-        if (skill.checkHistory) {
+  const store = ({ alignment }: { alignment: ReturnType<typeof readAligned> | null }) =>
+    withSessionLock({
+      directory,
+      create: request?.type === "start",
+      task: () => {
+        const files = versions({ directory });
+        if (operation === "next") {
           const records = files.map(
             (name) => read({ path: join(directory, name), offset: 0 }).records,
           );
-          skill.checkHistory({ records, session, version: undefined });
+          return { version: files.length, state: skill.next!({ records, session, version }) };
         }
-        const selected = version ?? files.length;
-        const file = files[selected - 1];
-        if (file === undefined) {
-          throw new Error("version does not exist");
+        if (!request) {
+          if (skill.checkHistory) {
+            const records = files.map(
+              (name) => read({ path: join(directory, name), offset: 0 }).records,
+            );
+            skill.checkHistory({ records, session, version: undefined });
+          }
+          const selected = version ?? files.length;
+          const file = files[selected - 1];
+          if (file === undefined) {
+            throw new Error("version does not exist");
+          }
+
+          const path = join(directory, file);
+
+          return {
+            path,
+            version: selected,
+            latestVersion: files.length,
+            ...read({ path, offset: offset ?? 0 }),
+          };
         }
 
-        const path = join(directory, file);
+        const records = files.map(
+          (name) => read({ path: join(directory, name), offset: 0 }).records,
+        );
+        if (alignment) {
+          const candidate =
+            request.type === "start"
+              ? plan.parseRequest({ value: request })
+              : parsePlanEvent({ value: records.at(-1)?.[0] });
+          if (
+            candidate.type !== "start" ||
+            candidate.alignment.version !== alignment.version ||
+            candidate.alignment.event_id !== alignment.event_id
+          ) {
+            throw new Error("Plan must reference the latest aligned event in this session");
+          }
+        }
 
-        return {
-          path,
-          version: selected,
-          latestVersion: files.length,
-          ...read({ path, offset: offset ?? 0 }),
-        };
-      }
+        const { record, retry } = skill.validate({ records, session, request, version });
+        const stored = retry ? record : { ...record, at: new Date().toISOString() };
+        write({
+          path: join(directory, `v${stored.version}.jsonl`),
+          record: stored,
+          create: stored.seq === 1,
+          retry,
+        });
 
-      const records = files.map((name) => read({ path: join(directory, name), offset: 0 }).records);
-      const { record, retry } = skill.validate({ records, session, request, version });
-      const stored = retry ? record : { ...record, at: new Date().toISOString() };
-      write({
-        path: join(directory, `v${stored.version}.jsonl`),
-        record: stored,
-        create: stored.seq === 1,
-        retry,
-      });
+        return stored;
+      },
+    });
 
-      return stored;
-    },
-  });
+  if (command === "plan" && request) {
+    const alignmentDirectory = join(resolve(root), ".jwn", session, "align");
+    if (!existsSync(alignmentDirectory)) {
+      throw new Error("Align records are required before writing Plan");
+    }
+
+    // Hold Align's lock through the Plan write so its prerequisite cannot change in between.
+    return withSessionLock({
+      directory: alignmentDirectory,
+      create: false,
+      task: () => {
+        const records = versions({ directory: alignmentDirectory }).map(
+          (name) => read({ path: join(alignmentDirectory, name), offset: 0 }).records,
+        );
+        return store({ alignment: readAligned({ records, session }) });
+      },
+    });
+  }
+
+  return store({ alignment: null });
 }
 
 // Importing the entry point has no CLI side effects, including through an installed symlink.
