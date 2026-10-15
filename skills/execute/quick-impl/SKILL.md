@@ -10,7 +10,7 @@ description: Use when implementing development work.
 
 ## Steps
 
-When running under Auto, follow [execution recording](../execute/references/auto-mode.md). Otherwise, keep working context in the session without emitting workflow records or artifacts.
+Follow [execution recording](../execute/references/recording.md) for every invocation, including standalone use.
 
 1. Read the authorized request, constraints, and available plans or findings. Without a plan, outline the approach; an agent's outline is not approval. Pause work awaiting required approval.
 2. Keep approved intent fixed. Before and during implementation, compare cumulative changes with the last user-approved plan, or the original request and decisions.

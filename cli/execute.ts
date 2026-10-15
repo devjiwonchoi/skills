@@ -31,7 +31,7 @@ const start = base
     reason: text.optional(),
   })
   .describe(
-    "Initialize this Auto task once. Pin its authorized goal and available approved plan reference. Use null revision before initial implementation, or the current snapshot when Auto enters existing work. A changed approved plan starts a new version with a reason; correction rounds stay in this version. The caller checks real authorization.",
+    "Initialize this task's execution journal once, including standalone stages. Pin its authorized goal and available approved plan reference. Use null revision before initial implementation, or the current snapshot when entering existing work. A changed approved plan starts a new version with a reason; correction rounds stay in this version. The caller checks real authorization.",
   );
 const iteration = base
   .extend({

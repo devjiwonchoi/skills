@@ -1,24 +1,18 @@
 # Auto state
 
-Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align, Plan, and execution stages do not emit workflow records or artifacts automatically. Preserve existing standalone records during recovery.
+Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Align, Plan, and execution stages always record through the CLI, including standalone invocations. Preserve and adopt existing standalone records with their actual approvals and evidence.
 
 ## Root and ownership
 
-- For Git projects, use the current working-tree root, not the shared Git directory or another worktree.
-- For non-Git recovery, check the current directory and its ancestors for the nearest `.jwn/`. For a new task, use the known project directory. Establish that directory with the user if it is unclear.
-- Use `.jwn/<session-id>/` as the task directory. Retain the session ID across stages and compaction. Use the chat ID when available or generate an ID once. Each session directory holds one task. Before reusing state, validate `workflow: "auto"`, the recorded goal, and the current request. Another task or another active session requires a user decision. Same-session compaction retains ownership. Do not overwrite unrelated files or interleave writers.
+Follow the shared [CLI recording](../../utils/references/recording.md) setup for the root, session ID, and Git exclusion before initialization. Reuse this session's standalone task directory when adopting its records.
 
-## Git ignore on initialization
-
-1. When first initializing Auto's state, including adoption of standalone Align records, check `git rev-parse --is-inside-work-tree`. If `true`, run `git check-ignore -q -- .jwn/` from the working-tree root.
-2. On exit code `1`, automatically append `.jwn/` only if absent to the global `core.excludesFile`, defaulting to `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`. Preserve existing contents and Git configuration.
-3. Recheck exclusion after registration. Report unexpected Git errors, write errors, or failed exclusion before continuing dependent work.
+Each session directory holds one task. Before reusing Auto state, validate `workflow: "auto"`, the recorded goal, and the current request. Another task or another active session requires a user decision. Same-session compaction retains ownership.
 
 ## Documents
 
-Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/`. Follow [Align recording](../../plan/align/references/auto-mode.md) for `align/v<N>.jsonl` and [Plan recording](../../plan/plan/references/auto-mode.md) for `plan/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
+Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/`. Follow [Align recording](../../plan/align/references/recording.md) for `align/v<N>.jsonl` and [Plan recording](../../plan/plan/references/recording.md) for `plan/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
 
-Execute and its stages share `execute/v<N>.jsonl` through the [execution state contract](../../execute/execute/references/auto-mode.md). Reference detailed outcomes there from Auto progress rather than duplicating findings or coverage. Execution completion advances to Ship; only Ship can establish Auto's final readiness.
+Execute and its stages share `execute/v<N>.jsonl` through [execution recording](../../execute/execute/references/recording.md). Reference detailed outcomes there from Auto progress rather than duplicating findings or coverage. Execution completion advances to Ship; only Ship can establish Auto's final readiness.
 
 Alignment references are `{ "path": "align/v<N>.jsonl", "event_id": "..." }`, with paths relative to `.jwn/<session-id>/`. `alignment` identifies the current version's `start` event. `approvedAlignment` identifies an actual `aligned` event. Keep historical approvals, but advance dependent work only when the latest record in the latest intention version is `aligned`. Plan references use the same `{ path, event_id }` shape: `plan` identifies the current `start` candidate and `approvedPlan` its actual `approved` event in `plan/v<N>.jsonl`. Approval precedes detailed review. Before execution, read the latest candidate and each reviewer's latest verdict: low needs none, medium one, high three distinct clear reviewers; any `changes_requested` blocks execution. Confirm the candidate's pinned Align is still current and aligned. Preserve historical approval while a blocker is unresolved. Legacy Markdown plan references remain strings such as `plan/PLAN.v<N>.md`; read them normally and preserve their actual approvals without implicit migration. Preserve existing legacy paths until explicitly migrated. Preserve legacy Markdown agreement references and their approvals when recovering existing tasks until explicitly migrated.
 

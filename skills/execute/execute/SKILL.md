@@ -9,7 +9,7 @@ description: Use when carrying development implementation through verification a
 
 ## Steps
 
-When running under Auto, follow [execution recording](references/auto-mode.md). Otherwise, keep working context in the session without emitting workflow records or artifacts.
+Follow [execution recording](references/recording.md) for every invocation, including standalone use.
 
 1. Read the authorized request, agreed intent, constraints, success criteria, and available plan. Without a plan, outline the approach and checks; wait for any required approval before implementation.
 2. Resume at the first unfinished stage. Begin a new iteration only for initial work, unresolved findings, or newly authorized follow-up work after completion. Follow [Impl](../impl/SKILL.md) for initial work or supported findings. Stop if implementation or verification remains incomplete.
