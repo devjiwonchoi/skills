@@ -23,6 +23,19 @@ export function apply({ state, event }: { state: State; event: Event }) {
     state.implementing = false;
     return;
   }
+  if (state.implementing) {
+    throw new Error("implementation outcome is required before verification");
+  }
+  if (event.revision !== state.revision) {
+    if (event.previous_revision !== state.revision) {
+      throw new Error("revision reconciliation must name the current previous_revision");
+    }
+    reconcile({ state, coverage: event.coverage });
+    state.revision = event.revision;
+  } else if (event.coverage !== undefined || event.previous_revision !== undefined) {
+    throw new Error("coverage reconciliation on verification requires a new revision");
+  }
+  state.verification = event;
 }
 
 function reconcile({

@@ -256,3 +256,56 @@ test("Impl rejects Review events and cannot retain uncovered scope", (context) =
     /cannot retain uncovered/,
   );
 });
+
+test("Verify requires completed implementation and evidence for a passed outcome", (context) => {
+  const task = fixture({ context, revision: null });
+  task.record({ type: "impl_started" });
+  assert.throws(() => task.verified("r1"), /implementation outcome/);
+  task.record({
+    type: "implemented",
+    previous_revision: null,
+    revision: "r1",
+    coverage: task.reconciliation(false),
+  });
+  assert.throws(
+    () =>
+      task.record({ type: "verified", revision: "r1", outcome: "passed", evidence: [], gaps: [] }),
+    /passed verification/,
+  );
+  task.record({
+    type: "verified",
+    revision: "r1",
+    outcome: "failed",
+    evidence: [],
+    gaps: ["Runtime failure"],
+  });
+  assert.equal(task.state().action, "blocked");
+  task.verified("r1");
+  assert.equal(task.state().action, "complete");
+});
+
+test("Verify reconciles its own code fixes against the current predecessor", (context) => {
+  const task = fixture({ context, revision: "r1" });
+  assert.throws(
+    () =>
+      task.record({
+        type: "verified",
+        revision: "r2",
+        outcome: "passed",
+        evidence: ["checks.json"],
+        gaps: [],
+      }),
+    /previous_revision/,
+  );
+  task.record({
+    type: "verified",
+    previous_revision: "r1",
+    revision: "r2",
+    coverage: task.reconciliation(false),
+    outcome: "passed",
+    evidence: ["checks.json"],
+    gaps: [],
+  });
+  assert.equal(task.state().revision, "r2");
+  assert.ok(task.state().coverage.every((item) => item.reviewedRevision === null));
+});
