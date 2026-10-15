@@ -4,7 +4,7 @@
 - Medium: one independent reviewer.
 - High: follow the [Advocate/Critic/Skeptic debate](debate.md).
 
-After acceptance from existing instructions or user approval, give reviewers the current candidate and preview. Trace concrete inputs through normal, failure, and retry cases. Each finding names the input, failing code or rule, and consequence.
+After acceptance from existing instructions or user approval, give reviewers the current candidate, preview, verification methods, and baseline evidence. Trace concrete inputs through normal, failure, and retry cases. Check that the proposed checks can establish the success criteria and that an observed baseline failure has the expected cause. Each finding names the input, failing code or rule, and consequence.
 
 Group supported corrections into a revised plan and return to Plan to record its acceptance or obtain required approval before re-reviewing affected behavior. Bring blockers or unresolved design choices to the user immediately, without waiting for the whole review to finish. Reuse settled choices within existing authorization. Return changes to approved decisions to the user before execution.
 
