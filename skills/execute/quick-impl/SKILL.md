@@ -14,6 +14,7 @@ Follow [execution recording](../execute/references/recording.md) for every invoc
 
 1. Read the authorized request, constraints, and available plans or findings. Without a plan, outline the approach; an agent's outline is not approval. Pause work awaiting required approval.
 2. Keep approved intent fixed. Before and during implementation, compare cumulative changes with the last user-approved plan, or the original request and decisions.
-   - Beyond agreed limits, show the cumulative diff, reason, and impact and wait for a decision. Include material changes to approach or contracts, new external dependencies, or materially increased cost, effort, or risk.
+   - A different file or repository alone does not reopen settled decisions. Continue investigation and bounded implementation within existing authorization.
+   - Beyond agreed limits, investigate the affected path and present the cumulative diff or concrete proposal, reason, impact, and recommendation. Wait for a decision before dependent changes. Include material changes to approach or contracts, new external dependencies, or materially increased cost, effort, or risk.
 3. Make the smallest coherent changes, reusing existing patterns and addressing supported findings within authorization.
-4. Identify the resulting revision and reconcile review coverage. Stop after implementation and report remaining work as unverified.
+4. Identify the resulting revision and reconcile review coverage. Return the implementation outcome and unverified work to the caller. Stop here when invoked alone.

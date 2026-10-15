@@ -58,5 +58,6 @@ The example is formatted for reading:
 - Use the actual branch and available session identity. Use `null` for unavailable values, including a detached or non-Git branch.
 - Keep `status.lastEventSeq` equal to `seq` and `status.updatedAt` equal to `at`. Record the actual response and document version in approval events and documents.
 - Record meaningful starts before acting and observed outcomes before advancing. Include decisions, verification, review, retries, and blockers. Before yielding, handing off, or finishing, record the current state and next action. Only mark `complete` when required work is complete.
+- For an external wait, record its trigger and actual resumption mechanism in `nextAction`. If none is available, record how to resume without claiming automatic continuation.
 - Evidence identifies the observation, outcome, source kind, command, revision, and artifact where applicable. Distinguish inspection, tests, builds, runtime, and CI. Reference detailed output instead of embedding raw logs or secrets.
 - Append progress first, then atomically replace `status.json` using a temporary file in the same session directory. Report write errors before continuing dependent work. Follow [recovery](recovery.md) after interrupted writes or conflicting records.
