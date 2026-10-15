@@ -11,7 +11,7 @@ const start = base
     content: text,
   })
   .describe(
-    "Save a complete candidate before acceptance or approval. Pin the current aligned event. Include goal/constraints, expected result and code-flow preview, approach, work units, verification, and fixed/adaptable decisions in content. Group edits into a new version. Earlier acceptance, approvals and reviews do not carry forward.",
+    "Save a complete candidate before acceptance or approval. Pin the current aligned event. Include goal/constraints, expected result and code-flow preview, approach, work units, each success criterion's check/expected result/evidence, prepared tests or reproduction and baseline outcome, and fixed/adaptable decisions in content. Group edits into a new version. Earlier acceptance, approvals and reviews do not carry forward.",
   );
 const approved = base
   .extend({
