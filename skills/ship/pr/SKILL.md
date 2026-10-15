@@ -10,6 +10,7 @@ description: Always use when handling PRs.
 - Split independently reviewable outcomes into separate PRs by default. Group commits in one PR only when they require joint review.
 - Stack dependent PRs on their parent branches in dependency order.
 - Keep only what a reviewer who has not read the conversation needs to understand the problem and solution, and omit work logs.
+- Do not append validation notes or explain how changes were validated in PR descriptions.
 - Keep titles short: action verb + change. Put purpose and explanation in the description.
 - Push each change to the PR that owns its review scope.
 - When scope changes, rewrite the PR title and description around the final solution.
