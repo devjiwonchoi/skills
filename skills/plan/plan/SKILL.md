@@ -6,7 +6,7 @@ argument-hint: "[--effort low|medium|high]"
 
 The goal is to turn the user's aligned intention into a concrete plan they can approve.
 
-When running under Auto, read [Auto mode](references/auto-mode.md).
+Follow [CLI recording](references/recording.md) for every invocation, including standalone use.
 
 1. Run [Align](../align/SKILL.md) or resume the current alignment.
 2. Measure task difficulty to choose effort, or use `--effort`.

@@ -1,6 +1,6 @@
-# Auto mode
+# Plan recording
 
-Use Auto's root and session ID. Resolve this skill's real path to find `<jwn-root>`.
+Follow the shared [CLI recording](../../../utils/references/recording.md) setup. Reuse Align's root and session ID. Resolve this skill's real path to find `<jwn-root>`.
 
 Run `node <jwn-root>/cli/dist/index.mjs plan --schema` for event fields and descriptions.
 Record each plan step as it happens using those descriptions.

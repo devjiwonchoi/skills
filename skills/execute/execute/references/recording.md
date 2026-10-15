@@ -1,14 +1,12 @@
-# Auto mode
-
-Record only under Auto. Standalone stages keep findings, coverage and evidence in the session without emitting workflow records or artifacts.
+# Execution recording
 
 ## Root and session
 
-Use Auto's project root and session ID across stages and compaction. The CLI appends `.jwn/<session-id>/` to that root. Never pass the task directory as `--root` or initialize Auto from a downstream skill. Follow Auto's [state contract](../../../auto/references/state.md).
+Follow the shared [CLI recording](../../../utils/references/recording.md) setup. Use the same project root and session ID across execution stages. Under Auto, also follow its [state contract](../../../auto/references/state.md).
 
 Resolve this skill's real path to find `<jwn-root>`. Run `node <jwn-root>/cli/dist/index.mjs <command> --schema` for event fields and `<command> <read|write> --root <root> --session <id>` for records. Writes take stdin JSON through a quoted heredoc (`<<'JSON'`). Pass `--version <N>` except for `start` and retain the returned version.
 
-All commands share `.jwn/<session-id>/execute/v<N>.jsonl` and its lock. Each skill writes only its owned events:
+All commands share `.jwn/<session-id>/execute/v<N>.jsonl` and its lock. After initialization, each skill writes only its owned events:
 
 | Skill      | Command   | Events                                                  |
 | ---------- | --------- | ------------------------------------------------------- |
@@ -18,7 +16,9 @@ All commands share `.jwn/<session-id>/execute/v<N>.jsonl` and its lock. Each ski
 | Review     | `review`  | `scope`, `review_pass`                                  |
 | Impl       | —         | None                                                    |
 
-Execute initializes the journal once with the authorized goal, approved plan reference or `null`, current revision or `null`, and required review sections. Read before resuming and confirm ownership, goal, approval and scope against the request. A changed approved plan creates a new version with a reason and reopens coverage, retaining finding IDs and evidence. Earlier evidence does not approve the successor. Correction rounds and code revisions stay in the same version. Goal changes return to Align.
+The first invoked execution stage initializes a missing journal through `execute write` with `type: start`, the authorized goal, approved plan reference or `null`, and required review sections. Use `null` revision before initial implementation or the actual current snapshot when entering existing work, including standalone Verify or Review. This initialization does not invoke Execute's workflow. Each stage then writes its owned events from the table above.
+
+Read before resuming and confirm ownership, goal, approval and scope against the request. A changed approved plan creates a new version with a reason and reopens coverage, retaining finding IDs and evidence. Earlier evidence does not approve the successor. Correction rounds and code revisions stay in the same version. Goal changes return to Align.
 
 Fresh event IDs identify writes. Stable finding IDs identify issues. Retry a lost response with the same ID, payload and version. On rejection, read before proceeding. Never change an ID to bypass a conflict or missing prerequisite. Preserve damaged logs and stop dependent work on recording failure.
 
@@ -36,7 +36,7 @@ Before each pass, read retained findings, coverage evidence and the scope return
 
 Match findings by root cause and failing behavior. Reuse the same ID, issue and section identity for repeated or recurring failures, accumulating evidence. Distinct failures at the same location get distinct IDs. Reinspect retained coverage when new evidence reveals a gap.
 
-Record coverage and findings only after completing one direct pass with accessible diff and session context. Record inaccessible or incomplete review with gaps and no accepted coverage or findings. Resolve or dismiss a finding only with evidence from a pass reviewing its section. Return to Execute after each pass; it owns correction and additional review.
+Record coverage and findings only after completing one direct pass with accessible diff and session context. Record inaccessible or incomplete review with gaps and no accepted coverage or findings. Resolve or dismiss a finding only with evidence from a pass reviewing its section. Return to the caller after each pass. Execute owns correction and additional review when invoked.
 
 ## Recovery and completion
 
@@ -44,4 +44,6 @@ Record coverage and findings only after completing one direct pass with accessib
 
 Resume interrupted implementation in its current round. Start another iteration after completion only for newly authorized work with a reason. Append `resumed` only after resolving the recorded blocker. Missing or failed verification/review evidence remains unresolved until its owner records a valid result. Stop on rounds that make no progress.
 
-Record `completed` only when current verification passed, review completed with required coverage, no validated P0–P2 findings remain open, and actual files still match. P3 findings do not restart implementation. Reference the detailed log from Auto progress and update its status through the state contract. Execution completion advances to Ship, not Auto's `done`.
+Standalone stages stop after their requested work. Remaining work returned by `execute next` does not authorize running other stages. Quick-impl stops after `implemented` without verification or review. Only Execute records `completed`, after current verification passed, review completed with required coverage, no validated P0–P2 findings remain open, and actual files still match. P3 findings do not restart implementation.
+
+Under Auto, reference the detailed log from progress and update status through the state contract. Execution completion advances to Ship, not Auto's `done`.

@@ -5,7 +5,7 @@ description: Use when reviewing development changes.
 
 ## Steps
 
-When running under Auto, follow [execution recording](../execute/references/auto-mode.md). Otherwise, keep working context in the session without emitting workflow records or artifacts.
+Follow [execution recording](../execute/references/recording.md) for every invocation, including standalone use.
 
 1. Read the repository, target revision, diff base or scope, and available session context.
    - Review stacks together with each PR's base/head and findings attributed to its PR.
