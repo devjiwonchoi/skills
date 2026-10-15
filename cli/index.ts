@@ -8,6 +8,7 @@ import execute, { validate, checkHistory } from "./execute.ts";
 import * as impl from "./impl/schema.ts";
 import { read, versions, withSessionLock, write } from "./jsonl.ts";
 import plan from "./plan/index.ts";
+import * as review from "./review/schema.ts";
 
 type Input = {
   records: unknown[][];
@@ -52,6 +53,7 @@ const commands = new Map<string, ReturnType<typeof command>>([
   ["plan", command({ ...plan, next: undefined, directory: undefined, checkHistory: undefined })],
   ["execute", command(execute)],
   ["impl", command({ ...impl, validate, checkHistory, directory: "execute", next: undefined })],
+  ["review", command({ ...review, validate, checkHistory, directory: "execute", next: undefined })],
 ]);
 
 export function run({
@@ -158,7 +160,7 @@ if (
 
     if (command === "--help") {
       process.stdout.write(
-        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, execute, impl\nUse <command> --help or --schema.\n",
+        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, execute, impl, review\nUse <command> --help or --schema.\n",
       );
     } else {
       const skill = commands.get(command);

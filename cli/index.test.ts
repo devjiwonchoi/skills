@@ -19,6 +19,8 @@ test("shared entry point and Align expose their own help without reading stdin",
     ["execute", "--schema"],
     ["impl", "--help"],
     ["impl", "--schema"],
+    ["review", "--help"],
+    ["review", "--schema"],
   ]) {
     const result = spawnSync(process.execPath, [script, ...args], {
       encoding: "utf8",

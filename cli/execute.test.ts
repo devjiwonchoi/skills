@@ -10,6 +10,7 @@ import { readState } from "./execute.ts";
 import { next as implementation } from "./impl/state.ts";
 import { run } from "./index.ts";
 import { read, versions } from "./jsonl.ts";
+import { context as review } from "./review/state.ts";
 
 function fixture({ context, revision }: { context: TestContext; revision: string | null }) {
   const root = mkdtempSync(join(tmpdir(), "jwn-execute-"));
@@ -59,8 +60,8 @@ function fixture({ context, revision }: { context: TestContext; revision: string
         unresolvedP0P2: undefined,
         sections: undefined,
         ...implementation({ state: value.impl }),
-        findings: [...[]],
-        coverage: [...value.impl.coverage.values()],
+        findings: [...value.review.findings.values()],
+        coverage: [...value.review.coverage.values()],
       },
     };
     return result.state as {
@@ -308,4 +309,62 @@ test("Verify reconciles its own code fixes against the current predecessor", (co
   });
   assert.equal(task.state().revision, "r2");
   assert.ok(task.state().coverage.every((item) => item.reviewedRevision === null));
+});
+
+test("Review owns stable findings, evidence and explicit dispositions", (context) => {
+  const task = fixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([task.finding], ["input", "install"]);
+  assert.throws(
+    () => task.pass([{ ...task.finding, id: "other" }], ["input"]),
+    /reuse the existing/,
+  );
+  assert.throws(
+    () => task.pass([{ ...task.finding, status: "resolved" }], ["install"]),
+    /require review of their section/,
+  );
+  task.pass([{ ...task.finding, evidence: ["second.json"] }], ["input"]);
+  assert.deepEqual(review({ state: task.rawState().review }).findings[0]?.evidence, [
+    "case-a.json",
+    "second.json",
+  ]);
+  task.pass([{ ...task.finding, status: "resolved", evidence: ["fixed.json"] }], ["input"]);
+  assert.equal(review({ state: task.rawState().review }).unresolvedP0P2.length, 0);
+});
+
+test("Review reuses unaffected coverage, rejects invalid scope and never accepts incomplete coverage", (context) => {
+  const task = fixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([], ["input", "install"]);
+  task.implemented("r2", true);
+  assert.deepEqual(
+    review({ state: task.rawState().review }).sections.map((section) => section.id),
+    ["input"],
+  );
+  assert.throws(
+    () =>
+      task.record({
+        type: "scope",
+        revision: "r2",
+        additions: [],
+        reopen: ["missing"],
+        reason: "new context",
+      }),
+    /unknown reopened/,
+  );
+  task.record({
+    type: "review_pass",
+    revision: "r2",
+    reviewer: "current-agent",
+    outcome: "incomplete",
+    reviewed: [],
+    findings: [],
+    evidence: [],
+    gaps: ["Unavailable source"],
+  });
+  assert.equal(review({ state: task.rawState().review }).pass?.outcome, "incomplete");
+  assert.equal(
+    task.state().coverage.find((item) => item.section.id === "input")?.reviewedRevision,
+    null,
+  );
 });

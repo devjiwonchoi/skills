@@ -5,6 +5,9 @@ import * as z from "zod";
 import * as impl from "./impl/schema.ts";
 import { create as implementation } from "./impl/state.ts";
 import { apply as implement } from "./impl/validate.ts";
+import * as review from "./review/schema.ts";
+import { create as reviewState, context, reconcile } from "./review/state.ts";
+import { apply as reviewEvent } from "./review/validate.ts";
 
 const text = z.string().regex(/\S/, "expected a nonempty string");
 const metadata = {
@@ -16,13 +19,7 @@ const base = z.strictObject({ id: text });
 const strings = z
   .array(text)
   .refine((values) => new Set(values).size === values.length, "duplicate ID");
-const section = z.strictObject({ id: text, path: text, behavior: text });
-const scope = z
-  .array(section)
-  .refine(
-    (items) => new Set(items.map((item) => item.id)).size === items.length,
-    "duplicate section ID",
-  );
+const scope = review.scope;
 
 const start = base
   .extend({
@@ -41,7 +38,7 @@ const events = [
   start.extend({ ...metadata, session_id: text, schema_version: z.literal(1) }),
 ] as const;
 const request = z.discriminatedUnion("type", requests);
-const event = z.discriminatedUnion("type", [...events, ...impl.events]);
+const event = z.discriminatedUnion("type", [...events, ...impl.events, ...review.events]);
 type Event = z.infer<typeof event>;
 type Request = z.infer<typeof request>;
 const schema = {
@@ -62,13 +59,34 @@ function requestFields({ event }: { event: Event }) {
 }
 type State = {
   impl: ReturnType<typeof implementation>;
+  review: ReturnType<typeof reviewState>;
 };
 // A shared lock and replay preserve ordering across different stage commands.
 function apply({ state, event }: { state: State; event: Event }) {
-  if (event.type === "start") {
-    throw new Error("start is only allowed at the version header");
+  switch (event.type) {
+    case "impl_started":
+    case "implemented":
+    case "verified": {
+      const changed =
+        event.type === "implemented" ||
+        (event.type === "verified" && event.revision !== state.impl.revision);
+      implement({ state: state.impl, event });
+      if (changed) {
+        reconcile({ state: state.review, coverage: event.coverage });
+      }
+      return;
+    }
+    case "scope":
+    case "review_pass":
+      return reviewEvent({
+        state: state.review,
+        event,
+        revision: state.impl.revision,
+        implementing: state.impl.implementing,
+      });
+    default:
+      throw new Error("start is only allowed at the version header");
   }
-  implement({ state: state.impl, event });
 }
 function startVersion({
   header,
@@ -77,19 +95,12 @@ function startVersion({
   header: Extract<Event, { type: "start" }>;
   priorState: State | null;
 }): State {
-  if (
-    priorState &&
-    [...priorState.impl.coverage.keys()].some(
-      (id) => !header.scope.some((section) => section.id === id),
-    )
-  ) {
-    throw new Error("a successor must retain existing review sections");
-  }
   return {
-    impl: implementation({
-      revision: header.revision,
+    impl: implementation({ revision: header.revision }),
+    review: reviewState({
       sections: header.scope,
       reason: header.reason,
+      previous: priorState?.review ?? null,
     }),
   };
 }
@@ -167,7 +178,10 @@ export function validate({
 }: {
   records: unknown[][];
   session: string;
-  request: Request | z.infer<(typeof impl.requests)[number]>;
+  request:
+    | Request
+    | z.infer<(typeof impl.requests)[number]>
+    | z.infer<(typeof review.requests)[number]>;
   version: number | undefined;
 }) {
   const { state, history } = replay({ records, session });

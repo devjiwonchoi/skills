@@ -6,7 +6,7 @@ Use Auto's project root and session ID, not its `.jwn/<session-id>/` task direct
 
 Execute records `start` once with the authorized goal, approved plan reference or `null`, current revision or `null`, and required review sections. Read existing records and verify ownership, goal, approval, and scope before resuming. A changed approved plan creates a new version with a reason. Correction work and code revisions stay in that version.
 
-Run `node <jwn-root>/cli/dist/index.mjs <execute|impl> --schema` for owned fields and descriptions. Use `<command> <read|write> --root <project-root> --session <id>`. Pass `--version <N>` except for `start`, and use a quoted heredoc for stdin JSON.
+Run `node <jwn-root>/cli/dist/index.mjs <execute|impl|review> --schema` for owned fields and descriptions. Use `<command> <read|write> --root <project-root> --session <id>`. Pass `--version <N>` except for `start`, and use a quoted heredoc for stdin JSON.
 
 All commands share `.jwn/<session-id>/execute/v<N>.jsonl` and its lock. Each command accepts only its own events. Quick-impl and Verify use the Impl command, recording only the events owned by their skill. Impl adds no duplicate records.
 
@@ -15,6 +15,7 @@ All commands share `.jwn/<session-id>/execute/v<N>.jsonl` and its lock. Each com
 | Execute    | `start`                       |
 | Quick-impl | `impl_started`, `implemented` |
 | Verify     | `verified`                    |
+| Review     | `scope`, `review_pass`        |
 
 Fresh IDs identify writes. Retry a lost response with the same ID, payload and version. Preserve damaged logs and stop dependent work on recording failure. Read from offset 0 after context loss. Retain the returned version and `nextOffset` for incremental reads.
 
