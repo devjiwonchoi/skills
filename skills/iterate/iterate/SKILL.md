@@ -6,6 +6,7 @@ description: Use when carrying development implementation through verification a
 ## Rules
 
 - Complete [explain](../../utils/explain/SKILL.md) and render its required visuals in chat before asking a question or requesting approval.
+- With `--cross`, pass `--cross` to every Review invocation, including correction passes. Otherwise use Review's default mode.
 
 ## Steps
 
