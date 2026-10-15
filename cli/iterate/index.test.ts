@@ -418,7 +418,7 @@ test("Missing verification evidence, review gaps and interrupted implementation 
     evidence: [],
     gaps: ["Runtime check unavailable"],
   });
-  assert.equal(task.state().action, "blocked");
+  assert.equal(task.state().action, "recover");
   task.verified("r1");
   assert.throws(
     () =>
@@ -444,7 +444,7 @@ test("Missing verification evidence, review gaps and interrupted implementation 
     evidence: [],
     gaps: ["Denied diff access"],
   });
-  assert.equal(task.state().action, "blocked");
+  assert.equal(task.state().action, "recover");
   assert.ok(task.state().coverage.every((item) => item.reviewedRevision === null));
   task.pass([], ["input", "install"]);
   assert.equal(task.state().action, "complete");
@@ -662,6 +662,9 @@ test("Plan successors retain unresolved findings and evidence, reopening all req
   );
   const write = (payload: unknown) =>
     task.invoke({ operation: "write", payload, version: 2, offset: undefined });
+  for (const path of ["checks-r2.json", "review-2.json", "review-fixed.json"]) {
+    writeFileSync(join(task.root, path), "synthetic successor evidence\n");
+  }
   write({
     id: "checks-2",
     type: "verified",

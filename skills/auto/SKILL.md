@@ -9,9 +9,10 @@ description: Use when carrying a development task through completion.
    - Adopt this session's standalone stage records and Plan documents with their actual approvals and evidence. Start at the first unfinished stage, reusing unchanged, unconflicted approvals consistent with the current intention.
 2. Follow [Align](../plan/align/SKILL.md) with the project root and retained alignment session ID.
 3. Follow [Plan](../plan/plan/SKILL.md) with the same root and session ID. Finish required detailed reviews before final acceptance or user approval. Carry the authorized verification methods, adaptation boundaries and delivery permissions through execution and Ship.
-4. Follow [Iterate](../iterate/iterate/SKILL.md) with the Auto task directory.
+4. Follow [Iterate](../iterate/iterate/SKILL.md) with the Auto task directory. Diagnose recovery work and continue authorized repairs, rechecks or waits. Escalate only decisions or blockers that cannot be resolved within the approved scope.
 5. Follow [Ship](../ship/ship/SKILL.md) for authorized delivery.
    - Advance to `done`/`complete` only after Ship reports verified readiness for human review. Until then, retain the `ship` stage and its remaining work.
-6. Before yielding with required work unfinished, continue available authorized actions. For an external wait, use an available authorized resumption mechanism. Otherwise, report the concrete decision or blocker and how to resume. Honor explicit user stops and required approval waits.
+
+6. Continue available authorized work before yielding unfinished. For external waits, record the trigger and use an available authorized wait or resumption mechanism. Without one, report the concrete blocker and how to resume. State alone does not restart a terminated session. Honor explicit user stops and required approval waits.
 
 Pass the task directory to each stage. Use the state contract to record stage changes, approvals, blockers, delivery outcomes, and the final state.

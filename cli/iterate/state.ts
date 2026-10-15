@@ -31,9 +31,12 @@ export function next({ state }: { state: State }) {
     return { ...common, ...impl, unresolvedP0P2: review.unresolvedP0P2 };
   }
   if (review.pass?.outcome === "incomplete") {
-    return { ...common, action: "blocked", reason: review.pass.gaps.join("\n") };
+    return { ...common, action: "recover", stage: "review", reason: review.pass.gaps.join("\n") };
   }
   if (impl.action !== "complete") {
+    if (impl.action === "blocked") {
+      return { ...common, action: "recover", stage: "verify", reason: impl.reason };
+    }
     return { ...common, ...impl };
   }
   if (review.pass && review.unresolvedP0P2.length > 0) {
@@ -51,7 +54,9 @@ function executionEvent({ state, event }: { state: State; event: Event }) {
       if (state.impl.implementing) {
         throw new Error("resume the current implementation iteration");
       }
-      const correction = work.action === "impl" && "step" in work && work.step === "quick-impl";
+      const correction =
+        (work.action === "impl" && "step" in work && work.step === "quick-impl") ||
+        work.action === "recover";
       if (!correction && !(work.action === "complete" && event.reason)) {
         throw new Error(
           "iteration requires implementation work from next or authorized follow-up with a reason",
