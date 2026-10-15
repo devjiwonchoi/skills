@@ -86,7 +86,7 @@ const question = base
       .nullish(),
   })
   .describe(
-    "Record before asking; cite open ambiguities. After ambiguities and unanswered questions are cleared, use [] and confirms_intention:true for final confirmation.",
+    "Record before asking; cite open ambiguities. When final confirmation is needed, first clear ambiguities and unanswered questions, then use [] and confirms_intention:true.",
   );
 
 const response = base
@@ -107,9 +107,10 @@ const aligned = base
   .extend({
     type: z.literal("aligned"),
     source: source.optional(),
+    reason: text.optional(),
   })
   .describe(
-    "Only after recorded final confirmation and no open work. The engine derives intention and the immediately preceding response source. Keep planning questions/plain go-aheads outside Align; record corrections.",
+    "Finalize with no open work. For a clear request, cite this version's start in source and explain in reason why its prompt and answers suffice. Otherwise the CLI cites the preceding actual final confirmation. Never bypass requested confirmation. Keep planning go-aheads outside Align; record corrections.",
   );
 
 // Requests, stored events, inferred types, and CLI documentation share these field definitions.

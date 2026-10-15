@@ -135,19 +135,15 @@ export function validate({
     return { record: existing, retry: true };
   }
 
-  const source = { version, event_id: state.previous.id };
-  if (
-    request.type === "aligned" &&
-    "source" in request &&
-    !isDeepStrictEqual(request.source, source)
-  ) {
-    throw new Error("aligned must cite the preceding response in this version");
-  }
-
   const record = parseEvent({
     value: {
       ...request,
-      ...(request.type === "aligned" ? { intention: state.header.intention, source } : {}),
+      ...(request.type === "aligned"
+        ? {
+            intention: state.header.intention,
+            source: request.source ?? { version, event_id: state.previous.id },
+          }
+        : {}),
       seq: state.seq + 1,
       version,
     },
@@ -364,14 +360,24 @@ function applyEvent({
       break;
     }
     case "aligned": {
-      // Bind approval to the immediately preceding confirmation in this intention version.
+      // Distinguish reliance on the original request from a later explicit confirmation.
       const previous = state.previous;
-      if (!isDeepStrictEqual(event.source, { version: event.version, event_id: previous.id })) {
-        throw new Error("aligned must cite the preceding response in this version");
-      }
-
-      if (previous.type !== "response" || previous.confirms_intention !== true) {
-        throw new Error("aligned needs actual user confirmation");
+      if (isDeepStrictEqual(event.source, { version: event.version, event_id: state.header.id })) {
+        if (!state.header.prompt?.trim() || !event.reason?.trim()) {
+          throw new Error("request-based alignment needs the original prompt and a reason");
+        }
+        if (
+          Object.values(state.questions).some((question) => question.confirms_intention === true)
+        ) {
+          throw new Error("requested final confirmation must be answered explicitly");
+        }
+      } else {
+        if (!isDeepStrictEqual(event.source, { version: event.version, event_id: previous.id })) {
+          throw new Error("aligned must cite the preceding response in this version");
+        }
+        if (previous.type !== "response" || previous.confirms_intention !== true) {
+          throw new Error("aligned needs actual user confirmation");
+        }
       }
 
       const current = alignmentView({ state });
@@ -390,7 +396,7 @@ function applyEvent({
       throw new Error("unknown event type");
   }
 
-  // Later evidence makes the existing approval historical until the user confirms again.
+  // Later evidence reopens alignment until its authorization is re-established.
   if (event.type !== "aligned") {
     state.aligned = null;
   }

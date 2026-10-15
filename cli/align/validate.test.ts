@@ -64,6 +64,176 @@ function fixture(context: TestContext) {
   return { root, directory, path: join(directory, "v1.jsonl"), call, record, read, confirm };
 }
 
+function requestFixture({ context, prompt }: { context: TestContext; prompt: string | undefined }) {
+  const root = mkdtempSync(join(tmpdir(), "align-request-"));
+  context.after(() => rmSync(root, { recursive: true, force: true }));
+  const call = ({ payload, version }: { payload: unknown; version: number | undefined }) =>
+    run({ root, session: "request", operation: "write", payload, version });
+  call({
+    payload: { id: "request", type: "start", intention: "Rename the button to Save.", prompt },
+    version: undefined,
+  });
+  const record = (payload: unknown) => call({ payload, version: 1 });
+  const aligned = {
+    id: "aligned-request",
+    type: "aligned",
+    source: { version: 1, event_id: "request" },
+    reason: "The exact label is specified and no intention decision remains.",
+  };
+  return { root, call, record, aligned };
+}
+
+test("a clear request aligns without a fabricated confirmation and can start Plan", (context) => {
+  const { root, record, aligned } = requestFixture({
+    context,
+    prompt: "Rename the button to Save.",
+  });
+  const result = record(aligned);
+  assert.ok("type" in result);
+  assert.equal(result.type, "aligned");
+  assert.deepEqual(result.source, { version: 1, event_id: "request" });
+  assert.deepEqual(record(aligned), result);
+
+  execute({
+    command: "plan",
+    root,
+    session: "request",
+    operation: "write",
+    version: undefined,
+    offset: undefined,
+    payload: {
+      id: "plan",
+      type: "start",
+      alignment: { version: 1, event_id: "aligned-request" },
+      effort: "low",
+      effort_reason: "One specified label.",
+      content:
+        "Assert the Save label, observe the old label before implementation, then rename it.",
+    },
+  });
+});
+
+test("request-based alignment needs the original prompt and rationale", (context) => {
+  const missing = requestFixture({ context, prompt: undefined });
+  assert.throws(() => missing.record(missing.aligned), /original prompt and a reason/);
+  const clear = requestFixture({ context, prompt: "Rename the button to Save." });
+  assert.throws(
+    () => clear.record({ ...clear.aligned, reason: undefined }),
+    /original prompt and a reason/,
+  );
+  assert.throws(
+    () => clear.record({ ...clear.aligned, source: { version: 1, event_id: "missing" } }),
+    /preceding response/,
+  );
+});
+
+test("request-based alignment cannot skip unresolved clarification or requested confirmation", (context) => {
+  const pending = requestFixture({ context, prompt: "Rename the button to Save." });
+  pending.record({
+    id: "understanding",
+    type: "understanding",
+    ambiguities: [{ id: "target", value: "Which button?", status: "open" }],
+  });
+  pending.record({
+    id: "question",
+    type: "question",
+    question: "Which button?",
+    ambiguity_ids: ["target"],
+  });
+  assert.throws(() => pending.record(pending.aligned), /open ambiguities or questions/);
+
+  const confirmation = requestFixture({ context, prompt: "Rename the button to Save." });
+  confirmation.record({
+    id: "confirm",
+    type: "question",
+    question: "Confirm this intention?",
+    ambiguity_ids: [],
+    confirms_intention: true,
+  });
+  assert.throws(() => confirmation.record(confirmation.aligned), /answered explicitly/);
+  confirmation.record({ id: "declined", type: "response", question_id: "confirm", value: "No." });
+  assert.throws(() => confirmation.record(confirmation.aligned), /answered explicitly/);
+});
+
+test("resolved clarification can cite the request while later evidence reopens alignment", (context) => {
+  const { root, record, aligned } = requestFixture({
+    context,
+    prompt: "Rename the button to Save.",
+  });
+  const ambiguity = { id: "target", value: "Which button?", status: "open" };
+  record({ id: "understanding", type: "understanding", ambiguities: [ambiguity] });
+  record({
+    id: "question",
+    type: "question",
+    question: "Which button?",
+    ambiguity_ids: ["target"],
+  });
+  record({ id: "answer", type: "response", question_id: "question", value: "The submit button." });
+  record({
+    id: "resolved",
+    type: "understanding",
+    ambiguities: [{ ...ambiguity, status: "resolved", resolved_by: "answer" }],
+  });
+  record(aligned);
+  record({ id: "correction", type: "response", value: "Actually, rename it to Submit." });
+  assert.throws(() => record(aligned), /alignment reopened/);
+  assert.throws(
+    () =>
+      execute({
+        command: "plan",
+        root,
+        session: "request",
+        operation: "write",
+        version: undefined,
+        offset: undefined,
+        payload: {
+          id: "plan",
+          type: "start",
+          alignment: { version: 1, event_id: "aligned-request" },
+          effort: "low",
+          effort_reason: "Label change.",
+          content: "Rename the button.",
+        },
+      }),
+    /latest Align version must be aligned/,
+  );
+});
+
+test("a changed intention cannot reuse an older request as its authorization", (context) => {
+  const { call, record, aligned } = requestFixture({
+    context,
+    prompt: "Rename the button to Save.",
+  });
+  record(aligned);
+  record({ id: "correction", type: "response", value: "Rename it to Submit instead." });
+  call({
+    payload: {
+      id: "new-request",
+      type: "start",
+      intention: "Rename the button to Submit.",
+      reason: "User correction.",
+      source: { version: 1, event_id: "correction" },
+    },
+    version: undefined,
+  });
+  assert.throws(
+    () =>
+      call({
+        payload: { ...aligned, id: "aligned-v2", source: { version: 2, event_id: "new-request" } },
+        version: 2,
+      }),
+    /original prompt and a reason/,
+  );
+  assert.throws(
+    () =>
+      call({
+        payload: { ...aligned, id: "aligned-v2", source: { version: 1, event_id: "request" } },
+        version: 2,
+      }),
+    /preceding response/,
+  );
+});
+
 test("native TypeScript CLI accepts stdin JSON and returns one JSON result", (context) => {
   const { root } = fixture(context);
   const script = fileURLToPath(new URL("../index.ts", import.meta.url));
