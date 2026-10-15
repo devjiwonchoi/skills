@@ -1,6 +1,6 @@
 # Auto state
 
-Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align and Plan do not record automatically. Preserve existing standalone records during recovery.
+Read this when Auto starts or when writing records for an Auto-managed task. Auto initializes `status.json` and `progress.jsonl` and supplies their paths to downstream skills. Standalone Align, Plan, and execution stages do not emit workflow records or artifacts automatically. Preserve existing standalone records during recovery.
 
 ## Root and ownership
 
@@ -17,6 +17,8 @@ Read this when Auto starts or when writing records for an Auto-managed task. Aut
 ## Documents
 
 Store `status.json` and `progress.jsonl` in `.jwn/<session-id>/`. Follow [Align recording](../../plan/align/references/auto-mode.md) for `align/v<N>.jsonl` and [Plan recording](../../plan/plan/references/auto-mode.md) for `plan/v<N>.jsonl`. Use `null` until a record or its actual approval exists.
+
+Execute and its stages share `execute/v<N>.jsonl` through the [execution state contract](../../execute/execute/references/auto-mode.md). Reference detailed outcomes there from Auto progress rather than duplicating findings or coverage. Execution completion advances to Ship; only Ship can establish Auto's final readiness.
 
 Alignment references are `{ "path": "align/v<N>.jsonl", "event_id": "..." }`, with paths relative to `.jwn/<session-id>/`. `alignment` identifies the current version's `start` event. `approvedAlignment` identifies an actual `aligned` event. Keep historical approvals, but advance dependent work only when the latest record in the latest intention version is `aligned`. Plan references use the same `{ path, event_id }` shape: `plan` identifies the current `start` candidate and `approvedPlan` its actual `approved` event in `plan/v<N>.jsonl`. Approval precedes detailed review. Before execution, read the latest candidate and each reviewer's latest verdict: low needs none, medium one, high three distinct clear reviewers; any `changes_requested` blocks execution. Confirm the candidate's pinned Align is still current and aligned. Preserve historical approval while a blocker is unresolved. Legacy Markdown plan references remain strings such as `plan/PLAN.v<N>.md`; read them normally and preserve their actual approvals without implicit migration. Preserve existing legacy paths until explicitly migrated. Preserve legacy Markdown agreement references and their approvals when recovering existing tasks until explicitly migrated.
 

@@ -3,8 +3,8 @@ import { isDeepStrictEqual } from "node:util";
 import * as z from "zod";
 
 import * as impl from "./impl/schema.ts";
-import { create as implementation } from "./impl/state.ts";
-import { apply as implement } from "./impl/validate.ts";
+import { create as implementation, next as implementationNext } from "./impl/state.ts";
+import { apply as implement, begin } from "./impl/validate.ts";
 import * as review from "./review/schema.ts";
 import { create as reviewState, context, reconcile } from "./review/state.ts";
 import { apply as reviewEvent } from "./review/validate.ts";
@@ -33,9 +33,39 @@ const start = base
   .describe(
     "Initialize this Auto task once. Pin its authorized goal and available approved plan reference. Use null revision before initial implementation, or the current snapshot when Auto enters existing work. A changed approved plan starts a new version with a reason; correction rounds stay in this version. The caller checks real authorization.",
   );
-const requests = [start] as const;
+const iteration = base
+  .extend({
+    type: z.literal("iteration"),
+    round: z.int().positive(),
+    findings: strings,
+    reason: text.optional(),
+  })
+  .describe(
+    "Execute records the next consecutive correction round and its unresolved P0–P2 finding IDs before implementation. Restart completed execution only for newly authorized work with a reason. Resume an interrupted round instead of starting another.",
+  );
+const blocked = base
+  .extend({ type: z.literal("blocked"), reason: text })
+  .describe(
+    "Record an approval boundary, stalled iteration, denied operation or other blocker before yielding.",
+  );
+const resumed = base
+  .extend({ type: z.literal("resumed"), reason: text })
+  .describe(
+    "Record the actual resolution of a recorded blocker. This does not turn missing or failed evidence into success.",
+  );
+const completed = base
+  .extend({ type: z.literal("completed") })
+  .describe(
+    "Execute records completion only after next reports complete and the caller confirms that the actual working tree and approved scope still match. Execution completion does not complete Auto or authorize Ship.",
+  );
+
+const requests = [start, iteration, blocked, resumed, completed] as const;
 const events = [
   start.extend({ ...metadata, session_id: text, schema_version: z.literal(1) }),
+  iteration.extend({ ...metadata }),
+  blocked.extend({ ...metadata }),
+  resumed.extend({ ...metadata }),
+  completed.extend({ ...metadata }),
 ] as const;
 const request = z.discriminatedUnion("type", requests);
 const event = z.discriminatedUnion("type", [...events, ...impl.events, ...review.events]);
@@ -60,9 +90,94 @@ function requestFields({ event }: { event: Event }) {
 type State = {
   impl: ReturnType<typeof implementation>;
   review: ReturnType<typeof reviewState>;
+  round: number;
+  blocker: string | null;
 };
+// Execute only coordinates stage readiness and correction rounds.
+function next({ state }: { state: State }) {
+  const review = context({ state: state.review });
+  const common = {
+    revision: state.impl.revision,
+    round: state.round,
+    implementing: state.impl.implementing,
+    findings: review.findings,
+    coverage: review.coverage,
+    verification: state.impl.verification,
+  };
+  if (state.blocker) {
+    return { ...common, action: "blocked", reason: state.blocker };
+  }
+  const impl = implementationNext({ state: state.impl });
+  if (impl.action === "impl" && impl.step === "quick-impl") {
+    return { ...common, ...impl, unresolvedP0P2: review.unresolvedP0P2 };
+  }
+  if (review.pass?.outcome === "incomplete") {
+    return { ...common, action: "blocked", reason: review.pass.gaps.join("\n") };
+  }
+  if (impl.action !== "complete") {
+    return { ...common, ...impl };
+  }
+  if (review.pass && review.unresolvedP0P2.length > 0) {
+    return { ...common, action: "impl", step: "quick-impl", unresolvedP0P2: review.unresolvedP0P2 };
+  }
+  if (review.sections.length > 0 || !review.pass) {
+    return { ...common, action: "review", sections: review.sections };
+  }
+  return { ...common, action: "complete" };
+}
+function executionEvent({ state, event }: { state: State; event: Event }) {
+  switch (event.type) {
+    case "iteration": {
+      const work = next({ state });
+      if (state.impl.implementing) {
+        throw new Error("resume the current implementation iteration");
+      }
+      const correction = work.action === "impl" && "step" in work && work.step === "quick-impl";
+      if (!correction && !(work.action === "complete" && event.reason)) {
+        throw new Error(
+          "iteration requires implementation work from next or authorized follow-up with a reason",
+        );
+      }
+      if (event.round !== state.round + 1) {
+        throw new Error("iteration rounds must be consecutive");
+      }
+      const pending = context({ state: state.review })
+        .unresolvedP0P2.map((finding) => finding.id)
+        .sort();
+      if (!isDeepStrictEqual([...event.findings].sort(), pending)) {
+        throw new Error("iteration must retain all unresolved P0–P2 findings");
+      }
+      state.round = event.round;
+      begin({ state: state.impl });
+      break;
+    }
+    case "blocked": {
+      state.blocker = event.reason;
+      break;
+    }
+    case "resumed": {
+      if (!state.blocker) {
+        throw new Error("no recorded blocker to resume");
+      }
+      state.blocker = null;
+      break;
+    }
+    case "completed": {
+      if (next({ state }).action !== "complete") {
+        throw new Error("execution criteria are not complete");
+      }
+      break;
+    }
+    case "start":
+      throw new Error("start is only allowed at the version header");
+  }
+}
+
 // A shared lock and replay preserve ordering across different stage commands.
 function apply({ state, event }: { state: State; event: Event }) {
+  if (state.blocker && event.type !== "resumed") {
+    throw new Error("resolve the recorded blocker before advancing");
+  }
   switch (event.type) {
     case "impl_started":
     case "implemented":
@@ -85,7 +200,7 @@ function apply({ state, event }: { state: State; event: Event }) {
         implementing: state.impl.implementing,
       });
     default:
-      throw new Error("start is only allowed at the version header");
+      return executionEvent({ state, event });
   }
 }
 function startVersion({
@@ -102,6 +217,8 @@ function startVersion({
       reason: header.reason,
       previous: priorState?.review ?? null,
     }),
+    round: 0,
+    blocker: null,
   };
 }
 
@@ -223,5 +340,13 @@ export default {
   validate,
   checkHistory,
   directory: "execute",
-  next: undefined,
+  next: ({
+    records,
+    session,
+    version,
+  }: {
+    records: unknown[][];
+    session: string;
+    version: number | undefined;
+  }) => next({ state: readState({ records, session, version }) }),
 };

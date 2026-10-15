@@ -56,7 +56,7 @@ function fixture({ context, revision }: { context: TestContext; revision: string
     const result = {
       state: {
         ...value.impl,
-        round: 0,
+        round: value.round,
         unresolvedP0P2: undefined,
         sections: undefined,
         ...implementation({ state: value.impl }),
@@ -174,6 +174,561 @@ function owner(value: unknown) {
   }
   return "execute";
 }
+
+function loopFixture(input: { context: TestContext; revision: string | null }) {
+  const task = fixture(input);
+  return {
+    ...task,
+    state: () => {
+      const result = task.invoke({
+        operation: "next",
+        payload: undefined,
+        version: undefined,
+        offset: undefined,
+      });
+      assert.ok("state" in result);
+      return result.state as ReturnType<typeof task.state>;
+    },
+  };
+}
+
+test("Execute groups deduplicated findings and retains unaffected coverage after correction", (context) => {
+  const task = loopFixture({ context, revision: null });
+  assert.equal(task.state().step, "quick-impl");
+  task.record({ type: "iteration", round: 1, findings: [] });
+  task.implemented("r1", false);
+  assert.equal(task.state().step, "verify");
+  task.verified("r1");
+  assert.deepEqual(
+    task.state().sections?.map((section) => section.id),
+    ["input", "install"],
+  );
+  task.pass([task.finding], ["input", "install"]);
+  assert.equal(task.state().action, "impl");
+  assert.equal(task.state().step, "quick-impl");
+  assert.deepEqual(
+    task.state().unresolvedP0P2?.map((finding) => finding.id),
+    ["F1"],
+  );
+  assert.equal(task.state().findings.length, 1);
+  assert.deepEqual(task.state().findings[0]?.evidence, ["case-a.json"]);
+
+  task.record({ type: "iteration", round: 2, findings: ["F1"] });
+  task.implemented("r2", true);
+  assert.equal(task.state().verification, null);
+  assert.equal(task.state().findings[0]?.status, "open");
+  task.verified("r2");
+  assert.deepEqual(
+    task.state().sections?.map((section) => section.id),
+    ["input"],
+  );
+  const retained = task.state().coverage.find((item) => item.section.id === "install");
+  assert.equal(retained?.reviewedRevision, "r1");
+  assert.deepEqual(retained?.evidence, ["review.json", "metadata.json"]);
+  assert.ok(retained?.reason);
+  task.pass([{ ...task.finding, status: "resolved", evidence: ["fix-r2.json"] }], ["input"]);
+  assert.equal(task.state().action, "complete");
+  task.record({ type: "completed" });
+});
+
+test("One direct pass returns P0–P2 for correction immediately, retaining uncovered scope", (context) => {
+  for (const priority of ["P0", "P1", "P2"]) {
+    const task = loopFixture({ context, revision: "r1" });
+    task.verified("r1");
+    task.pass([{ ...task.finding, priority }], ["input"]);
+    assert.equal(task.state().action, "impl");
+    assert.equal(task.state().step, "quick-impl");
+    assert.equal(
+      task.state().coverage.find((item) => item.section.id === "install")?.reviewedRevision,
+      null,
+    );
+    assert.throws(() => task.record({ type: "completed" }), /not complete/);
+    assert.deepEqual(
+      task.state().unresolvedP0P2?.map((finding) => finding.id),
+      ["F1"],
+    );
+    task.record({ type: "iteration", round: 1, findings: ["F1"] });
+    task.implemented("r2", false);
+    task.verified("r2");
+    task.pass([{ ...task.finding, priority, status: "resolved" }], ["input"]);
+    assert.equal(task.state().action, "review");
+    assert.deepEqual(
+      task.state().sections?.map((section) => section.id),
+      ["install"],
+    );
+    task.pass([], ["install"]);
+    assert.equal(task.state().action, "complete");
+  }
+});
+
+test("Repeated evidence updates a retained finding without requiring another discovery pass", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([task.finding], ["input", "install"]);
+  task.pass([{ ...task.finding, evidence: ["case-b.json"] }], ["input"]);
+  assert.equal(task.state().action, "impl");
+  assert.equal(task.state().findings.length, 1);
+  assert.deepEqual(task.state().findings[0]?.evidence, ["case-a.json", "case-b.json"]);
+});
+
+test("Exact retries survive revision advance; stale new events and conflicting retries do not append", (context) => {
+  const task = loopFixture({ context, revision: null });
+  task.implemented("r1", false);
+  const verification = task.verified("r1");
+  task.pass([], ["input", "install"]);
+  task.implemented("r2", true);
+  const before = readFileSync(task.path, "utf8");
+  assert.deepEqual(
+    task.invoke({
+      operation: "write",
+      payload: verification.payload,
+      version: 1,
+      offset: undefined,
+    }),
+    verification.result,
+  );
+  assert.equal(readFileSync(task.path, "utf8"), before);
+  assert.throws(
+    () =>
+      task.record({
+        type: "verified",
+        revision: "r1",
+        outcome: "passed",
+        evidence: ["old.json"],
+        gaps: [],
+      }),
+    /reconciliation|previous_revision/,
+  );
+  assert.throws(
+    () =>
+      task.invoke({
+        operation: "write",
+        payload: { ...verification.payload, evidence: ["different.json"] },
+        version: 1,
+        offset: undefined,
+      }),
+    /conflicting/,
+  );
+  assert.throws(
+    () =>
+      task.record({
+        type: "review_pass",
+        revision: "r1",
+        reviewer: "reviewer",
+        outcome: "completed",
+        reviewed: ["input"],
+        findings: [],
+        evidence: ["review.json"],
+        gaps: [],
+      }),
+    /current completed revision/,
+  );
+  assert.equal(readFileSync(task.path, "utf8"), before);
+});
+
+test("Revision reconciliation is explicit, complete, and cannot retain uncovered scope", (context) => {
+  const task = loopFixture({ context, revision: null });
+  task.record({ type: "impl_started" });
+  const before = readFileSync(task.path, "utf8");
+  for (const coverage of [[], task.reconciliation(false).slice(0, 1), task.reconciliation(true)]) {
+    assert.throws(
+      () => task.record({ type: "implemented", previous_revision: null, revision: "r1", coverage }),
+      /reconciliation|retain uncovered/,
+    );
+  }
+  assert.equal(readFileSync(task.path, "utf8"), before);
+  task.record({
+    type: "implemented",
+    previous_revision: null,
+    revision: "r1",
+    coverage: task.reconciliation(false),
+  });
+  task.verified("r1");
+  task.pass([], ["input", "install"]);
+  assert.equal(task.state().action, "complete");
+  task.record({
+    type: "verified",
+    revision: "r2",
+    previous_revision: "r1",
+    coverage: task.reconciliation(true),
+    outcome: "passed",
+    evidence: ["checks-r2.json"],
+    gaps: [],
+  });
+  assert.equal(task.state().action, "review");
+  assert.deepEqual(
+    task.state().sections?.map((section) => section.id),
+    ["input"],
+  );
+});
+
+test("Known findings cannot be duplicated, silently closed, or repurposed", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([task.finding], ["input", "install"]);
+  const before = readFileSync(task.path, "utf8");
+  assert.throws(() => task.pass([{ ...task.finding, id: "F2" }], ["input"]), /reuse the existing/);
+  assert.throws(
+    () => task.pass([{ ...task.finding, issue: "Different failure" }], ["input"]),
+    /retain its issue/,
+  );
+  assert.throws(
+    () => task.pass([{ ...task.finding, status: "resolved" }], ["install"]),
+    /require review of their section/,
+  );
+  assert.throws(() => task.record({ type: "completed" }), /not complete/);
+  assert.equal(readFileSync(task.path, "utf8"), before);
+  task.pass([], ["input"]);
+  assert.equal(task.state().findings[0]?.status, "open");
+  assert.equal(task.state().step, "quick-impl");
+  task.pass(
+    [{ ...task.finding, status: "dismissed", evidence: ["counterexample.json"] }],
+    ["input"],
+  );
+  assert.equal(task.state().action, "complete");
+  task.pass([task.finding], ["input"]);
+  assert.equal(task.state().findings.length, 1);
+  assert.equal(task.state().action, "impl");
+});
+
+test("A distinct failure at the same section is retained as a separate finding", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass(
+    [task.finding, { ...task.finding, id: "F2", issue: "Installer retry loses rollback state" }],
+    ["input", "install"],
+  );
+  assert.equal(task.state().action, "impl");
+  assert.equal(task.state().findings.length, 2);
+  assert.throws(() => task.record({ type: "iteration", round: 1, findings: ["F1"] }), /retain all/);
+  task.record({ type: "iteration", round: 1, findings: ["F1", "F2"] });
+});
+
+test("Missing verification evidence, review gaps and interrupted implementation stay incomplete", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  assert.throws(
+    () =>
+      task.record({ type: "verified", revision: "r1", outcome: "passed", evidence: [], gaps: [] }),
+    /passed verification/,
+  );
+  task.record({
+    type: "verified",
+    revision: "r1",
+    outcome: "incomplete",
+    evidence: [],
+    gaps: ["Runtime check unavailable"],
+  });
+  assert.equal(task.state().action, "blocked");
+  task.verified("r1");
+  assert.throws(
+    () =>
+      task.record({
+        type: "review_pass",
+        revision: "r1",
+        reviewer: "reviewer",
+        outcome: "incomplete",
+        reviewed: ["input"],
+        findings: [],
+        evidence: [],
+        gaps: ["Denied diff access"],
+      }),
+    /incomplete review/,
+  );
+  task.record({
+    type: "review_pass",
+    revision: "r1",
+    reviewer: "reviewer",
+    outcome: "incomplete",
+    reviewed: [],
+    findings: [],
+    evidence: [],
+    gaps: ["Denied diff access"],
+  });
+  assert.equal(task.state().action, "blocked");
+  assert.ok(task.state().coverage.every((item) => item.reviewedRevision === null));
+  task.pass([], ["input", "install"]);
+  assert.equal(task.state().action, "complete");
+  task.record({ type: "impl_started" });
+  assert.equal(task.state().step, "quick-impl");
+  assert.throws(() => task.verified("r1"), /implementation outcome/);
+});
+
+test("P3 findings do not restart implementation, but uncovered scope still needs review", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([{ ...task.finding, priority: "P3" }], ["input"]);
+  assert.equal(task.state().action, "review");
+  assert.deepEqual(
+    task.state().sections?.map((section) => section.id),
+    ["install"],
+  );
+  task.pass([], ["install"]);
+  assert.equal(task.state().action, "complete");
+  task.record({
+    type: "scope",
+    revision: "r1",
+    additions: [
+      { id: "telemetry", path: "src/telemetry.ts", behavior: "Telemetry during failure" },
+    ],
+    reopen: ["input"],
+    reason: "Discovery exposes an unreviewed interaction",
+  });
+  assert.equal(task.state().action, "review");
+  assert.deepEqual(
+    task.state().sections?.map((section) => section.id),
+    ["input", "telemetry"],
+  );
+});
+
+test("Blocker resolution preserves missing evidence and invalid transitions do not write", (context) => {
+  const task = loopFixture({ context, revision: null });
+  task.record({ type: "blocked", reason: "Plan boundary needs a decision" });
+  assert.equal(task.state().action, "blocked");
+  assert.throws(() => task.record({ type: "impl_started" }), /resolve the recorded blocker/);
+  task.record({ type: "resumed", reason: "The user approved the bounded correction" });
+  assert.equal(task.state().step, "quick-impl");
+  assert.throws(
+    () =>
+      task.record({
+        type: "implemented",
+        previous_revision: null,
+        revision: "r1",
+        coverage: task.reconciliation(false),
+      }),
+    /implementation start/,
+  );
+  task.record({ type: "iteration", round: 1, findings: [] });
+  task.implemented("r1", false);
+  assert.throws(
+    () => task.record({ type: "iteration", round: 2, findings: [] }),
+    /implementation work from next/,
+  );
+  assert.throws(
+    () => task.invoke({ operation: "next", payload: undefined, version: undefined, offset: 0 }),
+    /only supported by read/,
+  );
+});
+
+test("next and read reject damaged or semantically tampered history", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  const valid = readFileSync(task.path, "utf8");
+  appendFileSync(task.path, '{"type":');
+  assert.throws(() => task.state(), /incomplete trailing/);
+  assert.throws(
+    () =>
+      task.invoke({
+        operation: "read",
+        payload: undefined,
+        version: 1,
+        offset: Buffer.byteLength(valid),
+      }),
+    /incomplete trailing/,
+  );
+  writeFileSync(task.path, valid);
+  const tampered = valid
+    .trimEnd()
+    .split("\n")
+    .map((line) => JSON.parse(line) as Record<string, unknown>);
+  tampered[1]!.seq = 99;
+  writeFileSync(task.path, tampered.map((event) => JSON.stringify(event)).join("\n") + "\n");
+  assert.throws(() => task.state(), /sequence gap/);
+  assert.throws(() => task.verified("r1"), /sequence gap/);
+});
+
+test("Plan successors create versions explicitly; old exact retries remain safe and next rejects stale versions", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  const result = task.verified("r1");
+  assert.throws(
+    () =>
+      task.record({
+        type: "start",
+        goal: "Improve installation",
+        plan: "plan/v1.jsonl#approved-1",
+        revision: null,
+        scope: [{ id: "input", path: "src/input.ts", behavior: "Input validation" }],
+        reason: "Reset",
+      }),
+    /changed approved plan/,
+  );
+  const successor = task.record({
+    type: "start",
+    goal: "Improve installation",
+    plan: "plan/v2.jsonl#approved-2",
+    revision: null,
+    scope: [
+      { id: "input", path: "src/input.ts", behavior: "Input validation" },
+      { id: "install", path: "src/install.ts", behavior: "Installation and rollback" },
+    ],
+    reason: "Approved approach changed",
+  });
+  assert.ok("version" in successor.result);
+  assert.equal(successor.result.version, 2);
+  assert.equal(task.state().step, "quick-impl");
+  assert.throws(
+    () => task.invoke({ operation: "next", payload: undefined, version: 1, offset: undefined }),
+    /stale version/,
+  );
+  assert.deepEqual(
+    task.invoke({ operation: "write", payload: result.payload, version: 1, offset: undefined }),
+    result.result,
+  );
+});
+
+test("A deliberate return to earlier content requires a current predecessor and fresh evidence", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([], ["input", "install"]);
+  task.implemented("r2", false);
+  task.verified("r2");
+  const before = readFileSync(task.path, "utf8");
+  assert.throws(
+    () =>
+      task.record({
+        type: "verified",
+        previous_revision: "r1",
+        revision: "r3",
+        coverage: task.reconciliation(false),
+        outcome: "passed",
+        evidence: ["stale-check.json"],
+        gaps: [],
+      }),
+    /current previous_revision/,
+  );
+  assert.equal(readFileSync(task.path, "utf8"), before);
+  task.implemented("r1", false);
+  assert.equal(task.state().revision, "r1");
+  assert.equal(task.state().step, "verify");
+  assert.equal(task.state().verification, null);
+  assert.ok(task.state().coverage.every((item) => item.reviewedRevision === null));
+});
+
+test("A new revision with all coverage retained still gives the next direct review a scope", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([], ["input", "install"]);
+  task.record({
+    type: "verified",
+    revision: "r2",
+    previous_revision: "r1",
+    outcome: "passed",
+    evidence: ["checks-r2.json"],
+    gaps: [],
+    coverage: [
+      { section_id: "input", retain: true, reason: "Input behavior and dependencies unchanged" },
+      {
+        section_id: "install",
+        retain: true,
+        reason: "Installation behavior and dependencies unchanged",
+      },
+    ],
+  });
+  assert.equal(task.state().action, "review");
+  assert.deepEqual(
+    task.state().sections?.map((section) => section.id),
+    ["input", "install"],
+  );
+  task.pass([], ["input", "install"]);
+  assert.equal(task.state().action, "complete");
+});
+
+test("Plan successors retain unresolved findings and evidence, reopening all required scope", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([task.finding], ["input", "install"]);
+  const before = readFileSync(task.path, "utf8");
+  const successor = {
+    type: "start" as const,
+    goal: "Improve installation",
+    plan: "plan/v2.jsonl#approved-2",
+    revision: "r2",
+    scope: [
+      { id: "input", path: "src/input.ts", behavior: "Input validation" },
+      { id: "install", path: "src/install.ts", behavior: "Installation and rollback" },
+    ],
+    reason: "Approved approach changed",
+  };
+  assert.throws(
+    () => task.record({ ...successor, scope: successor.scope.slice(1) }),
+    /retain existing review sections/,
+  );
+  assert.equal(readFileSync(task.path, "utf8"), before);
+  task.record(successor);
+  assert.deepEqual(task.state().findings, [task.finding]);
+  assert.ok(
+    task
+      .state()
+      .coverage.every((item) => item.reviewedRevision === null && item.evidence.length > 0),
+  );
+  const write = (payload: unknown) =>
+    task.invoke({ operation: "write", payload, version: 2, offset: undefined });
+  write({
+    id: "checks-2",
+    type: "verified",
+    revision: "r2",
+    outcome: "passed",
+    evidence: ["checks-r2.json"],
+    gaps: [],
+  });
+  write({
+    id: "review-2",
+    type: "review_pass",
+    revision: "r2",
+    reviewer: "current-agent",
+    outcome: "completed",
+    reviewed: ["input", "install"],
+    findings: [],
+    evidence: ["review-2.json"],
+    gaps: [],
+  });
+  assert.equal(task.state().step, "quick-impl");
+  assert.deepEqual(
+    task.state().unresolvedP0P2?.map((item) => item.id),
+    ["F1"],
+  );
+  assert.throws(() => write({ id: "done-too-early", type: "completed" }), /not complete/);
+  write({
+    id: "resolved-2",
+    type: "review_pass",
+    revision: "r2",
+    reviewer: "current-agent",
+    outcome: "completed",
+    reviewed: ["input"],
+    findings: [{ ...task.finding, status: "resolved", evidence: ["fixed-r2.json"] }],
+    evidence: ["review-fixed.json"],
+    gaps: [],
+  });
+  assert.equal(task.state().action, "complete");
+  assert.deepEqual(task.state().findings[0]?.evidence, ["case-a.json", "fixed-r2.json"]);
+});
+
+test("Authorized follow-up resumes completed execution, and interrupted rounds cannot multiply", (context) => {
+  const task = loopFixture({ context, revision: "r1" });
+  task.verified("r1");
+  task.pass([], ["input", "install"]);
+  task.record({ type: "completed" });
+  assert.throws(
+    () => task.record({ type: "iteration", round: 1, findings: [] }),
+    /follow-up with a reason/,
+  );
+  task.record({
+    type: "iteration",
+    round: 1,
+    findings: [],
+    reason: "User authorized delivery fix-up",
+  });
+  assert.equal(task.state().implementing, true);
+  const before = readFileSync(task.path, "utf8");
+  assert.throws(
+    () => task.record({ type: "iteration", round: 2, findings: [] }),
+    /resume the current/,
+  );
+  assert.equal(readFileSync(task.path, "utf8"), before);
+  task.implemented("r2", false);
+  task.verified("r2");
+  task.pass([], ["input", "install"]);
+  assert.equal(task.state().action, "complete");
+});
 
 test("Journal retries retain original bytes across stage revision advances", (context) => {
   const task = fixture({ context, revision: null });
