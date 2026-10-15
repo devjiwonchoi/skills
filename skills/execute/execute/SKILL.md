@@ -9,12 +9,12 @@ description: Use when carrying development implementation through verification a
 
 ## Steps
 
-When running under Auto, read [execution recording](references/auto-mode.md) and initialize the execution journal before working stages record their outcomes.
-
-When Auto supplies a task directory, follow its [state contract](../../auto/references/state.md) throughout implementation, verification, and review. Record meaningful work starts and outcomes before advancing, and the current state before yielding.
+When running under Auto, follow [execution recording](references/auto-mode.md). Otherwise, keep working context in the session without emitting workflow records or artifacts.
 
 1. Read the authorized request, agreed intent, constraints, success criteria, and available plan. Without a plan, outline the approach and checks; wait for any required approval before implementation.
-2. Make focused changes within approved intent and plan limits. Compare cumulative changes with the last approved plan, or the original request and decisions; show the diff, reason, and impact and obtain approval before material changes or work beyond delegated limits.
-3. Verify every success criterion at the current revision, distinguishing inspection, tests, builds, runtime, and CI evidence. Missing evidence remains unresolved.
-4. Follow [Review](../review/SKILL.md) for the current revision.
-5. If iteration yields no new evidence or progress, report the blocker and needed decision. Otherwise report the completed revision, evidence, and remaining delivery work.
+2. Resume at the first unfinished stage. Begin a new iteration only for initial work, unresolved findings, or newly authorized follow-up work after completion. Follow [Impl](../impl/SKILL.md) for initial work or supported findings. Stop if implementation or verification remains incomplete.
+3. Follow [Review](../review/SKILL.md) once for the current revision. Pass retained findings and coverage. Stop if review remains incomplete.
+4. Repeat from step 2 while validated P0–P2 findings remain unresolved. Review the fix delta and affected behavior after verification.
+   - When no P0–P2 findings remain but required coverage is missing, repeat step 3 for uncovered or reopened sections only.
+   - Stop and report a blocker if repeated rounds make no progress.
+5. Confirm current verification passed, required review coverage is complete, no validated P0–P2 findings remain unresolved, and the working tree matches the checked revision. Report completion, the final revision, evidence, and remaining delivery work.

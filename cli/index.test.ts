@@ -32,7 +32,14 @@ test("shared entry point and Align expose their own help without reading stdin",
       assert.ok(JSON.parse(result.stdout).inputSchema);
     } else {
       assert.match(result.stdout, /Usage:/);
-      assert.match(result.stdout, args[0] !== "--help" ? /<read\|write>/ : /<command> <args>/);
+      assert.match(
+        result.stdout,
+        args[0] === "execute"
+          ? /<read\|write\|next>/
+          : args[0] !== "--help"
+            ? /<read\|write>/
+            : /<command> <args>/,
+      );
     }
   }
 });
@@ -64,6 +71,100 @@ test("invalid commands and Align arguments fail before creating alignment state"
     assert.match(result.stderr, /jwn:/);
     assert.equal(existsSync(join(root, ".jwn")), false);
   }
+});
+
+test("Execute's public commands record and recover work without reading stdin for next", (context) => {
+  const root = mkdtempSync(join(tmpdir(), "jwn-execute-cli-"));
+  context.after(() => rmSync(root, { recursive: true, force: true }));
+  const invoke = ({
+    command,
+    operation,
+    payload,
+    args,
+  }: {
+    command: string;
+    operation: string;
+    payload: unknown;
+    args: string[];
+  }) => {
+    const result = spawnSync(
+      process.execPath,
+      [script, command, operation, "--root", root, "--session", "session", ...args],
+      {
+        encoding: "utf8",
+        input: payload === undefined ? "this is not JSON" : JSON.stringify(payload),
+        timeout: 5000,
+      },
+    );
+    assert.equal(result.status, 0, result.stderr);
+    return JSON.parse(result.stdout);
+  };
+  invoke({
+    command: "execute",
+    operation: "write",
+    payload: {
+      id: "start",
+      type: "start",
+      goal: "Inspect current behavior",
+      plan: null,
+      revision: "r1",
+      scope: [{ id: "input", path: "input.ts", behavior: "Input validation" }],
+    },
+    args: [],
+  });
+  assert.equal(
+    invoke({ command: "execute", operation: "next", payload: undefined, args: [] }).state.step,
+    "verify",
+  );
+  invoke({
+    command: "impl",
+    operation: "write",
+    payload: {
+      id: "checks",
+      type: "verified",
+      revision: "r1",
+      outcome: "passed",
+      evidence: ["checks.json"],
+      gaps: [],
+    },
+    args: ["--version", "1"],
+  });
+  assert.equal(
+    invoke({ command: "execute", operation: "next", payload: undefined, args: ["--version", "1"] })
+      .state.action,
+    "review",
+  );
+  invoke({
+    command: "review",
+    operation: "write",
+    payload: {
+      id: "review",
+      type: "review_pass",
+      revision: "r1",
+      reviewer: "current-agent",
+      outcome: "completed",
+      reviewed: ["input"],
+      findings: [],
+      evidence: ["review.json"],
+      gaps: [],
+    },
+    args: ["--version", "1"],
+  });
+  assert.equal(
+    invoke({ command: "execute", operation: "next", payload: undefined, args: [] }).state.action,
+    "complete",
+  );
+  const read = invoke({ command: "execute", operation: "read", payload: undefined, args: [] });
+  assert.equal(read.records.length, 3);
+  assert.equal(
+    invoke({
+      command: "execute",
+      operation: "read",
+      payload: undefined,
+      args: ["--version", "1", "--offset", String(read.nextOffset)],
+    }).records.length,
+    0,
+  );
 });
 
 test("the shared CLI records, finalizes and recovers an alignment", (context) => {
