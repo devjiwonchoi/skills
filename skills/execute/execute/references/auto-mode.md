@@ -14,6 +14,7 @@ All commands share `.jwn/<session-id>/execute/v<N>.jsonl` and its lock. Each com
 | ---------- | ----------------------------- |
 | Execute    | `start`                       |
 | Quick-impl | `impl_started`, `implemented` |
+| Verify     | `verified`                    |
 
 Fresh IDs identify writes. Retry a lost response with the same ID, payload and version. Preserve damaged logs and stop dependent work on recording failure. Read from offset 0 after context loss. Retain the returned version and `nextOffset` for incremental reads.
 

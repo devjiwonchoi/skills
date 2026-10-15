@@ -43,5 +43,8 @@ export function next({ state }: { state: State }) {
   if (!state.verification) {
     return { action: "impl", step: "verify" };
   }
+  if (state.verification.outcome !== "passed") {
+    return { action: "blocked", reason: state.verification.gaps.join("\n") };
+  }
   return { action: "complete" };
 }
