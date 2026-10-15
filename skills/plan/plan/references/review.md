@@ -6,6 +6,8 @@
 
 After acceptance from existing instructions or user approval, give reviewers the current candidate, preview, verification methods, and baseline evidence. Trace concrete inputs through normal, failure, and retry cases. Check that the proposed checks can establish the success criteria and that an observed baseline failure has the expected cause. Each finding names the input, failing code or rule, and consequence.
 
+Check that the traced entrypoints and callers match the affected execution paths. A passing check on one path does not establish another path's behavior.
+
 Group supported corrections into a revised plan and return to Plan to record its acceptance or obtain required approval before re-reviewing affected behavior. Bring blockers or unresolved design choices to the user immediately, without waiting for the whole review to finish. Reuse settled choices within existing authorization. Return changes to approved decisions to the user before execution.
 
 Review the proposed code shape against repository conventions. Allow implementation refinements within the plan's adaptation boundaries. Return changes to specifically approved structure, conventions, or behavior to the user.
