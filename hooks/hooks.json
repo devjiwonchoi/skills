@@ -11,17 +11,6 @@
           }
         ]
       }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo \"When the user corrects, rejects, or expresses frustration with your previous work, follow remember.\"",
-            "timeout": 5
-          }
-        ]
-      }
     ]
   }
 }

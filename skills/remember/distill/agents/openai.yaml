@@ -1,4 +1,0 @@
-interface:
-  display_name: "Distill"
-  short_description: "Extract reusable knowledge and lessons"
-  default_prompt: "Use $distill to extract what could help future work or prevent repeated mistakes from this context."

@@ -1,6 +1,0 @@
-interface:
-  display_name: "Remember"
-  short_description: "Place approved lessons in native memory"
-  default_prompt: "Use $remember to propose durable lessons for future work and save the changes I approve."
-policy:
-  allow_implicit_invocation: true
