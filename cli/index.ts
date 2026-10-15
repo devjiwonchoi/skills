@@ -4,6 +4,8 @@ import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 
 import align from "./align/index.ts";
+import execute, { validate, checkHistory } from "./execute.ts";
+import * as impl from "./impl/schema.ts";
 import { read, versions, withSessionLock, write } from "./jsonl.ts";
 import plan from "./plan/index.ts";
 
@@ -23,22 +25,33 @@ function command<T extends { id: string; type: string }>({
   schema,
   parseRequest,
   validate,
+  next,
+  directory,
+  checkHistory,
 }: {
   schema: unknown;
   parseRequest: (input: { value: unknown }) => T;
   validate: (input: Omit<Input, "request"> & { request: T }) => Result;
+  next: ((input: Omit<Input, "request">) => unknown) | undefined;
+  directory: string | undefined;
+  checkHistory: ((input: Omit<Input, "request">) => void) | undefined;
 }) {
   return {
     schema,
     parseRequest,
     validate: ({ request, ...input }: Input) =>
       validate({ ...input, request: parseRequest({ value: request }) }),
+    next,
+    directory,
+    checkHistory,
   };
 }
 
 const commands = new Map<string, ReturnType<typeof command>>([
-  ["align", command(align)],
-  ["plan", command(plan)],
+  ["align", command({ ...align, next: undefined, directory: undefined, checkHistory: undefined })],
+  ["plan", command({ ...plan, next: undefined, directory: undefined, checkHistory: undefined })],
+  ["execute", command(execute)],
+  ["impl", command({ ...impl, validate, checkHistory, directory: "execute", next: undefined })],
 ]);
 
 export function run({
@@ -53,7 +66,7 @@ export function run({
   command: string;
   root: string;
   session: string;
-  operation: "read" | "write";
+  operation: "read" | "write" | "next";
   version: number | undefined;
   offset: number | undefined;
   payload: unknown;
@@ -71,19 +84,35 @@ export function run({
     throw new Error("invalid version");
   }
 
-  if (operation === "write" && offset !== undefined) {
+  if (operation !== "read" && offset !== undefined) {
     throw new Error("--offset is only supported by read");
   }
 
+  if (operation === "next" && !skill.next) {
+    throw new Error(`${command} does not support next`);
+  }
+
   const request = operation === "write" ? skill.parseRequest({ value: payload }) : null;
-  const directory = join(resolve(root), ".jwn", session, command);
+  const directory = join(resolve(root), ".jwn", session, skill.directory ?? command);
 
   return withSessionLock({
     directory,
     create: request?.type === "start",
     task: () => {
       const files = versions({ directory });
+      if (operation === "next") {
+        const records = files.map(
+          (name) => read({ path: join(directory, name), offset: 0 }).records,
+        );
+        return { version: files.length, state: skill.next!({ records, session, version }) };
+      }
       if (!request) {
+        if (skill.checkHistory) {
+          const records = files.map(
+            (name) => read({ path: join(directory, name), offset: 0 }).records,
+          );
+          skill.checkHistory({ records, session, version: undefined });
+        }
         const selected = version ?? files.length;
         const file = files[selected - 1];
         if (file === undefined) {
@@ -129,7 +158,7 @@ if (
 
     if (command === "--help") {
       process.stdout.write(
-        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan\nUse <command> --help or --schema.\n",
+        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, execute, impl\nUse <command> --help or --schema.\n",
       );
     } else {
       const skill = commands.get(command);
@@ -151,14 +180,19 @@ if (
       });
       if (values.help) {
         process.stdout.write(
-          `Usage: node <jwn-root>/cli/dist/index.mjs ${command} <read|write> --session <id> [--root <project>] [--version <N>] [--offset <bytes>]\nread: records and nextOffset. write: stdin JSON → stored event. --schema: event fields and descriptions. Node 24+.\n`,
+          `Usage: node <jwn-root>/cli/dist/index.mjs ${command} <${skill.next ? "read|write|next" : "read|write"}> --session <id> [--root <project>] [--version <N>] [--offset <bytes>]\nread: records and nextOffset. write: stdin JSON → stored event.${skill.next ? " next: replay full history and derive recorded state. Offsets are read-only." : ""} --schema: event fields and descriptions. Node 24+.\n`,
         );
       } else if (values.schema) {
         process.stdout.write(JSON.stringify(skill.schema, null, 2) + "\n");
       } else {
         const [operation] = positionals;
-        if (positionals.length !== 1 || (operation !== "read" && operation !== "write")) {
-          throw new Error(`${command} requires read or write. Use --help.`);
+        if (
+          positionals.length !== 1 ||
+          (operation !== "read" && operation !== "write" && !(operation === "next" && skill.next))
+        ) {
+          throw new Error(
+            `${command} requires read or write${skill.next ? " or next" : ""}. Use --help.`,
+          );
         }
 
         if (values.session === undefined) {
@@ -172,7 +206,7 @@ if (
           operation,
           version: values.version === undefined ? undefined : Number(values.version),
           offset: values.offset === undefined ? undefined : Number(values.offset),
-          payload: operation === "read" ? undefined : JSON.parse(readFileSync(0, "utf8")),
+          payload: operation === "write" ? JSON.parse(readFileSync(0, "utf8")) : undefined,
         });
         process.stdout.write(JSON.stringify(result) + "\n");
       }
