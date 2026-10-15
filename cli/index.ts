@@ -12,6 +12,7 @@ import { parseEvent as parsePlanEvent } from "./plan/schema.ts";
 import review from "./review/index.ts";
 import { capture } from "./shared/file-hash.ts";
 import { read, versions, withSessionLock, write } from "./shared/journal.ts";
+import ship, { readState as readShipState } from "./ship/index.ts";
 
 type Input = {
   root: string;
@@ -58,6 +59,7 @@ const commands = new Map<string, ReturnType<typeof command>>([
   ["iterate", command(iterate)],
   ["impl", command({ ...impl, next: undefined })],
   ["review", command({ ...review, next: undefined })],
+  ["ship", command(ship)],
 ]);
 
 export function run({
@@ -142,6 +144,21 @@ export function run({
               };
             }
           }
+          if (command === "ship" && (state as { action: string }).action === "complete") {
+            try {
+              verifyDeliveryExecution({ root, session, records });
+            } catch (error) {
+              return {
+                version: files.length,
+                state: {
+                  ...(state as object),
+                  action: "recover",
+                  stage: "iterate",
+                  reason: (error as Error).message,
+                },
+              };
+            }
+          }
           return { version: files.length, state };
         }
         if (!request) {
@@ -174,6 +191,9 @@ export function run({
         const { record, retry } = skill.validate({ records, session, request, version, root });
         if (!retry && command === "iterate" && request.type === "completed") {
           verifyExecutionEvidence({ records, session, root });
+        }
+        if (!retry && command === "ship" && request.type === "ready") {
+          verifyDeliveryExecution({ root, session, records });
         }
         const successfulEvidence =
           !retry &&
@@ -218,7 +238,60 @@ export function run({
     });
   }
 
+  if (command === "ship" && (operation === "next" || request?.type === "ready")) {
+    return withSessionLock({
+      directory: join(resolve(root), ".jwn", session, "iterate"),
+      create: false,
+      task: () => store({ alignment: null }),
+    });
+  }
+
   return store({ alignment: null });
+}
+
+function verifyDeliveryExecution({
+  root,
+  session,
+  records,
+}: {
+  root: string;
+  session: string;
+  records: unknown[][];
+}) {
+  const directory = join(resolve(root), ".jwn", session, "iterate");
+  const execution = versions({ directory }).map(
+    (name) => read({ path: join(directory, name), offset: 0 }).records,
+  );
+  const state = iterate.next({ records: execution, session, version: undefined });
+  const delivery = readShipState({ records, session, version: undefined });
+  if (state.action !== "complete" || state.revision !== delivery.targets?.revision) {
+    throw new Error("Ship readiness requires complete execution at the current delivery revision");
+  }
+  const header = execution.at(-1)?.[0] as { plan: string | null };
+  const reference = header.plan?.match(/^plan\/v([1-9][0-9]*)\.jsonl(?:#(.+))?$/);
+  if (reference) {
+    const planState = run({
+      command: "plan",
+      operation: "next",
+      root,
+      session,
+      version: Number(reference[1]),
+      offset: undefined,
+      payload: undefined,
+    }) as {
+      state: { action: string; candidate: { id: string }; authorization: { id: string } | null };
+    };
+    const fragmentMatches =
+      reference[2] === undefined ||
+      reference[2] === planState.state.candidate.id ||
+      reference[2] === planState.state.authorization?.id;
+    if (planState.state.action !== "iterate" || !fragmentMatches) {
+      throw new Error(
+        "current Plan authorization and reviews must match execution before readiness",
+      );
+    }
+  }
+  verifyExecutionEvidence({ root, session, records: execution });
 }
 
 // Importing the entry point has no CLI side effects, including through an installed symlink.
@@ -235,7 +308,7 @@ if (
 
     if (command === "--help") {
       process.stdout.write(
-        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, iterate, impl, review\nUse <command> --help or --schema.\n",
+        "Usage: node <jwn-root>/cli/dist/index.mjs <command> <args>\nCommands: align, plan, iterate, impl, review, ship\nUse <command> --help or --schema.\n",
       );
     } else {
       const skill = commands.get(command);

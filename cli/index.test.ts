@@ -21,6 +21,8 @@ test("shared entry point and Align expose their own help without reading stdin",
     ["impl", "--schema"],
     ["review", "--help"],
     ["review", "--schema"],
+    ["ship", "--help"],
+    ["ship", "--schema"],
   ]) {
     const result = spawnSync(process.execPath, [script, ...args], {
       encoding: "utf8",
@@ -34,7 +36,7 @@ test("shared entry point and Align expose their own help without reading stdin",
       assert.match(result.stdout, /Usage:/);
       assert.match(
         result.stdout,
-        ["iterate", "plan"].includes(args[0]!)
+        ["iterate", "plan", "ship"].includes(args[0]!)
           ? /<read\|write\|next>/
           : args[0] !== "--help"
             ? /<read\|write>/
