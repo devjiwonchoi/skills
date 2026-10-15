@@ -36,7 +36,7 @@ Before each pass, read retained findings, coverage evidence and the scope return
 
 Match findings by root cause and failing behavior. Reuse the same ID, issue and section identity for repeated or recurring failures, accumulating evidence. Distinct failures at the same location get distinct IDs. Reinspect retained coverage when new evidence reveals a gap.
 
-Record coverage and findings only after completing one direct pass with accessible diff and session context. Record inaccessible or incomplete review with gaps and no accepted coverage or findings. Resolve or dismiss a finding only with evidence from a pass reviewing its section. Return to the caller after each pass. Iterate owns correction and additional review when invoked.
+Record coverage and findings only after completing one pass in the selected Review mode with accessible diff and session context. Record inaccessible or incomplete review with gaps and no accepted coverage or findings. Resolve or dismiss a finding only with evidence from a pass reviewing its section. Return to the caller after each pass. Iterate owns correction and additional review when invoked.
 
 ## Recovery and completion
 
