@@ -1,9 +1,16 @@
+import type { Artifact } from "../shared/file-hash.ts";
 import type { Finding, Pass, Section } from "./schema.ts";
 
 export type State = {
   coverage: Map<
     string,
-    { section: Section; reviewedRevision: string | null; reason: string | null; evidence: string[] }
+    {
+      section: Section;
+      reviewedRevision: string | null;
+      reason: string | null;
+      evidence: string[];
+      artifacts: Artifact[] | undefined;
+    }
   >;
   findings: Map<string, Finding>;
   pass: Pass | null;
@@ -32,6 +39,7 @@ export function create({
           reviewedRevision: null,
           reason: reason ?? null,
           evidence: previous?.coverage.get(section.id)?.evidence ?? [],
+          artifacts: previous?.coverage.get(section.id)?.artifacts,
         },
       ]),
     ),

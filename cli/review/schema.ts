@@ -1,10 +1,13 @@
 import * as z from "zod";
 
+import { artifacts } from "../shared/file-hash.ts";
+
 const text = z.string().regex(/\S/, "expected a nonempty string");
 const metadata = {
   seq: z.int().positive(),
   version: z.int().positive(),
   at: z.iso.datetime().optional(),
+  artifacts: artifacts.optional(),
 };
 const base = z.strictObject({ id: text });
 const strings = z
@@ -89,4 +92,4 @@ export function parseEvent({ value }: { value: unknown }) {
   return event.parse(value);
 }
 export type Finding = z.infer<typeof finding>;
-export type Pass = z.infer<typeof reviewPass>;
+export type Pass = Extract<Event, { type: "review_pass" }>;

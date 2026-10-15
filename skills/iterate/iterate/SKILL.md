@@ -17,4 +17,4 @@ Follow [execution recording](references/recording.md) for every invocation, incl
 4. Repeat from step 2 while validated P0–P2 findings remain unresolved. Review the fix delta and affected behavior after verification.
    - When no P0–P2 findings remain but required coverage is missing, repeat step 3 for uncovered or reopened sections only.
    - Stop and report a blocker if repeated rounds make no progress.
-5. Confirm current verification passed, required review coverage is complete, no validated P0–P2 findings remain unresolved, and the working tree matches the checked revision. Report completion, the final revision, evidence, and remaining delivery work.
+5. Confirm current artifact evidence is intact, verification passed, required review coverage is complete, no validated P0–P2 findings remain unresolved, and the working tree matches the checked revision. Report completion, the final revision, evidence, and remaining delivery work.

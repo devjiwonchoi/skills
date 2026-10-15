@@ -1,3 +1,4 @@
+import { verify as verifyArtifacts } from "../shared/file-hash.ts";
 import type { Event } from "./schema.ts";
 import type { State } from "./state.ts";
 
@@ -34,4 +35,12 @@ export function apply({ state, event }: { state: State; event: Event }) {
     throw new Error("coverage reconciliation on verification requires a new revision");
   }
   state.verification = event;
+}
+
+export function verifyEvidence({ root, state }: { root: string; state: State }) {
+  const verification = state.verification;
+  if (!verification || verification.outcome !== "passed") {
+    throw new Error("current verification has not passed");
+  }
+  verifyArtifacts({ root, evidence: verification.evidence, recorded: verification.artifacts });
 }

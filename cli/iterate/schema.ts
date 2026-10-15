@@ -77,7 +77,7 @@ export function parseEvent({ value }: { value: unknown }) {
   return event.parse(value);
 }
 
-const recorderFields = ["seq", "version", "at", "session_id", "schema_version"];
+const recorderFields = ["seq", "version", "at", "session_id", "schema_version", "artifacts"];
 export function requestFields({ event }: { event: Event }) {
   return Object.fromEntries(Object.entries(event).filter(([key]) => !recorderFields.includes(key)));
 }

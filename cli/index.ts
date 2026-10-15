@@ -6,13 +6,15 @@ import { parseArgs } from "node:util";
 import align from "./align/index.ts";
 import { readAligned } from "./align/validate.ts";
 import impl from "./impl/index.ts";
-import iterate from "./iterate/index.ts";
+import iterate, { verifyExecutionEvidence } from "./iterate/index.ts";
 import plan from "./plan/index.ts";
 import { parseEvent as parsePlanEvent } from "./plan/schema.ts";
 import review from "./review/index.ts";
+import { capture } from "./shared/file-hash.ts";
 import { read, versions, withSessionLock, write } from "./shared/journal.ts";
 
 type Input = {
+  root: string;
   records: unknown[][];
   session: string;
   request: unknown;
@@ -124,14 +126,30 @@ export function run({
           const records = files.map(
             (name) => read({ path: join(directory, name), offset: 0 }).records,
           );
-          return { version: files.length, state: skill.next!({ records, session, version }) };
+          const state = skill.next!({ records, session, version, root });
+          if (command === "iterate" && (state as { action: string }).action === "complete") {
+            try {
+              verifyExecutionEvidence({ records, session, root });
+            } catch (error) {
+              return {
+                version: files.length,
+                state: {
+                  ...(state as object),
+                  action: "recover",
+                  stage: "evidence",
+                  reason: (error as Error).message,
+                },
+              };
+            }
+          }
+          return { version: files.length, state };
         }
         if (!request) {
           if (skill.checkHistory) {
             const records = files.map(
               (name) => read({ path: join(directory, name), offset: 0 }).records,
             );
-            skill.checkHistory({ records, session, version: undefined });
+            skill.checkHistory({ records, session, version: undefined, root });
           }
           const selected = version ?? files.length;
           const file = files[selected - 1];
@@ -152,8 +170,24 @@ export function run({
         const records = files.map(
           (name) => read({ path: join(directory, name), offset: 0 }).records,
         );
-        const { record, retry } = skill.validate({ records, session, request, version });
-        const stored = retry ? record : { ...record, at: new Date().toISOString() };
+
+        const { record, retry } = skill.validate({ records, session, request, version, root });
+        if (!retry && command === "iterate" && request.type === "completed") {
+          verifyExecutionEvidence({ records, session, root });
+        }
+        const successfulEvidence =
+          !retry &&
+          ((record.type === "verified" && record.outcome === "passed") ||
+            (record.type === "review_pass" && record.outcome === "completed"));
+        const stored = retry
+          ? record
+          : {
+              ...record,
+              at: new Date().toISOString(),
+              ...(successfulEvidence
+                ? { artifacts: capture({ root, evidence: record.evidence as string[] }) }
+                : {}),
+            };
         write({
           path: join(directory, `v${stored.version}.jsonl`),
           record: stored,

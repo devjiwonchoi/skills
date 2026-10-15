@@ -28,7 +28,7 @@ Identify each revision by the diff base, HEAD, staged and unstaged changes, rele
 
 `implemented` names the current `previous_revision` and reconciles every review section. Reopen changed and affected behavior. Retain previously reviewed coverage only with a supported reason. Verify supplies the same reconciliation if authorized fixes change the snapshot. A new revision invalidates verification and review completion. Unresolved findings survive.
 
-Verify records `passed`, `failed` or `incomplete`, the checked revision, evidence paths and gaps. Detailed criterion results belong in the evidence artifact. Passing requires evidence for every required criterion and no unresolved gaps. Implementation and verification cannot close findings.
+Verify records `passed`, `failed` or `incomplete`, the checked revision, evidence paths and gaps. Detailed criterion results belong in the evidence artifact. Passing requires evidence for every required criterion and no unresolved gaps. New passing Verify and completed Review writes capture actual evidence files and their SHA-256 digests. Paths resolve from the project root. Historical reads and exact retries do not reopen artifacts. Current completion requires intact captured verification and retained review evidence. Refresh legacy outcomes without hashes rather than rewriting history. Hashes prove artifact integrity, not check quality or criterion satisfaction. Implementation and verification cannot close findings.
 
 ## Review passes
 

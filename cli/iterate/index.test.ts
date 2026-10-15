@@ -39,6 +39,13 @@ function fixture({ context, revision }: { context: TestContext; revision: string
   const record = (input: { type: string; [key: string]: unknown }) => {
     counter += 1;
     const payload = { id: `event-${counter}`, ...input };
+    if (Array.isArray(input.evidence)) {
+      for (const path of input.evidence as string[]) {
+        if (!existsSync(join(root, path))) {
+          writeFileSync(join(root, path), JSON.stringify({ artifact: path }) + "\n");
+        }
+      }
+    }
     const result = invoke({
       operation: "write",
       payload,

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -87,6 +87,16 @@ test("Iterate's public commands record and recover work without reading stdin fo
     payload: unknown;
     args: string[];
   }) => {
+    if (
+      payload &&
+      typeof payload === "object" &&
+      "evidence" in payload &&
+      Array.isArray(payload.evidence)
+    ) {
+      for (const path of payload.evidence) {
+        writeFileSync(join(root, String(path)), "synthetic evidence\n");
+      }
+    }
     const result = spawnSync(
       process.execPath,
       [script, command, operation, "--root", root, "--session", "session", ...args],

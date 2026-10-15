@@ -2,7 +2,7 @@ import { schema, parseRequest } from "./schema.ts";
 import { next as nextAction } from "./state.ts";
 import { validate, checkHistory, readState } from "./validate.ts";
 
-export { validate, checkHistory, readState } from "./validate.ts";
+export { validate, checkHistory, readState, verifyExecutionEvidence } from "./validate.ts";
 
 export default {
   schema,

@@ -1,3 +1,4 @@
+import { verify as verifyArtifacts } from "../shared/file-hash.ts";
 import type { Event } from "./schema.ts";
 import type { State } from "./state.ts";
 
@@ -26,6 +27,7 @@ export function apply({
           reviewedRevision: null,
           reason: event.reason,
           evidence: [],
+          artifacts: undefined,
         });
       }
       for (const id of event.reopen) {
@@ -80,10 +82,20 @@ export function apply({
           reviewedRevision: event.revision,
           reason: null,
           evidence: event.evidence,
+          artifacts: event.artifacts,
         });
       }
       state.pass = event;
       break;
     }
+  }
+}
+
+export function verifyEvidence({ root, state }: { root: string; state: State }) {
+  for (const item of state.coverage.values()) {
+    if (item.reviewedRevision === null) {
+      throw new Error("review coverage is incomplete");
+    }
+    verifyArtifacts({ root, evidence: item.evidence, recorded: item.artifacts });
   }
 }

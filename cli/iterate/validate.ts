@@ -3,7 +3,9 @@ import { isDeepStrictEqual } from "node:util";
 import type * as z from "zod";
 
 import * as impl from "../impl/schema.ts";
+import { verifyEvidence as verifyImplementationEvidence } from "../impl/validate.ts";
 import * as review from "../review/schema.ts";
+import { verifyEvidence as verifyReviewEvidence } from "../review/validate.ts";
 import { parseEvent, requestFields, type Event, type Request } from "./schema.ts";
 import { apply, startVersion, type State } from "./state.ts";
 
@@ -117,4 +119,18 @@ export function validate({
   const record = parseEvent({ value: { ...request, seq: current.length + 1, version } });
   apply({ state, event: record });
   return { record, retry: false };
+}
+
+export function verifyExecutionEvidence({
+  records,
+  session,
+  root,
+}: {
+  records: unknown[][];
+  session: string;
+  root: string;
+}) {
+  const state = readState({ records, session, version: undefined });
+  verifyImplementationEvidence({ root, state: state.impl });
+  verifyReviewEvidence({ root, state: state.review });
 }
