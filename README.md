@@ -2,6 +2,10 @@
 
 personal skills my agents use everyday
 
+```
+plan -> iterate -> ship -> retro
+```
+
 ## Idea Sources
 
 - [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent)
