@@ -7,7 +7,6 @@
   },
   "repository": "https://github.com/devjiwonchoi/skills",
   "skills": [
-    "./skills/auto",
     "./skills/plan",
     "./skills/iterate",
     "./skills/ship",

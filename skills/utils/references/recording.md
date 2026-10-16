@@ -1,19 +1,19 @@
 # Task recording
 
-Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, review, and Auto, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal, schema, parser, or recording command.
+Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, and review, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal, schema, parser, or recording command.
 
 ## Task ownership
 
 Use the caller's project root and task directory when supplied. Otherwise use the current Git working-tree root or known non-Git project directory. Retain one task ID across stages and compaction, using the chat ID when available or choosing an ID once.
 
-Read existing records before continuing. Record the goal, owning chat, and caller in `STATUS.md`, distinguishing Auto, standalone stages, and a Plan workflow through approved delivery. Do not select another task by recency, interleave writers, or overwrite unrelated records. Keep task records outside the deliverable diff using existing ignore rules or a worktree-local exclusion.
+Read existing records before continuing. Record the goal, owning chat, and caller in `STATUS.md`, distinguishing standalone stages and a Plan workflow through approved delivery. Do not select another task by recency, interleave writers, or overwrite unrelated records. Keep task records outside the deliverable diff using existing ignore rules or a worktree-local exclusion.
 
 ## Documents and owners
 
 | Document    | Owner                                                        | Contents                                                                                                     |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | `PLAN.md`   | Plan                                                         | Intent, decisions, versioned plan, checks, actual authorization, and plan-review verdicts                    |
-| `STATUS.md` | Active stage, with Auto owning overall progress when invoked | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history |
+| `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history |
 | `VERIFY.md` | Verify                                                       | Checked changes, criterion results, commands or scenarios, evidence, and gaps                                |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                    |
 | `RETRO.md`  | Explicitly invoked Retro                                     | Observed workflow problems and proposed jwn improvements                                                     |
