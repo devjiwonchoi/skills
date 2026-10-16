@@ -1,16 +1,10 @@
 # Plan recording
 
-Follow the shared [CLI recording](../../../utils/references/recording.md) setup. Reuse Align's root and session ID. Resolve this skill's real path to find `<jwn-root>`.
+Follow shared [task recording](../../../utils/references/recording.md). Plan owns `PLAN.md`, including standalone use.
 
-Run `node <jwn-root>/cli/dist/index.mjs plan --schema` for event fields and descriptions.
-Record each plan step as it happens using those descriptions.
-
-Include the verification methods, expected outcomes, prepared tests or reproduction, and baseline evidence or its limitation in the candidate. Record `accepted` with the actual existing user instruction in `value` and why it settles the plan's consequential choices in `reason`. Use `approved` only for an actual user approval of this candidate. Neither event carries to a new version or bypasses a pending decision or explicit approval request. Both retain the effort's required reviews.
-
-Every Plan write requires the same session's latest Align version to be `aligned` and the candidate to reference that exact event. If Align is missing, reopened, or superseded, finish Align and save a new candidate before advancing. Historical Plan records remain readable.
-
-Invoke `node <jwn-root>/cli/dist/index.mjs plan <read|write> --root <root> --session <id>`.
-For writes, provide stdin JSON with a quoted heredoc (`<<'JSON'`) and pass `--version <N>` except for `type: start`. Retain the returned version.
-
-For reads, retain `version` and `nextOffset` for subsequent calls with `--version` and `--offset`.
-Read the latest version from offset 0 after context loss or when `latestVersion` changes.
+1. Record the request, goal, constraints, success criteria, questions and actual answers. Preserve the distinction between user decisions and proposed implementation.
+2. Maintain the current plan version with its preview, approach, work units, adaptation boundaries, verification methods, expected results, and baseline evidence or limitations.
+3. Record actual acceptance from existing instructions with its source and reason, or the user's actual approval of this version. Do not invent answers or treat reviewer agreement as user approval.
+4. Preserve authorized versions and their approval evidence before revising the candidate. Identify changed decisions and increment the plan version when its content changes. Do not carry acceptance or review verdicts to changed content without checking their scope.
+5. Record effort and each reviewer's latest verdict against the current version. Approval alone does not clear required reviews. Pending questions, missing reviews, and unresolved objections remain visible on recovery.
+6. Pass the task directory and authorized version to Iterate only when the current intention is settled, authorization covers the plan, and required reviews clear. Respect host mode and the caller's delivery scope.

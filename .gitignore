@@ -1,6 +1,1 @@
-node_modules/
 .jwn/
-dist/
-!/cli/dist/
-/cli/dist/*
-!/cli/dist/index.mjs

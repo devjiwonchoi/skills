@@ -1,17 +1,35 @@
-# CLI recording
+# Task recording
 
-Use the CLI to record Align, Plan, and execution stages in `.jwn/<session-id>/`, including standalone invocations. Ordinary conversation does not initialize records. Only Auto writes `status.json` and `progress.jsonl`.
+Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, review, and Auto, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal, schema, parser, or recording command.
 
-## Root and session
+## Task ownership
 
-Use the caller's project root and session ID when supplied. Otherwise, use the current Git working-tree root or the known non-Git project directory. For non-Git recovery, check the current directory and its ancestors for the nearest `.jwn/`. Establish the project directory with the user only if it is unclear.
+Use the caller's project root and task directory when supplied. Otherwise use the current Git working-tree root or known non-Git project directory. Retain one task ID across stages and compaction, using the chat ID when available or choosing an ID once.
 
-Retain one session ID across stages and compaction. Use the chat ID when available or generate an ID once. Read existing records before resuming and confirm their ownership, goal, and actual approvals against the current request. Do not select another session by recency, overwrite unrelated records, or interleave writers.
+Read existing records before continuing. Record the goal, owning chat, and caller in `STATUS.md`, distinguishing Auto, standalone stages, and a Plan-to-Iterate workflow. Do not select another task by recency, interleave writers, or overwrite unrelated records. Keep task records outside the deliverable diff using existing ignore rules or a worktree-local exclusion.
 
-The CLI appends `.jwn/<session-id>/` to `--root`. Pass the project root, not the task directory. Standalone recording does not start Auto or authorize additional stages.
+## Documents and owners
 
-## Git ignore on initialization
+| Document    | Owner                                                        | Contents                                                                                                     |
+| ----------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `PLAN.md`   | Plan                                                         | Intent, decisions, versioned plan, checks, actual authorization, and plan-review verdicts                    |
+| `STATUS.md` | Active stage, with Auto owning overall progress when invoked | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history |
+| `VERIFY.md` | Verify                                                       | Checked changes, criterion results, commands or scenarios, evidence, and gaps                                |
+| `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                    |
+| `RETRO.md`  | Explicitly invoked Retro                                     | Observed workflow problems and proposed jwn improvements                                                     |
 
-1. Before writing the first task record, check `git rev-parse --is-inside-work-tree`. If `true`, run `git check-ignore -q -- .jwn/` from the working-tree root.
-2. On exit code `1`, append `.jwn/` only if absent to the global `core.excludesFile`, defaulting to `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`. Preserve existing contents and Git configuration.
-3. Recheck exclusion after registration. Report unexpected Git errors, write errors, or failed exclusion before continuing dependent work.
+Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.
+
+Record actual observations before advancing. On interruption or completion, update the current stage, state, unfinished work, and next action in `STATUS.md`. An invoked stage returns its outcome to its caller. A standalone stage stops at its requested boundary. Standalone Plan includes the approved transition to Iterate, not additional delivery permissions.
+
+## Evidence and recovery
+
+Identify evidence by the diff base, HEAD, and relevant staged, unstaged, untracked, and dependency state. Save enough file or diff evidence to compare the checked changes after interruption. HEAD alone does not identify an uncommitted revision. Keep commands, outcomes, source kinds, and artifact paths with their results.
+
+After context loss, read `STATUS.md` and the documents relevant to its current stage. Restore actual decisions, approval scope, unresolved findings, coverage, and next action. Inspect the current files before reusing verification or review. Preserve historical evidence while marking affected completion stale when files or requirements changed.
+
+Missing, conflicting, or unreadable records do not establish approval or completion. Report the gap and continue only work whose authorization and prerequisites remain known. Never retry a denied action through another recording path.
+
+Old JSONL-only tasks are outside this workflow's recovery support. Preserve their files without parsing, converting, or inferring authorization. Report that context is unavailable and establish the current task from the user's request before creating separate Markdown records. Do not silently restart an old task or select another directory.
+
+While the host prohibits writes, keep the current plan and pending record updates in conversation. Save them when writes become allowed without inventing earlier approvals or results.
