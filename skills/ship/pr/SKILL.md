@@ -19,7 +19,7 @@ description: Always use when handling PRs.
 
 ## Examples
 
-- Add `align` skill
+- Add `retro` skill
 - Fix login redirect
 - Remove unused option
 
