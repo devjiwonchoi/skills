@@ -1,6 +1,0 @@
-{
-  "semi": true,
-  "singleQuote": false,
-  "ignorePatterns": [".agents/**", "cli/dist/**", "dist/**"],
-  "sortImports": true
-}

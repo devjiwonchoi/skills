@@ -25,4 +25,4 @@ Use only when Review receives `--cross`.
      ```
      Verify `model: gpt-6.1-sol`, `provider: openai`, `approval: never`, and `sandbox: read-only` in `review_metadata`.
 4. Use the result only after successful completion, metadata verification, and confirmed access to the requested scope and session context. If the other reviewer is unavailable, access is denied, or review is incomplete, return an incomplete review with gaps. Do not silently substitute models or direct review.
-5. Return the result and artifact paths to Review for finding reconciliation and recording. The caller owns recording and any corrections.
+5. Return the result and artifact paths to Review for reconciliation into `REVIEW.md`. Preserve raw provider output as evidence and reuse existing finding IDs. The caller owns Markdown recording and any corrections.

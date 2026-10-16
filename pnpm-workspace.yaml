@@ -1,4 +1,0 @@
-packages:
-  - cli
-allowBuilds:
-  esbuild: true
