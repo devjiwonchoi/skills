@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"After compaction, restore the current task, unfinished work, actual approvals, and permissions. If this task has .jwn Markdown records, read the installed Auto skill's references/recovery.md and resume its recorded caller and stage without starting Auto or extra stages. Do not recover or convert legacy JSONL-only tasks. Otherwise continue from session context without creating records.\"",
+            "command": "echo \"After compaction, locate only the current owning task from retained session context. Read its .jwn/<task>/STATUS.md and, if present, the entire PLAN.md before continuing. Restore the approved version, actual authorization, delivery scope, pending reviews, and saved next action. A plan file alone is not approval. For pending post-approval compaction, record this actual recovery as completed and continue the saved action without compacting the same approval again. Follow the installed Auto skill's references/recovery.md. Continue through required plan reviews, Iterate, approved PR creation, and Moniterate only when authorized. Preserve standalone stage boundaries and host Plan Mode. Do not start Auto, choose another task, or convert legacy JSONL records. Without task records, continue from retained session context.\"",
             "timeout": 5
           }
         ]
