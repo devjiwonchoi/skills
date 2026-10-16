@@ -6,6 +6,8 @@ argument-hint: "[--effort low|medium|high]"
 
 The goal is to turn the user's intention into a concrete plan they can approve.
 
+After approval, continue through [Iterate](../../iterate/iterate/SKILL.md) → [Ship](../../ship/ship/SKILL.md) within the approved scope, following the compaction and review steps below.
+
 Follow [Plan recording](references/recording.md), including standalone use. Respect the host's active mode. This skill cannot switch the host into or out of Plan Mode.
 
 1. Read the request, existing decisions, and task records. State the goal, constraints, success criteria, and unresolved choices. Keep user requirements distinct from proposed implementation choices.

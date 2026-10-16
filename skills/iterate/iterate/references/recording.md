@@ -1,6 +1,6 @@
 # Execution recording
 
-Follow shared [task recording](../../../utils/references/recording.md) for the project root, task ownership, Markdown documents, and evidence. Under Auto, also follow its [state contract](../../../auto/references/state.md).
+Follow shared [task recording](../../../utils/references/recording.md) for the project root, task ownership, Markdown documents, and evidence.
 
 ## Stage ownership
 
@@ -36,4 +36,4 @@ After context loss, read `STATUS.md`, the relevant authorized plan, `VERIFY.md`,
 
 Standalone stages stop after their requested work. Quick-impl does not verify or review. Impl continues from successful implementation to Verify. Standalone Plan continues through Iterate and approved Ship and Moniterate after post-approval compaction and required reviews, subject to host mode. Check the plan's actual delivery authorization before publishing. These transitions do not authorize merge, deployment, or messaging by themselves.
 
-Only Iterate reports execution complete after current verification passes, required review coverage is complete, no validated P0–P2 findings remain unresolved, and actual files still match the checked changes. P3 nits do not restart implementation. Stop and report a blocker when repeated rounds make no progress. Under Auto, execution completion advances to Ship, not Done.
+Only Iterate reports execution complete after current verification passes, required review coverage is complete, no validated P0–P2 findings remain unresolved, and actual files still match the checked changes. P3 nits do not restart implementation. Stop and report a blocker when repeated rounds make no progress.
