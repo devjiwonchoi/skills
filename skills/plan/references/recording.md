@@ -1,6 +1,6 @@
 # Plan recording
 
-Follow shared [task recording](../../../utils/references/recording.md). Plan owns `PLAN.md`, including standalone use.
+Follow shared [task recording](../../utils/references/recording.md). Plan owns `PLAN.md`, including standalone use.
 
 1. Record the request, goal, constraints, success criteria, questions and actual answers. Preserve the distinction between user decisions and proposed implementation.
 2. Maintain the current plan version with its preview, approach, work units, adaptation boundaries, verification methods, expected results, and baseline evidence or limitations. Preserve the delivery structure shown for approval: ordered commit messages, purposes, scopes and dependencies, plus each PR's commit mapping, grouping reason, repository, head/base branches, publishing order, title, description, draft status, opening checks, and Moniterate readiness conditions. Honor explicit delivery limits.
