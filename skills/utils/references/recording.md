@@ -1,10 +1,12 @@
 # Task recording
 
-Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, and review, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal, schema, parser, or recording command.
+Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, and review, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal or general recording command. The continuation runtime reads only the explicit continuation fields described below.
 
 ## Task ownership
 
 Use the caller's project root and task directory when supplied. Otherwise use the current Git working-tree root or known non-Git project directory. Retain one task ID across stages and compaction, using the chat ID when available or choosing an ID once.
+
+For tasks with authorized follow-up work, follow [automatic continuation](continuation.md) to bind the owning task to this chat. Keep its continuation state and next action in `STATUS.md` before each turn ends.
 
 Read existing records before continuing. Record the goal, owning chat, and caller in `STATUS.md`, distinguishing standalone stages and a Plan workflow through approved delivery. Do not select another task by recency, interleave writers, or overwrite unrelated records. Keep task records outside the deliverable diff using existing ignore rules or a worktree-local exclusion.
 

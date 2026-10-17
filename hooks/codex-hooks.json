@@ -1,0 +1,49 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^compact$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"After compaction, locate only the current owning task from retained session context. Read its .jwn/<task>/STATUS.md and, if present, the entire PLAN.md before continuing. Restore the approved version, actual authorization, delivery scope, pending reviews, and saved next action. A plan file alone is not approval. For pending post-approval compaction, record this actual recovery as completed and continue the saved action without compacting the same approval again. Follow the installed Plan skill's references/recording.md for a Plan workflow. Continue through required plan reviews, Iterate, Ship, and Moniterate only when authorized. Preserve standalone stage boundaries and host Plan Mode. Do not start a different workflow, choose another task, or convert legacy JSONL records. Without task records, continue from retained session context.\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/hooks/continuation.mjs\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/hooks/continuation.mjs\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/hooks/continuation.mjs\" hook",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
