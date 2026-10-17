@@ -7,9 +7,11 @@ description: Always use when handling PRs.
 
 - Before creating or updating PRs, follow [Commit](../commit/SKILL.md) to establish or reconcile the commit structure.
 - Map commits to review contexts and independently reviewable outcomes.
-- Split independently reviewable outcomes into separate PRs by default. Group commits in one PR only when they require joint review.
+- Keep new shared code with its first real caller when the caller is needed to understand its purpose or assess its contract. Use separate commits within that PR.
+- Split outcomes into separate PRs when each is independently understandable and reviewable.
 - Stack dependent PRs on their parent branches in dependency order.
 - Keep only what a reviewer who has not read the conversation needs to understand the problem and solution, and omit work logs.
+- Explain new abstractions through their actual entrypoint, caller, and resulting behavior.
 - Do not append validation notes or explain how changes were validated in PR descriptions.
 - Keep titles short: action verb + change. Put purpose and explanation in the description.
 - Push each change to the PR that owns its review scope.
