@@ -28,3 +28,19 @@ Bind with `node "<plugin-root>/hooks/continuation.mjs" bind --task "<absolute .j
 The worker first queries `thread/loaded/list` on that daemon. Only an already-loaded current thread may be resumed to subscribe. It never loads an old transcript or searches other servers. Remote connections, custom sockets and embedded/`--no-daemon` sessions are unsupported; a missing current thread fails explicitly. Compact completion requires same-thread item/completed, matching completed turn and idle; an empty RPC response is not completion.
 
 The Codex control protocol is version dependent. Local fixtures do not prove a real TUI stayed attached through compact; that remains a live acceptance check.
+
+## Claude Code CLI and Desktop Code
+
+Use the Mod in Claude Code CLI 2.1.287+ or Desktop's bundled Code 2.1.286+ (local Code sessions). The host loads `hooks/claude.ts` directly: no external Node, npm install or compilation. Plugin policy, safe mode and disable settings can prevent loading. Reload updated plugins normally. Ordinary Desktop Chat/Cowork, WSL and cloud sessions are outside this support contract.
+
+After saving the owning records, call the Mod's `jwn_continuation` tool with `operation: "bind"` and the absolute `task`. After actual Plan approval, save its evidence and ready next action, then call it with `operation: "compact"`, the same task and a unique `approval`. This records the request; it does not compact inside the tool call. End this root turn so `turn.complete` can compact between turns. Read the records on attributed same-session recovery, finish pending reviews, and continue only the authorized stage. Do not call the Codex Node command in Claude.
+
+The Mod ignores subagent, interrupted, refused and error completions. A skipped compact does not count as completion. Human input or interruption cancels queued work; stale attributed deliveries are checked again at prompt submission. Session-keyed scheduler data lives in `$.store`; Markdown retains actual authority. Unchanged saved work is not repeatedly submitted by consecutive automated turns. Update Next action as work progresses. A reload cancels pending timers; inspect saved scheduling state and errors before resuming. Never reissue a compact approval whose outcome is uncertain.
+
+Claude's default `hooks/hooks.json` loads only the Mod and portable recovery hook. Codex's explicit manifest selects a different hooks file. Claude's manifest hooks are additive, so pointing that manifest to another file would not isolate Codex commands. Mod fixture checks establish lifecycle decisions; actual Claude CLI and Desktop model/tool recovery are separate live acceptance checks.
+
+### Developing the Mod
+
+The entrypoint uses official `claude-code` types. When the Mod loads interactively, Claude generates declarations for that engine version under `.claude-plugin/types/` and a TypeScript configuration. Use those generated types when checking local changes; no SDK package or declaration snapshot is bundled with the plugin.
+
+Run `claude plugin test <plugin-root>` for the Claude lifecycle regressions. These use `claude-code/testing`, the engine's hook dispatch and its mock clock, without a model session, login or network. Run `node --test <plugin-root>/hooks/*.test.mjs` for the Codex and packaging regressions, and `claude plugin validate <plugin-root>` for registration checks. Tests do not establish actual model/tool recovery.
