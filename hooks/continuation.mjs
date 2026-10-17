@@ -8,6 +8,7 @@ import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { continuation, configure, hookDecision, prompt } from './continuation-core.mjs';
 import { connectDesktop, completedAndIdle } from './codex-desktop.mjs';
+import { connectCLI } from './codex-cli.mjs';
 
 const adjacent = ({ file, suffix }) => file.slice(0, -path.extname(file).length) + suffix;
 export async function read({ file }) {
@@ -159,7 +160,7 @@ function validChat({ chat }) {
   );
 }
 // Persist task ownership before scheduling any compact request.
-export async function bind({ task, chat, approval, host, endpoint }) {
+export async function bind({ task, chat, approval, host }) {
   if (!validChat({ chat })) {
     throw new Error('current verified chat ID required');
   }
@@ -188,15 +189,17 @@ export async function bind({ task, chat, approval, host, endpoint }) {
       }
 
       const updated = configure({ binding, chat, task, approval, action });
-      if (host && host !== 'desktop') {
+      if (host && !['desktop', 'cli'].includes(host)) {
         throw new Error('unsupported continuation host');
       }
       if (approval && host && binding.host && host !== binding.host) {
         throw new Error('rebind host before compact');
       }
       updated.host = host || updated.host || 'desktop';
-      if (endpoint) {
-        updated.endpoint = endpoint;
+      // An explicit rebind adopts the local host and drops legacy remote settings.
+      if (!approval) {
+        delete updated.endpoint;
+        delete updated.token_env;
       }
       await save({ file, value: updated });
     },
@@ -318,7 +321,12 @@ export async function run({ args, input }) {
       throw new Error('worker requires exact task and approval');
     }
     try {
-      await worker({ file, connect: connectDesktop, expected: { task, approval } });
+      const binding = await read({ file });
+      await worker({
+        file,
+        connect: binding.host === 'cli' ? connectCLI : connectDesktop,
+        expected: { task, approval },
+      });
     } catch (error) {
       await change({
         file,
@@ -346,10 +354,7 @@ export async function run({ args, input }) {
   const { values: flags } = parseArgs({
     args: rest,
     options: Object.fromEntries(
-      ['task', 'chat', 'approval', 'host', 'endpoint'].map(name => [
-        name,
-        { type: 'string' },
-      ]),
+      ['task', 'chat', 'approval', 'host'].map(name => [name, { type: 'string' }]),
     ),
   });
   if (!flags.task || (command === 'compact' && !flags.approval)) {

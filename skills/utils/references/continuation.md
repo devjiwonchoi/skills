@@ -20,3 +20,11 @@ Codex requires Node 22+ on PATH, no npm install or build. Install/reload the plu
 Node stores atomic JSON under a serialized `.node-lock` directory. A crash can leave that directory behind. Inspect `owner.json`, ensure the recorded process and any worker are stopped, then remove only that binding's lock manually. Never delete a live or ambiguous lock. A retained lock reports an error rather than stealing ownership or duplicating compaction.
 
 Desktop uses internal owner/follower IPC, version dependent: `$CODEX_HOME/ipc/ipc.sock` (default `~/.codex`) or Windows `\\.\pipe\codex-ipc`. Unit and CI tests do not establish actual Desktop integration on every OS. Installed hook trust and runtime evidence must be checked separately from source tests.
+
+## Codex CLI
+
+Bind with `node "<plugin-root>/hooks/continuation.mjs" bind --task "<absolute .jwn/task>" --host cli` in the current local CLI session. It requires `codex` on PATH and uses only `codex app-server proxy` to join the default local shared daemon. No endpoint or token configuration is needed. Rebind old remote tasks explicitly before using them locally.
+
+The worker first queries `thread/loaded/list` on that daemon. Only an already-loaded current thread may be resumed to subscribe. It never loads an old transcript or searches other servers. Remote connections, custom sockets and embedded/`--no-daemon` sessions are unsupported; a missing current thread fails explicitly. Compact completion requires same-thread item/completed, matching completed turn and idle; an empty RPC response is not completion.
+
+The Codex control protocol is version dependent. Local fixtures do not prove a real TUI stayed attached through compact; that remains a live acceptance check.
