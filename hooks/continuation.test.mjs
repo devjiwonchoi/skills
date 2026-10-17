@@ -260,6 +260,40 @@ test('delayed spawned worker is tied to its original task and approval', async t
   assert.equal((await read({ file })).compact.approval, 'new');
 });
 
+test('worker uses adapter compaction identity without a PostCompact hook', async t => {
+  const { task, file } = await fixture({ t });
+  await bind({ task, chat: 'a', host: 'cli' });
+  await bind({ task, chat: 'a', approval: 'cli' });
+  let starts = 0;
+  await worker({
+    file,
+    connect: async () => ({
+      snapshot: async () => ({
+        compactTurn: 'cli-compact',
+        threadRuntimeStatus: { type: 'idle' },
+        turns: [
+          {
+            turnId: 'cli-compact',
+            status: 'completed',
+            items: [{ type: 'contextCompaction', completed: true }],
+          },
+        ],
+      }),
+      compact: async () => {},
+      start: async () => {
+        starts++;
+
+        return 'resumed';
+      },
+      close: () => {},
+    }),
+  });
+  const binding = await read({ file });
+  assert.equal(starts, 1);
+  assert.equal(binding.compact.turn_id, 'cli-compact');
+  assert.equal(binding.compact.phase, 'resumed');
+});
+
 test('CLI parses standard string options and rejects unknown or missing values', async t => {
   const { task } = await fixture({ t });
   const result = await run({ args: ['bind', `--task=${task}`, '--chat=equals'] });
@@ -267,4 +301,40 @@ test('CLI parses standard string options and rejects unknown or missing values',
   await assert.rejects(run({ args: ['bind', '--task'] }), /argument missing/);
   await assert.rejects(run({ args: ['bind', '--unknown', 'value'] }), /Unknown option/);
   await assert.rejects(run({ args: ['bind', task] }), /Unexpected argument/);
+});
+
+test('local CLI rebind drops legacy remote settings without losing approval history', async t => {
+  const { task, root, file } = await fixture({ t });
+  await change({
+    file,
+    run: binding => {
+      binding.host = 'cli';
+      binding.endpoint = 'wss://old-server';
+      binding.token_env = 'OLD_TOKEN';
+    },
+  });
+  // Compact approval alone must not migrate an existing remote binding.
+  await bind({ task, chat: 'a', approval: 'old-remote' });
+  assert.equal((await read({ file })).endpoint, 'wss://old-server');
+  await assert.rejects(bind({ task, chat: 'a', host: 'cli' }), /compact pending/);
+  await hook({
+    event: {
+      cwd: root,
+      session_id: 'a',
+      turn_id: 'human',
+      hook_event_name: 'UserPromptSubmit',
+    },
+  });
+  await bind({ task, chat: 'a', host: 'cli' });
+  const local = await read({ file });
+  assert.equal(local.host, 'cli');
+  assert.equal(local.endpoint, undefined);
+  assert.equal(local.token_env, undefined);
+  await assert.rejects(bind({ task, chat: 'a', approval: 'old-remote' }), /already/);
+  for (const flag of ['--endpoint', '--token_env']) {
+    await assert.rejects(
+      run({ args: ['bind', '--task', task, flag, 'value'] }),
+      /Unknown option/,
+    );
+  }
 });
