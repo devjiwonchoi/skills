@@ -1,12 +1,12 @@
 # Task recording
 
-Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, and review, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal or general recording command. The continuation runtime reads only the explicit continuation fields described below.
+Use Markdown under `.jwn/<task>/` for Plan, implementation, verification, and review, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal or general recording command.
 
 ## Task ownership
 
 Use the caller's project root and task directory when supplied. Otherwise use the current Git working-tree root or known non-Git project directory. Retain one task ID across stages and compaction, using the chat ID when available or choosing an ID once.
 
-For tasks with authorized follow-up work, follow [automatic continuation](continuation.md) to bind the owning task to this chat. Keep its continuation state and next action in `STATUS.md` before each turn ends.
+For tasks with authorized follow-up work, keep the current state and next action in `STATUS.md` before each turn ends. During an approved run, end each turn by stating its state: continuing with the next step, waiting on what, needing the user and why, or done with evidence shown in the conversation.
 
 Read existing records before continuing. Record the goal, owning chat, and caller in `STATUS.md`, distinguishing standalone stages and a Plan workflow through approved delivery. Do not select another task by recency, interleave writers, or overwrite unrelated records. Keep task records outside the deliverable diff using existing ignore rules or a worktree-local exclusion.
 
@@ -28,7 +28,7 @@ Record actual observations before advancing. On interruption or completion, upda
 
 Identify evidence by the diff base, HEAD, and relevant staged, unstaged, untracked, and dependency state. Save enough file or diff evidence to compare the checked changes after interruption. HEAD alone does not identify an uncommitted revision. Keep commands, outcomes, source kinds, and artifact paths with their results.
 
-After context loss, read `STATUS.md` and the entire owning task's `PLAN.md` when present before continuing. Read the other documents relevant to the current stage. Restore actual decisions, approval scope, compaction progress, unresolved findings, coverage, and next action. Inspect the current files before reusing verification or review. Preserve historical evidence while marking affected completion stale when files or requirements changed.
+After context loss, read `STATUS.md` and the entire owning task's `PLAN.md` when present before continuing. Read the other documents relevant to the current stage. Restore actual decisions, approval scope, unresolved findings, coverage, and next action. Inspect the current files before reusing verification or review. Preserve historical evidence while marking affected completion stale when files or requirements changed.
 
 Missing, conflicting, or unreadable records do not establish approval or completion. Report the gap and continue only work whose authorization and prerequisites remain known. Never retry a denied action through another recording path.
 

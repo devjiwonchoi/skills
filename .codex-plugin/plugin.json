@@ -12,5 +12,5 @@
     "./skills/ship",
     "./skills/utils"
   ],
-  "hooks": "./hooks/codex-hooks.json"
+  "hooks": "./hooks/hooks.json"
 }
