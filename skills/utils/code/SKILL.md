@@ -11,6 +11,7 @@ description: Always use when writing or modifying code.
 - Prefer type inference over redundant annotations or assertions.
 - In JavaScript and TypeScript, prefer a single destructured object parameter over multiple positional parameters, such as `({ a, b, c })` instead of `(a, b, c)`.
 - Prefer `type` over `interface` unless the codebase convention favors `interface`.
+- Prefer adding new props and type entries near the end of existing lists unless local context requires a different order.
 - Name values and conditions after their purpose.
 - Use block bodies for control flow, even for a single statement.
 - Prefer explicit `if` checks with `throw` over `assert` for runtime validation.
@@ -21,6 +22,7 @@ description: Always use when writing or modifying code.
 - Follow the repository's formatting and organization without unrelated style rewrites.
 - Prefer colocating unit tests with the tested source, such as `x.test.ts` next to `x.ts`, following repository conventions.
 - Prefer inline snapshots, fixtures, and similar test data over new files unless separate files improve behavior, readability, or reuse.
+- Avoid Jest `.not` assertions. Prefer equivalent positive matchers, such as asserting that a regex match is null.
 - In TypeScript, prefer explicit `T | undefined` over optional `?:`.
 - Prefer `null` when explicitly assigning an absent value.
 - Preserve existing contracts and meaningful differences between absent values when applying style preferences.
