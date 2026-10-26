@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "The assistant may stop unless all of these hold: it is executing a plan the user approved, authorized work in that plan remains, and its latest message neither asks the user for a decision, reports a blocker, nor reports completion with evidence. Ordinary conversation, planning, and questions may always stop. When it may not stop, the reason names the next authorized step.",
+            "prompt": "Decide whether the assistant may end its turn. Return ok: true (allow the stop) by default, including for ordinary conversation, planning, answers and questions. Return ok: false only when ALL of these hold: the assistant is executing a plan the user approved, authorized work in that plan remains, and its latest message does not ask the user for a decision, report a blocker, or report completion with evidence. When returning ok: false, the reason names the next authorized step.",
             "timeout": 30
           }
         ]
