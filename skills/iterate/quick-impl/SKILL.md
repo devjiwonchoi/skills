@@ -12,8 +12,8 @@ description: Use when implementing development work.
 
 Follow [execution recording](../iterate/references/recording.md) for every invocation, including standalone use.
 
-1. Read the authorized request, constraints, and available plans or findings. Without a plan, outline the approach; an agent's outline is not approval. Pause work awaiting required approval.
-2. Keep approved intent fixed. Before and during implementation, compare cumulative changes with the last user-approved plan, or the original request and decisions.
+1. Read the todo spec you were given, the approved `ALIGN.md`, and any findings. Without a todo spec, outline the approach. An agent's outline is not approval. Pause work awaiting required approval.
+2. Keep approved intent fixed. Before and during implementation, compare cumulative changes with the approved `ALIGN.md`, or the original request and decisions.
    - A different file or repository alone does not reopen settled decisions. Continue investigation and bounded implementation within existing authorization.
    - Beyond agreed limits, investigate the affected path and present the cumulative diff or concrete proposal, reason, impact, and recommendation. Wait for a decision before dependent changes. Include material changes to approach or contracts, new external dependencies, or materially increased cost, effort, or risk.
 3. Make the smallest coherent changes, reusing existing patterns and addressing supported findings within authorization.

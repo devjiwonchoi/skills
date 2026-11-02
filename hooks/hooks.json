@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "The assistant may stop unless all of these hold: it is executing a plan the user approved, authorized work in that plan remains, and its latest message neither asks the user for a decision, reports a blocker, nor reports completion with evidence. Ordinary conversation, planning, and questions may always stop. When it may not stop, the reason names the next authorized step.",
+            "prompt": "The assistant may stop unless all of these hold: it is executing an aligned plan (ALIGN.md) the user approved, authorized work in that plan remains, and its latest message neither asks the user for a decision, reports a blocker, nor reports completion with evidence. Ordinary conversation, planning, and questions may always stop. When it may not stop, the reason names the next authorized step.",
             "timeout": 30
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo \"If this session owns an approved jwn run, re-read its .jwn/<task>/STATUS.md and PLAN.md, then continue only within the recorded authorization.\"",
+            "command": "echo \"If this session owns an approved jwn run, re-read its .jwn/<task>/STATUS.md and ALIGN.md, then continue only within the recorded authorization.\"",
             "timeout": 5
           }
         ]
