@@ -82,7 +82,7 @@ flowchart TD
 # Todos
 
 ## 2a · <title>        (subagent)
-- Door: two-way | one-way · approved: <exact values>
+- Approved values: <exact values, only for an irreversible action>
 - Depends on: 1a
 - Serves: criteria 3, 5
 - Goal: what is true when it's done
@@ -98,7 +98,7 @@ flowchart TD
 - Size: <todos, files, or time>
 - Key choices: <decisions that shape the result>
 - When you are needed: <checkpoints left, or none>
-- Approval authorizes: <every action, including one-way values>
+- Approval authorizes: <every action, including the exact values of irreversible ones>
 ````
 
 ## Light form
