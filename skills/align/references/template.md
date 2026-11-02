@@ -6,7 +6,7 @@ Use this layout to present the plan and to save `ALIGN.md`.
 
 Size the plan to the task. Show a section only when it tells the reader something the other sections do not.
 
-- Light: use for a simple task. That means one or two work todos, no UI, no one-way action beyond the approved delivery, and an approach the Goal makes clear. Show Goal, Decisions when any exist, Todos, and Summary. Fold success criteria into each todo's `Done when`, list files in each todo's `Files`, put all delivery in one todo, and list human checkpoints only when there are any.
+- Light: use for a simple task. That means one or two work todos, no UI, no irreversible action beyond the approved delivery, and an approach the Goal makes clear. Show Goal, Decisions when any exist, Todos, and Summary. Fold success criteria into each todo's `Done when`, list files in each todo's `Files`, put all delivery in one todo, and list human checkpoints only when there are any.
 - Full: use for everything else. Show every section.
 - When unsure, use full. Switch to full when revision grows the task past light.
 - A light plan may add any full section that helps, such as a Mermaid diagram for a flow the Goal does not make clear.
@@ -117,14 +117,12 @@ Version: <n> · Status: draft | approved by <who> on <date>
 # Todos
 
 ## 1 · <title>        (subagent)
-- Door: two-way
 - Goal: what is true when it's done
 - Files: exact paths to create, modify, or delete
 - How: numbered concrete steps
 - Done when: observable checks that prove the Goal
 
 ## 2 · Deliver        (subagent)
-- Door: two-way
 - Depends on: 1
 - How: commit `<message>` on `<branch>`, push, open PR `<title>` against `<base>` with <description> and <reviewers>, then Moniterate
 - Done when: <PR is open and checks pass>
@@ -135,5 +133,5 @@ Version: <n> · Status: draft | approved by <who> on <date>
 
 - What: <outcome>
 - When you are needed: <checkpoints left, or none>
-- Approval authorizes: <every action, including one-way values>
+- Approval authorizes: <every action, including the exact values of irreversible ones>
 ````
