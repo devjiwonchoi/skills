@@ -22,7 +22,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 
 Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.
 
-Record actual observations before advancing. On interruption or completion, update the current stage, state, unfinished work, and next action in `STATUS.md`. An invoked stage returns its outcome to its caller. A standalone stage stops at its requested boundary. Approved Align continues through Iterate, which follows Ship and Moniterate within the approved delivery. Preserve explicit user limits and do not infer merge, deployment, or messaging permission. One-way actions approved with exact values in `ALIGN.md` are authorized.
+Record actual observations before advancing. On interruption or completion, update the current stage, state, unfinished work, and next action in `STATUS.md`. An invoked stage returns its outcome to its caller. A standalone stage stops at its requested boundary. Approved Align continues through Iterate, which follows Ship and Moniterate within the approved delivery. Preserve explicit user limits and do not infer merge, deployment, or messaging permission. Irreversible actions approved with exact values in `ALIGN.md` are authorized.
 
 ## Evidence and recovery
 
