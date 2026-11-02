@@ -4,15 +4,16 @@ Follow shared [task recording](../../../utils/references/recording.md) for the p
 
 ## Stage ownership
 
-Read `STATUS.md`, the authorized plan when available, and relevant verification and review before acting. Initialize missing documents for the requested stage only. Record the caller, requested scope, current changes, and next action so recovery preserves standalone boundaries.
+Read `STATUS.md`, `ALIGN.md` when available, and relevant verification and review before acting. Initialize missing documents for the requested stage only. Record the caller, requested scope, current changes, and next action so recovery preserves standalone boundaries.
 
-- Iterate records iterations, blockers, resumed work, and completion in `STATUS.md`.
+- Iterate records each todo's result (done, re-run, or failed), fix todos in the same spec, deviations, blockers, and next action in `STATUS.md`. `ALIGN.md` stays as approved.
 - Quick-impl records implementation outcomes and unverified work in `STATUS.md`.
 - Verify appends results and evidence to `VERIFY.md`.
 - Review maintains findings and pass history in `REVIEW.md`.
 - Impl passes implementation and verification outcomes to its caller.
+- Only the main agent writes task records. Subagents return their results to it.
 
-Keep correction rounds in the same task and retain finding IDs. Return changes in intent or specifically approved decisions to Plan. Preserve actual authorization and previous results when the plan changes. Do not silently reuse evidence for a changed scope.
+Keep correction rounds in the same task and retain finding IDs. Return changes in intent or approved decisions to Align. Preserve actual authorization and previous results when `ALIGN.md` changes. Do not silently reuse evidence for a changed scope.
 
 ## Revisions and verification
 
@@ -32,8 +33,8 @@ Append a pass entry identifying the reviewed changes, selected mode, covered sec
 
 ## Recovery and completion
 
-After context loss, read `STATUS.md`, the relevant authorized plan, `VERIFY.md`, and `REVIEW.md`. Restore actual approvals, incomplete checks, unresolved findings, and covered or reopened behavior. Inspect actual files before using prior results. Resume an interrupted round rather than inventing a successful outcome or starting another task.
+After context loss, read `STATUS.md`, `ALIGN.md`, `VERIFY.md`, and `REVIEW.md`. Restore actual approvals, unfinished todos, incomplete checks, unresolved findings, and covered or reopened behavior. Inspect actual files before using prior results. Resume an interrupted round rather than inventing a successful outcome or starting another task.
 
-Standalone stages stop after their requested work. Quick-impl does not verify or review. Impl continues from successful implementation to Verify. Standalone Plan continues through Iterate and approved Ship and Moniterate after required reviews and handoff, subject to host mode. Check the plan's actual delivery authorization before publishing. These transitions do not authorize merge, deployment, or messaging by themselves.
+Standalone stages stop after their requested work. Quick-impl does not verify or review. Impl continues from successful implementation to Verify. Approved Align continues through Iterate, which follows Ship and Moniterate within the approved delivery. Check the delivery authorization in `ALIGN.md` before publishing. These transitions do not authorize merge, deployment, or messaging by themselves. One-way actions approved with exact values in `ALIGN.md` are authorized.
 
-Only Iterate reports execution complete after current verification passes, required review coverage is complete, no validated P0–P2 findings remain unresolved, and actual files still match the checked changes. P3 nits do not restart implementation. Stop and report a blocker when repeated rounds make no progress.
+Only Iterate reports execution complete after every success criterion passes current verification, required review coverage is complete, no validated P0–P2 findings remain unresolved, and actual files still match the checked changes. P3 nits do not restart implementation.
