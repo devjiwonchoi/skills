@@ -14,7 +14,7 @@ The goal is to agree with the user on the end state of any request, such as rese
    - Run work that shares a browser, screen, or account in sequence.
    - Gather only what the end state, decisions, and criteria need. Leave the deliverable work to todos.
    - For bugs, reproduce and find the root cause with [Debug](../utils/debug/SKILL.md). If it stays unknown, make diagnosis its own todo.
-   - For one-way actions, do reversible prep now to learn real values, such as filling a cart and reading the checkout total.
+   - For irreversible actions, do reversible prep now to learn real values, such as filling a cart and reading the checkout total.
    - Fill gaps from context instead of asking.
 3. Ask only the important decisions with [Socratic](../utils/socratic/SKILL.md), using the host's question interface when available.
 4. Draw the end state with [Explain](../utils/explain/SKILL.md), without a closing question. Approval happens in step 9.
@@ -34,13 +34,12 @@ The goal is to agree with the user on the end state of any request, such as rese
 8. Predict where the run could need a human and clear each point now.
    - Check for sign-in or 2FA, CAPTCHA, missing access or permission grants, missing information, payment or credential entry, external waits, and host or tool rules that forbid an action.
    - Plan an action only the user may perform as a user step.
-   - Tag each todo's door as two-way or one-way.
-   - Settle every one-way action, such as buying, paying, sending, deleting, publishing, merging, or deploying, with the exact values learned in step 2.
+   - Get approval now, with the exact values learned in step 2, for every irreversible action, such as buying, paying, sending, deleting, publishing, merging, or deploying, so Iterate never pauses for it.
    - End every checkpoint cleared or approved with exact values.
 9. Present the plan in the template format, ending with its Summary.
    - Check that every Mermaid diagram parses first.
    - Revise with the user from the affected step until they approve.
 10. On approval, save `.jwn/<task>/ALIGN.md` following [task recording](../utils/references/recording.md), then follow [Iterate](../iterate/iterate/SKILL.md) with it.
-    - Approval settles every choice the plan states, including the branch, commits, push, PR, and one-way values. Do not ask for them again.
+    - Approval settles every choice the plan states, including the branch, commits, push, PR, and the values of irreversible actions. Do not ask for them again.
     - Continue in the current context. Do not force compaction.
     - While host plan mode blocks writes, keep the plan in conversation and save it once writes are allowed.

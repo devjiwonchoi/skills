@@ -28,7 +28,7 @@ Follow [execution recording](references/recording.md) for every invocation, incl
    - Run main-agent todos in the session. Without subagents, run every todo in the session in dependency order.
    - Todos that change files follow [Impl](../impl/SKILL.md) scoped to that todo.
    - Re-run a todo with its failure evidence until its done-when passes.
-   - Run one-way todos only with their approved values.
+   - Run irreversible actions only with their approved values.
 3. Review: check every success criterion with [Verify](../verify/SKILL.md), except those served only by held delivery todos. Ship proves those.
    - When files changed, also follow [Review](../review/SKILL.md) once for the current revision.
 4. Repeat: turn failed criteria and validated P0–P2 findings into fix todos and return to step 2.
