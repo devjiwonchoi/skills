@@ -2,7 +2,7 @@
 
 Use this layout to present the plan and to save `ALIGN.md`.
 
-- Number each success criterion and todo as a `##` heading with `1 ·` or `1a ·`, never `1.`.
+- Number only success criteria and todos, as `##` headings with `1 ·` or `1a ·`, never `1.`. Sections and End state views get no number.
 - Give each End state view its own `##` heading. Never use `###`.
 - Show End state behavior in Mermaid only, never code or pseudo code.
 - Start each success criterion with an action verb.
@@ -18,32 +18,32 @@ Use this layout to present the plan and to save `ALIGN.md`.
 
 Version: <n> · Status: draft | approved by <who> on <date>
 
-# 1 · Goal
+# Goal
 
 <Request restated. Before → after when replacing something.>
 
 ---
 
-# 2 · Decisions
+# Decisions
 
 1. <Settled decision>
 
 ---
 
-# 3 · End state
+# End state
 
-## 1 · <Flow name>
+## <Flow name>
 
 ```mermaid
 flowchart TD
   A["<Step>"] --> B["<Step>"]
 ```
 
-## 2 · Prototype
+## Prototype
 
 <Throwaway HTML prototype, only if UI is involved.>
 
-## 3 · File tree
+## File tree
 
 ```text
 <path>    # NEW | MODIFIED | DELETED: <why>
@@ -51,7 +51,7 @@ flowchart TD
 
 ---
 
-# 4 · Success criteria
+# Success criteria
 
 ## 1 · <Action verb and outcome>
 
@@ -60,13 +60,13 @@ flowchart TD
 
 ---
 
-# 5 · Human checkpoints
+# Human checkpoints
 
 1. <Point>: cleared (<how>) | approved (<exact values>)
 
 ---
 
-# 6 · Todos
+# Todos
 
 ## 2a · <title>        (subagent)
 - Door: two-way | one-way · approved: <exact values>
@@ -79,7 +79,7 @@ flowchart TD
 
 ---
 
-# 7 · Summary
+# Summary
 
 - What: <outcome>
 - Size: <todos, files, or time>
