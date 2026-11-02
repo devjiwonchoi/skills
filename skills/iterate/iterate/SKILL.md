@@ -19,6 +19,7 @@ Follow [execution recording](references/recording.md) for every invocation, incl
 
 1. Read `ALIGN.md` and `STATUS.md` for the task.
    - Run only an `ALIGN.md` whose status says approved.
+   - When `ALIGN.md` has no success criteria section, treat each todo's done-when checks as its success criteria.
    - Add findings supplied by the caller, such as CI failures, bot comments, or Ship corrections, as fix todos.
    - Without an `ALIGN.md`, turn the request or findings into todos in the same spec within existing authorization.
    - Follow [Align](../../align/SKILL.md) first when intent or decisions are unsettled.
