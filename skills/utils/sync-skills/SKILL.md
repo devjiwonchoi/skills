@@ -19,4 +19,4 @@ description: Use when syncing personal skills.
    - Preserve displaced copies outside skill discovery paths and leave unrelated skills untouched.
 5. Route intended local changes into a PR when requested or already authorized, using `$commit` and `$pr` in a separate worktree.
    - After a PR merges, confirm its edits are present upstream before clearing only those edits and resuming the pull.
-   - Verify the plugin is enabled in each host and its installed skills and hooks match the checkout. Report updates, preserved edits, conflicts, and pending PRs.
+   - Verify the plugin is enabled in each host and its installed skills match the checkout. Report updates, preserved edits, conflicts, and pending PRs.
