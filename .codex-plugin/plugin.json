@@ -11,6 +11,5 @@
     "./skills/iterate",
     "./skills/ship",
     "./skills/utils"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
