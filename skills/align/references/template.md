@@ -8,6 +8,7 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 
 - Light: use for a simple task. That means one or two work todos, no UI, no irreversible action beyond the approved delivery, and an approach the Goal makes clear. Show Goal, Decisions when any exist, Todos, and Summary. Fold success criteria into each todo's `Done when`, list files in each todo's `Files`, put all delivery in one todo, and list human checkpoints only when there are any.
 - Full: use for everything else. Show every section.
+- Both forms show the Intention under Goal and the Don'ts section. Write `none` for a kind of Don't that does not apply.
 - When unsure, use full. Switch to full when revision grows the task past light.
 - A light plan may add any full section that helps, such as a Mermaid diagram for a flow the Goal does not make clear.
 
@@ -18,6 +19,8 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Show End state behavior in Mermaid only, never code or pseudo code.
 - Start each success criterion with an action verb.
 - Mark each todo `(subagent)` or `(main agent)`. Use main agent for todos that need tools, grants, or a screen that subagents lack.
+- Keep the Intention to one line on why the user wants the result. When the end state proves impossible or contradictory, use it to recommend a re-align, never to change the end state alone.
+- Start each Don't with `Out of scope:` for what this task does not build, or `Must not happen:` for a result to avoid even within scope.
 - Write everything else as normal text.
 - Quote Mermaid labels that contain punctuation and check each diagram parses before presenting.
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
@@ -34,6 +37,15 @@ Version: <n> · Status: draft | approved by <who> on <date>
 # Goal
 
 <Request restated. Before → after when replacing something.>
+
+Intention: <why the user wants this, in one line>
+
+---
+
+# Don'ts
+
+- Out of scope: <what this task does not build>
+- Must not happen: <a result to avoid even within scope, such as a regression>
 
 ---
 
@@ -111,6 +123,15 @@ Version: <n> · Status: draft | approved by <who> on <date>
 # Goal
 
 <Request restated. Before → after when replacing something.>
+
+Intention: <why the user wants this, in one line>
+
+---
+
+# Don'ts
+
+- Out of scope: <what this task does not build>
+- Must not happen: <a result to avoid even within scope, such as a regression>
 
 ---
 

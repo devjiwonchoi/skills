@@ -25,6 +25,7 @@ The goal is to agree with the user on the end state of any request, such as rese
    - In the light form, skip this step unless a diagram would clarify a flow the Goal does not.
 6. Write numbered success criteria. Start each with an action verb and name what meets it and what proves it.
    - In the light form, fold them into each todo's done-when check instead.
+   - In both forms, write the Intention, one line on why the user wants the result, and the Don'ts: what stays out of scope and what must not happen even within scope.
 7. Break the work into todos using the todo spec in the [template](references/template.md).
    - State what to achieve and how, step by step, so a subagent can run each todo with no other context.
    - Fan out everything that can run in parallel.
@@ -34,6 +35,7 @@ The goal is to agree with the user on the end state of any request, such as rese
 8. Check coverage in both directions and revise on gaps.
    - Every criterion is met by the end state, built by a todo, and proven by a done-when check.
    - Every todo serves a criterion. Cut any that does not.
+   - No todo does what a Don't rules out.
    - In the light form, every done-when check proves the Goal.
 9. Predict where the run could need a human and clear each point now.
    - Check for sign-in or 2FA, CAPTCHA, missing access or permission grants, missing information, payment or credential entry, external waits, and host or tool rules that forbid an action.
