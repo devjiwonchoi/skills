@@ -9,6 +9,7 @@ description: Use when executing an aligned plan.
 - With `--cross`, pass `--cross` to every Review invocation, including correction passes. Otherwise use Review's default mode.
 - Stop and ask only when reality differs from `ALIGN.md` or a loop makes no progress.
   - Reality differs when values change, an unplanned blocker appears, or an approved decision needs to change.
+  - When the end state must change, re-align: revise the affected `ALIGN.md` sections through [Align](../../align/SKILL.md) and continue this run after approval. Never leave the end state silently.
   - A loop makes no progress when a fix attempt leaves the same failure or finding and adds no new evidence.
   - Do not ask again for anything the approved plan settles.
 - Subagents never ask the user. They return blockers, changed values, and needed decisions to the main agent, which applies the stop rule.
@@ -35,3 +36,4 @@ Follow [execution recording](references/recording.md) for every invocation, incl
 4. Repeat: turn failed criteria and validated P0–P2 findings into fix todos and return to step 2.
    - Review the fix delta and affected behavior.
 5. Finish: when delivery todos exist, follow [Ship](../../ship/ship/SKILL.md) for them unless the caller owns delivery, then record them done. Otherwise report the result against each criterion with evidence.
+6. Remember: after the final report, follow [Retro](../../utils/retro/SKILL.md) for this task, then ask any closing question Ship returned. Skip it when Moniterate or Ship invoked this run.
