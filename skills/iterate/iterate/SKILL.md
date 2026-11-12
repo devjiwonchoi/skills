@@ -9,6 +9,7 @@ description: Use when executing an aligned plan.
 - With `--cross`, pass `--cross` to every Review invocation, including correction passes. Otherwise use Review's default mode.
 - Stop and ask only when reality differs from `ALIGN.md` or a loop makes no progress.
   - Reality differs when values change, an unplanned blocker appears, or an approved decision needs to change.
+  - When the end state must change, re-align: revise the affected `ALIGN.md` sections through [Align](../../align/SKILL.md) and continue this run after approval. Never leave the end state silently.
   - A loop makes no progress when a fix attempt leaves the same failure or finding and adds no new evidence.
   - Do not ask again for anything the approved plan settles.
 - Subagents never ask the user. They return blockers, changed values, and needed decisions to the main agent, which applies the stop rule.
