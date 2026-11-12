@@ -18,7 +18,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
 | `VERIFY.md` | Verify                                                       | Checked changes, criterion results, commands or scenarios, evidence, and gaps                                           |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
-| `RETRO.md`  | Explicitly invoked Retro                                     | Observed workflow problems and proposed jwn improvements                                                                |
+| `RETRO.md`  | Retro                                                        | Failures and workflow problems found, their signals, and proposed prevention                                            |
 
 Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.
 

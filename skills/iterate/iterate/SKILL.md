@@ -36,3 +36,4 @@ Follow [execution recording](references/recording.md) for every invocation, incl
 4. Repeat: turn failed criteria and validated P0–P2 findings into fix todos and return to step 2.
    - Review the fix delta and affected behavior.
 5. Finish: when delivery todos exist, follow [Ship](../../ship/ship/SKILL.md) for them unless the caller owns delivery, then record them done. Otherwise report the result against each criterion with evidence.
+6. Remember: after the final report, follow [Retro](../../utils/retro/SKILL.md) for this task, then ask any closing question Ship returned. Skip it when Moniterate or Ship invoked this run.

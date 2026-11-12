@@ -16,3 +16,4 @@ description: Use when delivering development changes.
 6. After publishing a PR, follow [Moniterate](../moniterate/SKILL.md) within the existing scope and authorization. Obtain its readiness report before reporting the final result.
 7. Report the final revision, links, the end-state comparison, and readiness for human review.
    - For published PRs, request the reviewers `ALIGN.md` names without asking. Otherwise recommend reviewers from repository guidance, ownership, and review history. Explain why and finish by asking whether to request review. Send only after user approval. If none are supported, explain the gap and ask the user to name one.
+   - When Iterate invoked Ship, return this question to Iterate instead of asking it, so Retro runs first.
