@@ -3,20 +3,24 @@ name: align
 description: Use when planning or starting a task.
 ---
 
-The goal is to agree with the user on an observable end state for any request, such as research, brainstorm, build, fix, debug, or computer-use tasks, and how each part will be proven, then hand off to Iterate.
+The goal is to agree with the user on an observable end state for any request, such as research, brainstorm, build, fix, debug, or computer-use tasks, and how each part will be proven, settle every question and permission, then hand off to Iterate.
 
 ## Steps
 
-1. Read the request and existing task records.
+1. Read the request, the preferences file, and existing task records per the `task-recording` skill.
+   - If the preferences file is missing, no one-way door is already allowed.
    - If the request is very ambiguous, restate the goal in your own words and get confirmation before continuing.
 2. Gather context with the `research` skill.
    - Research the topic or inspect the brownfield repository, fanning out subagents for wide searches.
    - Run work that shares a browser, screen, or account in sequence.
    - Gather only what the end state, decisions, and criteria need. Leave the deliverable work to todos.
    - For bugs, reproduce and find the root cause with the `debug` skill. If it stays unknown, make diagnosis its own todo.
-   - For irreversible actions, do reversible prep now to learn real values, such as filling a cart and reading the checkout total.
+   - For a one-way door, do reversible prep now to learn real values, such as filling a cart and reading the checkout total.
    - Fill gaps from context instead of asking.
-3. Ask only the important decisions with the `socratic` skill, using the host's question interface when available.
+3. Classify every action and decision. Settle what is still open with the `socratic` skill, using the host's question interface when available.
+   - A two-way door is reversible. Decide it and report the choice afterward.
+   - A one-way door is irreversible, such as buying, paying, sending, deleting, publishing, merging, or deploying. Settle it now with exact values, unless the preferences file already allows it.
+   - When the preferences file allows a one-way door, record the values and which preference allows it.
 4. Pick the light or full form from the [template](references/template.md). Use light for a simple task and full otherwise.
 5. Draw the end state with the `explain` skill, without a closing question. Approval happens in step 10.
    - End state items are the success criteria. In the light form they are the `Done when` lines. Name each item's proof, the observable check that shows it is met.
@@ -40,12 +44,12 @@ The goal is to agree with the user on an observable end state for any request, s
 9. Predict where the run could need a human and clear each point now.
    - Check for sign-in or 2FA, CAPTCHA, missing access or permission grants, missing information, payment or credential entry, external waits, and host or tool rules that forbid an action.
    - Plan an action only the user may perform as a user step.
-   - Get approval now, with the exact values learned in step 2, for every irreversible action, such as buying, paying, sending, deleting, publishing, merging, or deploying, so Iterate never pauses for it.
-   - End every checkpoint cleared or approved with exact values.
+   - Settle every one-way door that the preferences file does not already allow, with the exact values from step 2, so Iterate never pauses for it.
+   - End with every checkpoint cleared or approved with exact values, and with every question and permission settled.
 10. Present the plan in the template format for its form, leading with the end state and ending with its Summary.
     - Check that every Mermaid diagram parses first.
     - Revise with the user from the affected step until they approve.
 11. On approval, save `.jwn/<task>/ALIGN.md` following the `task-recording` skill, then follow the `iterate` skill with it.
-    - Approval settles every choice the plan states, including the branch, commits, push, PR, and the values of irreversible actions. Do not ask for them again.
+    - Approval settles every choice the plan states, including the branch, commits, push, PR, and one-way values. Do not ask for them again.
     - Continue in the current context. Do not force compaction.
     - While host plan mode blocks writes, keep the plan in conversation and save it once writes are allowed.
