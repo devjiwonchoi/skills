@@ -38,6 +38,8 @@ End state items are the success criteria items. Each `##` heading under `# Succe
 
 All end state items are met when `end_state_items_met` equals `end_state_items_total`. Write the counts as integers and `delegated` as `true` or `false`.
 
+`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. Verify does not rewrite the line.
+
 ## Task ownership
 
 Use the caller's task ID when supplied. Otherwise retain one task ID across stages and compaction, using the chat ID when available or choosing an ID once.
@@ -53,9 +55,9 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | Document    | Owner                                                        | Contents                                                                                                                |
 | ----------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
 | `EXPLORE.md` | Explore                                                      | Chosen direction, rejected directions with reasons, and open questions                                                   |
-| `ALIGN.md`  | Align                                                        | Goal, intention, Don'ts, decisions, end state, success criteria, human checkpoints, todos, summary, and actual approval |
+| `ALIGN.md`  | Align                                                        | Goal, intention, Don'ts, decisions, end state, success criteria, `Criteria hash: <sha256>`, human checkpoints, todos, summary, and actual approval |
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
-| `VERIFY.md` | Verify                                                       | Checked changes, criterion results, commands or scenarios, evidence, and gaps                                           |
+| `VERIFY.md` | Verify                                                       | Checked changes, criterion results, the recomputed criteria hash, commands or scenarios, evidence, and gaps             |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
 | `RETRO.md`  | Retro                                                        | Front matter defined above, then failures and workflow problems found, their signals, and proposed prevention            |
 
