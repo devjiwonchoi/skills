@@ -21,7 +21,7 @@ Follow the `execution-recording` skill for every invocation, including standalon
 
 1. Read `ALIGN.md` and `STATUS.md` for the task.
    - Run only an `ALIGN.md` whose status says approved.
-   - When `ALIGN.md` has no success criteria section, treat each todo's done-when checks as its success criteria.
+   - An end state item is a success criterion, or a `Done when` line in the light form.
    - Add findings supplied by the caller, such as CI failures, bot comments, or Ship corrections, as fix todos. CI or bot findings a caller passes in, including from Moniterate or standalone Ship, run within existing authorization without an `ALIGN.md`.
    - Follow the `align` skill only for new scope with no approved end state. Quick-impl may proceed only when the user's request itself is the spec.
 2. Execute: fan out the work. Run every unfinished todo whose dependencies are done, in parallel, each in its own subagent, with its todo spec, the `ALIGN.md` path if one exists, otherwise the original request, and the rule that the subagent makes two-way door decisions and returns them instead of asking.
@@ -31,9 +31,9 @@ Follow the `execution-recording` skill for every invocation, including standalon
    - Todos that change files follow the `impl` skill scoped to that todo.
    - Re-run a todo with its failure evidence until its done-when passes.
    - Run irreversible actions only with their approved values.
-3. Review: check every success criterion with the `verify` skill, except those served only by held delivery todos. Ship proves those.
+3. Review: check every end state item with the `verify` skill, except those served only by held delivery todos. Ship proves those.
    - When files changed, also follow the `review` skill once for the current revision.
-4. Repeat: turn failed criteria and validated P0–P2 findings into fix todos and return to step 2.
+4. Repeat: turn failed end state items and validated P0–P2 findings into fix todos and return to step 2.
    - Review the fix delta and affected behavior.
-5. Finish: when delivery todos exist, follow the `ship` skill for them unless the caller owns delivery, then record them done. Otherwise report what was done against each criterion with evidence, including the two-way door decisions in `STATUS.md`.
+5. Finish: when delivery todos exist, follow the `ship` skill for them unless the caller owns delivery, then record them done. Otherwise report what was done against each end state item with evidence, including the two-way door decisions in `STATUS.md`.
 6. Remember: after the final report, follow the `retro` skill for this task, then ask any closing question Ship returned. Skip it when Moniterate or Ship invoked this run.
