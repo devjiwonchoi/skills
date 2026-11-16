@@ -11,6 +11,7 @@
     "./skills/align",
     "./skills/iterate",
     "./skills/ship",
+    "./skills/remember",
     "./skills/utils"
   ]
 }
