@@ -27,7 +27,8 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Write everything else as normal text.
 - Quote Mermaid labels that contain punctuation and check each diagram parses before presenting.
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
-- Give todos that could share a file or stateful resource a dependency so they never run at once.
+- Fan out independent todos. Fix shared paths, names, and interfaces in the plan first. Give todos that could share a file or stateful resource a dependency so they never run at once.
+- Plan PRs as a stack per the `pr` skill.
 - Cover both directions. Every end state item is met by the end state, built by a todo, and proven by its named check. Every todo serves an end state item. Revise the plan when either direction has a gap. In the light form, every `Done when` line proves the end state.
 
 ## Full form

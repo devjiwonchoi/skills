@@ -32,10 +32,10 @@ The goal is to agree with the user on an observable end state for any request, s
    - In both forms, write the Intention, one line on why the user wants the result, and the Don'ts: what stays out of scope and what must not happen even within scope.
 7. Break the work into todos using the todo spec in the [template](references/template.md).
    - State what to achieve and how, step by step, so a subagent can run each todo with no other context.
-   - Fan out everything that can run in parallel.
+   - Fan out independent work across parallel todos and subagents. Fix shared paths, names, and interfaces in the plan first so that work does not wait.
    - Give todos that could share a file or stateful resource, such as a screen, browser session, or account, a dependency.
    - Mark todos that need tools, grants, or a screen that subagents lack as main agent.
-   - For file changes, include commit, push, PR, and the `moniterate` skill todos unless the user limits delivery. Follow the `commit` and `pr` skills to state each commit message, PR title and description, branch, base, reviewers to request, and how later fixes land. In the light form, put them in one delivery todo.
+   - For file changes, include commit, push, PR, and the `moniterate` skill todos unless the user limits delivery. Follow the `commit` and `pr` skills to state each commit message, PR title and description, branch, base, reviewers to request, and how later fixes land. Plan PRs as a stack per the `pr` skill. In the light form, put them in one delivery todo.
 8. Check coverage in both directions and revise on gaps.
    - Every end state item is met by the end state, built by a todo, and proven by its named check.
    - Every todo serves an end state item. Cut any that does not.
