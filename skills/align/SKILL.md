@@ -8,12 +8,13 @@ The goal is to agree with the user on an observable end state for any request, s
 ## Steps
 
 1. Read the request, the preferences file, and existing task records per the `task-recording` skill.
+   - When `EXPLORE.md` is in the task folder, start from it.
    - If the preferences file is missing, no one-way door is already allowed.
-   - If the request is very ambiguous, restate the goal in your own words and get confirmation before continuing.
-2. Gather context with the `research` skill.
+   - If the goal or approach is unsettled and there is no `EXPLORE.md`, follow the `explore` skill first.
+2. Research only what the end state still needs, with the `research` skill.
    - Research the topic or inspect the brownfield repository, fanning out subagents for wide searches.
    - Run work that shares a browser, screen, or account in sequence.
-   - Gather only what the end state, decisions, and criteria need. Leave the deliverable work to todos.
+   - Leave the deliverable work to todos.
    - For bugs, reproduce and find the root cause with the `debug` skill. If it stays unknown, make diagnosis its own todo.
    - For a one-way door, do reversible prep now to learn real values, such as filling a cart and reading the checkout total.
    - Fill gaps from context instead of asking.
@@ -49,7 +50,7 @@ The goal is to agree with the user on an observable end state for any request, s
 10. Present the plan in the template format for its form, leading with the end state and ending with its Summary.
     - Check that every Mermaid diagram parses first.
     - Revise with the user from the affected step until they approve.
-11. On approval, save `.jwn/<task>/ALIGN.md` following the `task-recording` skill, then follow the `iterate` skill with it.
+11. On approval, save `ALIGN.md` in the task folder following the `task-recording` skill, then follow the `iterate` skill with it.
     - Run `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section.
     - Approval settles every choice the plan states, including the branch, commits, push, PR, and one-way values. Do not ask for them again.
     - Continue in the current context. Do not force compaction.
