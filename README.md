@@ -3,7 +3,7 @@
 personal skills my agents use everyday
 
 ```
-align -> iterate -> ship -> retro
+explore -> align -> iterate -> ship -> remember
 ```
 
 ## Idea Sources
