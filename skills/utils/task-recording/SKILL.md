@@ -25,6 +25,8 @@ User preferences and learned rules live in `preferences.md`.
 
 Weekly retros live in `retros/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number.
 
+End state items are the success criteria items. Each `##` heading under `# Success criteria` is one item. In the light form, each line matching `^- Done when:` is one item. `RETRO.md` counts these items. Verify judges exactly these items.
+
 `RETRO.md` starts with YAML front matter. These keys are required, and extra keys are allowed:
 
 - `interventions_after_approval` (int)
