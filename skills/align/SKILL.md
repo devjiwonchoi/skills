@@ -50,6 +50,7 @@ The goal is to agree with the user on an observable end state for any request, s
     - Check that every Mermaid diagram parses first.
     - Revise with the user from the affected step until they approve.
 11. On approval, save `.jwn/<task>/ALIGN.md` following the `task-recording` skill, then follow the `iterate` skill with it.
+    - Run `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section.
     - Approval settles every choice the plan states, including the branch, commits, push, PR, and one-way values. Do not ask for them again.
     - Continue in the current context. Do not force compaction.
     - While host plan mode blocks writes, keep the plan in conversation and save it once writes are allowed.

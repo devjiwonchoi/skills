@@ -29,6 +29,7 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
 - Fan out independent todos. Fix shared paths, names, and interfaces in the plan first. Give todos that could share a file or stateful resource a dependency so they never run at once.
 - Plan PRs as a stack per the `pr` skill.
+- On approval, run `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section. Leave it blank until approval.
 - Cover both directions. Every end state item is met by the end state, built by a todo, and proven by its named check. Every todo serves an end state item. Revise the plan when either direction has a gap. In the light form, every `Done when` line proves the end state.
 
 ## Full form
@@ -37,6 +38,7 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 # ALIGN: <title>
 
 Version: <n> · Status: draft | approved by <who> on <date>
+Criteria hash: <digest>
 
 # End state
 
@@ -123,6 +125,7 @@ Intention: <why the user wants this, in one line>
 # ALIGN: <title>
 
 Version: <n> · Status: draft | approved by <who> on <date>
+Criteria hash: <digest>
 
 # End state
 
