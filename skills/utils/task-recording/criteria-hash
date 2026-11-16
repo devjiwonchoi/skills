@@ -1,0 +1,150 @@
+#!/bin/sh
+# Usage: criteria-hash <ALIGN.md>
+# Print the sha256 hex digest of the ALIGN.md success criteria.
+# Align and Verify run this script. Nothing else defines the hash.
+#
+# Full form: lines after "# Success criteria" until a "^# " line that is
+# outside a fenced code block. A fence opens on three or more ` or ~ and
+# closes only on at least that many of the same character, so ``` inside a
+# ```` fence does not end it. A fenced "# Success criteria" does not start
+# the section. Light form, when that section is absent: lines matching
+# "^- Done when:", in file order. Strip trailing whitespace on each line.
+# Drop "---" lines and trailing blank lines. Join with newlines and one
+# final newline. Exit 1 when the section has no non-blank lines, or when
+# neither form is present.
+
+set -eu
+
+if [ "$#" -ne 1 ] || [ ! -f "$1" ]; then
+  echo "usage: criteria-hash <ALIGN.md>" >&2
+  exit 1
+fi
+
+tmp=$(mktemp "${TMPDIR:-/tmp}/criteria-hash.XXXXXX")
+trap 'rm -f "$tmp"' EXIT
+
+if ! awk '
+function strip(s) {
+  sub(/\r$/, "", s)
+  sub(/[[:space:]]+$/, "", s)
+  return s
+}
+
+function parse_fence(s,    rest, ch, n) {
+  rest = s
+  sub(/^[[:space:]]*/, "", rest)
+  ch = substr(rest, 1, 1)
+  if (ch != "`" && ch != "~") {
+    return 0
+  }
+  n = 0
+  while (substr(rest, n + 1, 1) == ch) {
+    n++
+  }
+  if (n < 3) {
+    return 0
+  }
+  mark_ch = ch
+  mark_n = n
+  mark_rest = substr(rest, n + 1)
+  return 1
+}
+
+function emit(n,    i, m, any) {
+  m = 0
+  any = 0
+  for (i = 1; i <= n; i++) {
+    if (buf[i] ~ /^[[:space:]]*---[[:space:]]*$/) {
+      continue
+    }
+    if (buf[i] !~ /^[[:space:]]*$/) {
+      any = 1
+    }
+    m++
+    kept[m] = buf[i]
+  }
+  while (m > 0 && kept[m] ~ /^[[:space:]]*$/) {
+    m--
+  }
+  if (!any || m == 0) {
+    return 1
+  }
+  for (i = 1; i <= m; i++) {
+    print kept[i]
+  }
+  return 0
+}
+
+{
+  all[++na] = strip($0)
+}
+
+END {
+  fence_ch = ""
+  fence_len = 0
+  start = 0
+  end = 0
+  for (i = 1; i <= na; i++) {
+    if (fence_len > 0) {
+      if (parse_fence(all[i]) && mark_ch == fence_ch && mark_n >= fence_len && mark_rest ~ /^[[:space:]]*$/) {
+        fence_ch = ""
+        fence_len = 0
+      }
+      continue
+    }
+    if (parse_fence(all[i]) && (mark_ch != "`" || index(mark_rest, "`") == 0)) {
+      fence_ch = mark_ch
+      fence_len = mark_n
+      continue
+    }
+    if (start == 0) {
+      if (all[i] ~ /^# Success criteria[[:space:]]*$/) {
+        start = i + 1
+      }
+      continue
+    }
+    if (all[i] ~ /^# /) {
+      end = i
+      break
+    }
+  }
+  if (start > 0) {
+    if (end == 0) {
+      end = na + 1
+    }
+    n = 0
+    for (i = start; i < end; i++) {
+      buf[++n] = all[i]
+    }
+    if (emit(n) != 0) {
+      print "criteria-hash: success criteria section has no non-blank lines" > "/dev/stderr"
+      exit 1
+    }
+    exit 0
+  }
+  n = 0
+  for (i = 1; i <= na; i++) {
+    if (all[i] ~ /^- Done when:/) {
+      buf[++n] = all[i]
+    }
+  }
+  if (n == 0 || emit(n) != 0) {
+    print "criteria-hash: no success criteria section or Done when lines" > "/dev/stderr"
+    exit 1
+  }
+  exit 0
+}
+' "$1" > "$tmp"; then
+  exit 1
+fi
+
+if command -v sha256sum >/dev/null 2>&1; then
+  digest=$(sha256sum "$tmp")
+elif command -v shasum >/dev/null 2>&1; then
+  digest=$(shasum -a 256 "$tmp")
+else
+  echo "criteria-hash: need sha256sum or shasum" >&2
+  exit 1
+fi
+
+printf '%s\n' "$digest" | awk 'NR == 1 { print $1; exit }'

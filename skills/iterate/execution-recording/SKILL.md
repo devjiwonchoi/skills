@@ -5,7 +5,7 @@ description: Use when recording implementation, verification, or review of a tas
 
 # Execution recording
 
-Follow the shared `task-recording` skill for the project root, task ownership, Markdown documents, and evidence.
+Follow the `task-recording` skill for where records live, task ownership, Markdown documents, and evidence.
 
 ## Stage ownership
 
@@ -26,7 +26,7 @@ Record the diff base, HEAD, staged and unstaged changes, relevant untracked file
 
 Implementation identifies changed and affected behavior and reopens the corresponding checks and review. Retain unaffected coverage only with a supported reason. A changed revision invalidates completion for affected behavior, and unresolved findings survive.
 
-Verify records passed, failed, or incomplete with criterion results, commands or scenarios, evidence paths, and gaps. Passing requires evidence for every required criterion. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains incomplete.
+Verify records passed, failed, or incomplete with criterion results, commands or scenarios, evidence paths, and gaps. Follow the `task-recording` skill for the criteria hash. Do not pass when the stored hash differs, and leave the stored line unchanged. Passing requires evidence for every required criterion. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains incomplete.
 
 ## Review history
 
