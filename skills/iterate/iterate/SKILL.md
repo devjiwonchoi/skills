@@ -16,7 +16,7 @@ description: Use when executing an aligned plan.
 
 ## Steps
 
-Follow [execution recording](references/recording.md) for every invocation, including standalone use.
+Follow the `execution-recording` skill for every invocation, including standalone use.
 
 1. Read `ALIGN.md` and `STATUS.md` for the task.
    - Run only an `ALIGN.md` whose status says approved.

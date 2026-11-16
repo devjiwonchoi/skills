@@ -45,7 +45,7 @@ The goal is to agree with the user on the end state of any request, such as rese
 10. Present the plan in the template format for its form, ending with its Summary.
     - Check that every Mermaid diagram parses first.
     - Revise with the user from the affected step until they approve.
-11. On approval, save `.jwn/<task>/ALIGN.md` following [task recording](../utils/references/recording.md), then follow the `iterate` skill with it.
+11. On approval, save `.jwn/<task>/ALIGN.md` following the `task-recording` skill, then follow the `iterate` skill with it.
     - Approval settles every choice the plan states, including the branch, commits, push, PR, and the values of irreversible actions. Do not ask for them again.
     - Continue in the current context. Do not force compaction.
     - While host plan mode blocks writes, keep the plan in conversation and save it once writes are allowed.

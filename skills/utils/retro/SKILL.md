@@ -19,7 +19,7 @@ description: Use when reviewing and improving the jwn workflow.
 
 ## Steps
 
-1. Read the current session, relevant task records, and additional material supplied by the user. Use shared [task recording](../references/recording.md) for this task's `RETRO.md`. Do not choose another task by recency or include secrets and unrelated history.
+1. Read the current session, relevant task records, and additional material supplied by the user. Use the shared `task-recording` skill for this task's `RETRO.md`. Do not choose another task by recency or include secrets and unrelated history.
 2. Check the task for each failure above and for other friction, such as duplicate recording or late previews. Cite the actual request, outcome, or artifact as the signal, and the responsible jwn instruction when known. Mark a failure not found, or not yet observable when its signals come later, such as edits after acceptance.
 3. Apply the `delete` skill to seek removal or simplification before adding rules. Consolidate proposals with the same cause and read existing Retro proposals before adding duplicates. Do not turn an isolated complaint into a universal requirement.
 4. For each found failure or friction, prefer prevention in this order: structure that makes it impossible, then types, lint, tests, and written instructions last. Record the observed case, cause and confidence, affected instruction, specific removal or replacement, expected effect, and how to check that effect, preferring a check that fails on the observed case. State when evidence is insufficient instead of inventing a fix.

@@ -10,7 +10,7 @@ description: Use when implementing development work.
 
 ## Steps
 
-Follow [execution recording](../iterate/references/recording.md) for every invocation, including standalone use.
+Follow the `execution-recording` skill for every invocation, including standalone use.
 
 1. Read the todo spec you were given, the approved `ALIGN.md`, and any findings. Without a todo spec, outline the approach. An agent's outline is not approval. Pause work awaiting required approval.
 2. Keep approved intent fixed. Before and during implementation, compare cumulative changes with the approved `ALIGN.md`, or the original request and decisions.
