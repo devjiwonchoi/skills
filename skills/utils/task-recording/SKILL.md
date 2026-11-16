@@ -19,6 +19,8 @@ The root is `$JWN_HOME` when that environment variable is set, and `~/.jwn` othe
 
 Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `STATUS.md`, `VERIFY.md`, `REVIEW.md`, and `RETRO.md`.
 
+`<repo>` is `owner/name` from the `origin` remote URL. Take the last two path segments of `https://host/owner/name` or `git@host:owner/name`, after removing a trailing `.git`. When `origin` is missing or those segments cannot be read, resolve `git rev-parse --git-common-dir` to an absolute path and use the basename of its parent directory. Outside a Git checkout, use the working directory name.
+
 User preferences and learned rules live in `preferences.md`.
 
 Weekly retros live in `retros/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number.
@@ -36,6 +38,8 @@ All end state items are met when `end_state_items_met` equals `end_state_items_t
 ## Task ownership
 
 Use the caller's task ID when supplied. Otherwise retain one task ID across stages and compaction, using the chat ID when available or choosing an ID once.
+
+Derive `<repo>` as the record format defines. When the caller supplies a project, resolve `origin` and the Git directory from that project.
 
 For tasks with authorized follow-up work, keep the current state and next action in `STATUS.md` before each turn ends. During an approved run, end each turn by stating its state: continuing with the next step, waiting on what, needing the user and why, or done with evidence shown in the conversation.
 
