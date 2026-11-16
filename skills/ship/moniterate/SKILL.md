@@ -6,7 +6,7 @@ description: Use when asked to monitor and iterate on a pull request.
 ## Steps
 
 1. Read the approved delivery scope and current task records through the shared `task-recording` skill. Check CI and review comments on the latest PR head. Record the PR URL, checked head, remaining work, and next check in `STATUS.md`.
-2. If a human leaves review comments, a fix falls outside the approved scope, merge or deployment is needed, or a blocker needs human input, report it to the user and pause the loop.
+2. If a human leaves review comments, merge or deployment is needed, or a blocker needs human input, report it to the user and pause the loop. A fix outside the approved scope follows the stop rule in the `iterate` skill.
 3. Rerun failed CI checks that appear flaky and inspect each retry.
 4. Follow the `iterate` skill as its delivery owner, so Iterate skips Ship, for failures introduced by our changes and valid bot findings within existing authorization. Commit and push only after execution completes.
 5. Recheck CI and bot comments on the latest PR head after reruns or pushes.
