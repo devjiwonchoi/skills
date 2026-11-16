@@ -5,7 +5,7 @@ description: Use when recording implementation, verification, or review of a tas
 
 # Execution recording
 
-Follow the shared `task-recording` skill for the project root, task ownership, Markdown documents, and evidence.
+Follow the `task-recording` skill for where records live, task ownership, Markdown documents, and evidence.
 
 ## Stage ownership
 
