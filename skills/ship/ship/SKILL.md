@@ -16,4 +16,4 @@ description: Use when delivering development changes.
 6. After publishing a PR, follow the `moniterate` skill within the existing scope and authorization. Obtain its readiness report before reporting the final result.
 7. End with a final report: what was done, the end-state comparison, and exactly where to review (PR links, files, and evidence), including two-way door decisions recorded in `STATUS.md`.
    - For published PRs, request the reviewers `ALIGN.md` names without asking. Otherwise recommend reviewers from repository guidance, ownership, and review history. Explain why and finish by asking whether to request review. Send only after user approval. If none are supported, explain the gap and ask the user to name one.
-   - When Iterate invoked Ship, return this question to Iterate instead of asking it, so Retro runs first.
+   - When Iterate invoked Ship, return this question to Iterate instead of asking it, so Remember runs first.
