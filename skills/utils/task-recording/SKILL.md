@@ -49,6 +49,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 
 | Document    | Owner                                                        | Contents                                                                                                                |
 | ----------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `EXPLORE.md` | Explore                                                      | Chosen direction, rejected directions with reasons, and open questions                                                   |
 | `ALIGN.md`  | Align                                                        | Goal, intention, Don'ts, decisions, end state, success criteria, human checkpoints, todos, summary, and actual approval |
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
 | `VERIFY.md` | Verify                                                       | Checked changes, criterion results, commands or scenarios, evidence, and gaps                                           |
