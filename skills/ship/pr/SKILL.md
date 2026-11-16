@@ -5,7 +5,7 @@ description: Always use when handling PRs.
 
 ## Rules
 
-- Before creating or updating PRs, follow [Commit](../commit/SKILL.md) to establish or reconcile the commit structure.
+- Before creating or updating PRs, follow the `commit` skill to establish or reconcile the commit structure.
 - Map commits to review contexts and independently reviewable outcomes.
 - Keep new shared code with its first real caller when the caller is needed to understand its purpose or assess its contract. Use separate commits within that PR.
 - Split outcomes into separate PRs when each is independently understandable and reviewable.

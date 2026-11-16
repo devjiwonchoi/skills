@@ -1,3 +1,8 @@
+---
+name: task-recording
+description: Use when recording a task under .jwn.
+---
+
 # Task recording
 
 Use Markdown under `.jwn/<task>/` for Align, implementation, verification, and review, including standalone invocations. Ordinary conversation creates no records. Create each document only when its stage needs it. Do not create a replacement journal or general recording command.

@@ -11,7 +11,7 @@ description: Use when reviewing development changes.
 
 ## Steps
 
-Follow [execution recording](../iterate/references/recording.md) for every invocation, including standalone use.
+Follow the `execution-recording` skill for every invocation, including standalone use.
 
 1. Read the repository, target revision, diff base or scope, and retained findings and pass history in `REVIEW.md`.
    - Review stacks together with each PR's base/head and findings attributed to its PR.
