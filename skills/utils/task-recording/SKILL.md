@@ -34,6 +34,7 @@ End state items are the success criteria items. Each `##` heading under `# Succe
 - `end_state_items_met` (int)
 - `review_change_requests` (int)
 - `delegated` (bool: true when `interventions_after_approval` is 0 and all end state items are met)
+- `date` (`YYYY-MM-DD`, the task finish date in the user's local date, for weekly retros)
 
 All end state items are met when `end_state_items_met` equals `end_state_items_total`. Write the counts as integers and `delegated` as `true` or `false`.
 
