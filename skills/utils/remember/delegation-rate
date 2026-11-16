@@ -3,7 +3,8 @@
 #
 # Usage: delegation-rate [--week YYYY-Www] FILE_OR_DIR...
 # The default week is the current ISO week in local time. A directory
-# contributes files named RETRO.md. Symlinked roots are followed.
+# contributes REMEMBER.md files, and a RETRO.md file whose directory
+# has no REMEMBER.md. Symlinked roots are followed.
 # Each file is counted once, by its physical path. A quoted date is
 # accepted. realpath is used when it exists, otherwise cd -P and pwd -P.
 #
@@ -116,11 +117,22 @@ tab=$(printf '\t')
 
 for arg do
   if [ -d "$arg" ]; then
+    if ! find -H "$arg" -name REMEMBER.md -type f >"$found"; then
+      printf 'delegation-rate: cannot read %s\n' "$arg" >&2
+      exit 1
+    fi
+    while IFS= read -r file; do
+      printf '0\t%s\n' "$file"
+    done <"$found" >>"$raw"
     if ! find -H "$arg" -name RETRO.md -type f >"$found"; then
       printf 'delegation-rate: cannot read %s\n' "$arg" >&2
       exit 1
     fi
     while IFS= read -r file; do
+      dir=$(dirname "$file")
+      if [ -f "$dir/REMEMBER.md" ]; then
+        continue
+      fi
       printf '0\t%s\n' "$file"
     done <"$found" >>"$raw"
   elif [ -f "$arg" ]; then

@@ -36,4 +36,4 @@ Follow the `execution-recording` skill for every invocation, including standalon
 4. Repeat: turn failed end state items and validated P0–P2 findings into fix todos and return to step 2.
    - Review the fix delta and affected behavior.
 5. Finish: when delivery todos exist, follow the `ship` skill for them unless the caller owns delivery, then record them done. Otherwise report what was done against each end state item with evidence, including the two-way door decisions in `STATUS.md`.
-6. Remember: after the final report, follow the `retro` skill for this task, then ask any closing question Ship returned. Skip it when Moniterate or Ship invoked this run.
+6. Remember: after the final report, follow the `remember` skill for this task, then ask any closing question Ship returned. Skip it when Moniterate or Ship invoked this run.

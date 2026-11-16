@@ -21,7 +21,7 @@ description: Always use when handling PRs.
 
 ## Examples
 
-- Add `retro` skill
+- Add `remember` skill
 - Fix login redirect
 - Remove unused option
 

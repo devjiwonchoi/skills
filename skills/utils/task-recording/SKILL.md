@@ -17,24 +17,24 @@ The root is `$JWN_HOME` when that environment variable is set, and `~/.jwn` othe
 
 `VERSION` contains `1`.
 
-Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `STATUS.md`, `VERIFY.md`, `REVIEW.md`, and `RETRO.md`.
+Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `STATUS.md`, `VERIFY.md`, `REVIEW.md`, and `REMEMBER.md`. Read `RETRO.md` when `REMEMBER.md` is absent. Write `REMEMBER.md` and leave an existing `RETRO.md` in place.
 
 `<repo>` is `owner/name` from the `origin` remote URL. Take the last two path segments of `https://host/owner/name` or `git@host:owner/name`, after removing a trailing `.git`. When `origin` is missing or those segments cannot be read, resolve `git rev-parse --git-common-dir` to an absolute path and use the basename of its parent directory. Outside a Git checkout, use the working directory name.
 
 User preferences and learned rules live in `preferences.md`.
 
-Weekly retros live in `retros/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number.
+Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number. Read `retros/<YYYY>-W<ww>.md` when the `weeks/` file is absent. Write `weeks/` only.
 
-End state items are the success criteria items. Each `##` heading under `# Success criteria` is one item. In the light form, each line matching `^- Done when:` is one item. `RETRO.md` counts these items. Verify judges exactly these items.
+End state items are the success criteria items. Each `##` heading under `# Success criteria` is one item. In the light form, each line matching `^- Done when:` is one item. `REMEMBER.md` counts these items. Verify judges exactly these items.
 
-`RETRO.md` starts with YAML front matter. These keys are required, and extra keys are allowed:
+`REMEMBER.md` starts with YAML front matter. These keys are required, and extra keys are allowed:
 
 - `interventions_after_approval` (int)
 - `end_state_items_total` (int)
 - `end_state_items_met` (int)
 - `review_change_requests` (int)
 - `delegated` (bool: true when `interventions_after_approval` is 0 and all end state items are met)
-- `date` (`YYYY-MM-DD`, the task finish date in the user's local date, for weekly retros)
+- `date` (`YYYY-MM-DD`, the task finish date in the user's local date, for the weekly file)
 
 All end state items are met when `end_state_items_met` equals `end_state_items_total`. Write the counts as integers and `delegated` as `true` or `false`.
 
@@ -59,7 +59,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
 | `VERIFY.md` | Verify                                                       | Checked changes, criterion results, the recomputed criteria hash, commands or scenarios, evidence, and gaps             |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
-| `RETRO.md`  | Retro                                                        | Front matter defined above, then failures and workflow problems found, their signals, and proposed prevention            |
+| `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, and proposed prevention            |
 
 Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.
 
