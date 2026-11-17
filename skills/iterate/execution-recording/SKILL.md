@@ -14,7 +14,8 @@ Read `STATUS.md`, `DECISIONS.md`, `ALIGN.md` when available, and relevant verifi
 - Iterate records each todo's result (done, re-run, or failed), fix todos in the same spec, deviations, blockers, and next action in `STATUS.md`. `ALIGN.md` stays as approved.
 - Iterate appends each decision and each useful stop to `DECISIONS.md`. An entry states what, why, the evidence path, and the outcome. Earlier entries are not rewritten.
 - Quick-impl records implementation outcomes and unverified work in `STATUS.md`.
-- Verify appends results and evidence to `VERIFY.md`.
+- Verify appends results and evidence to `VERIFY.md` as one `Result`, `Proof`, `Wanted`, `Got` block per end state item, per the `task-recording` skill.
+- Pending questions go in `STATUS.md` as root lines, per the `task-recording` skill.
 - Review maintains findings and pass history in `REVIEW.md`.
 - Impl passes implementation and verification outcomes to its caller.
 - Only the main agent writes task records. Subagents return their results to it.

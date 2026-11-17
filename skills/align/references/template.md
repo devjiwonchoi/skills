@@ -6,11 +6,11 @@ Use this layout to present the plan and to save `ALIGN.md`.
 
 Size the plan to the task. Show a section only when it tells the reader something the other sections do not.
 
-- Light: use for a simple task. That means one or two work todos, no UI, no one-way door beyond the approved delivery, and an approach the end state items make clear. Show End state, Criteria, Todos, Stack when delivering a PR, Goal, Don'ts, Decisions when any exist, and Summary. Add Files when files change. Put all delivery in one todo and one Stack entry. List human checkpoints only when there are any.
+- Light: use for a simple task. That means one or two work todos, no UI, no one-way door beyond the approved delivery, and an approach the end state items make clear. Show End state, Criteria, Todos, Stack when delivering a PR, Goal, Don'ts, Later and Decisions when any exist, and Summary. Add Files when files change. Put all delivery in one todo and one Stack entry. List human checkpoints only when there are any.
 - Full: use for everything else. Show every section.
 - Both forms open with the End state items, then the E2E workflow diagram, then Criteria. Both show the Intention under Goal and the Don'ts section. Write `none` for a kind of Don't that does not apply.
 - When unsure, use full. Switch to full when revision grows the task past light.
-- When a section is shown, keep this order: End state, Criteria, Files, Todos, Stack, Goal, Don'ts, Decisions, Human checkpoints, Summary. The title and status lines stay above End state. The diagram stays inside End state.
+- When a section is shown, keep this order: End state, Criteria, Files, Todos, Stack, Goal, Don'ts, Later, Decisions, Human checkpoints, Summary. The title and status lines stay above End state. The diagram stays inside End state.
 
 ## Rules
 
@@ -26,12 +26,14 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Mark each todo `(subagent)` or `(main agent)`. Use main agent for todos that need tools, grants, or a screen that subagents lack.
 - Keep the Intention to one line on why the user wants the result. When the end state proves impossible or contradictory, use it to recommend a re-align, never to change the end state alone.
 - Start each Don't with `Out of scope:` for what this task does not build, or `Must not happen:` for a result to avoid even within scope.
+- Later lists what was agreed and deliberately left out of this task, one bullet each. Show it only when there is any. It is not a Don't: a Don't says what must not happen, a Later says what comes next. It sits outside the hashed sections.
 - Write everything else as normal text.
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
 - Fan out independent todos. Fix shared paths, names, and interfaces in the plan first. Give todos that could share a file or stateful resource a dependency so they never run at once.
 - The Stack section is the PR plan per the `pr` skill. List each PR's branch, base, title, commits, body, and reviewers. The bottom PR targets the approved base. Each later PR is based on the previous PR's branch. A delivery todo carries out the Stack entry it names.
 - Save the plan as `ALIGN.md` with `Status: draft` before approval, so its progress is readable. Approval sets the status to `approved by <who> on <date>`. A draft has no `ALIGN.approved.md`.
 - On approval, run `e2e-workflow check <ALIGN.md>` from the `align` skill folder, then `criteria-hash <ALIGN.md>` from the `task-recording` skill folder. Write `Criteria hash: <digest>` outside the hashed section. Leave it blank until approval. Then copy the saved file to `ALIGN.approved.md`. That copy freezes the diagram with the rest of the contract. Replace that copy only on a later approval.
+- `Deadline: YYYY-MM-DD` is an optional line under the `Version` line. Write it only when the owner stated a deadline, and leave the line out otherwise. Never ask for one. It is part of what the owner approves. The criteria hash does not cover it, so Verify compares it with the approved copy.
 - Cover both directions. Every end state item has one proof, is named by a criterion, and is built by a todo. Every criterion names an end state item. Every todo serves an end state item. Every `E2E:` proof names a node in a journey. Every file proof names a path in Files. Revise the plan when any direction has a gap or the check fails.
 
 ## E2E workflow
@@ -66,6 +68,7 @@ flowchart LR
 # ALIGN: Reply in a thread
 
 Version: <n> · Status: draft | approved by <who> on <date>
+Deadline: <YYYY-MM-DD>
 Criteria hash: <digest>
 
 # End state
@@ -163,6 +166,12 @@ Intention: <why the user wants this, in one line>
 
 ---
 
+# Later
+
+- <agreed, but not done in this task>
+
+---
+
 # Decisions
 
 1. <Reported or approved decision> · two-way | one-way · <reported choice, approved exact values, or allowed by preferences>
@@ -190,6 +199,7 @@ Intention: <why the user wants this, in one line>
 # ALIGN: Reply in a thread
 
 Version: <n> · Status: draft | approved by <who> on <date>
+Deadline: <YYYY-MM-DD>
 Criteria hash: <digest>
 
 # End state
@@ -265,6 +275,12 @@ Intention: <why the user wants this, in one line>
 
 - Out of scope: <what this task does not build>
 - Must not happen: <a result to avoid even within scope, such as a regression>
+
+---
+
+# Later
+
+- <agreed, but not done in this task>
 
 ---
 

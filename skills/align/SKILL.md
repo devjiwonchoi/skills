@@ -34,6 +34,8 @@ The goal is to agree with the user on an observable end state for any request, s
    - Save the opening as `ALIGN.md` with `Status: draft` once it is written, and save again after each revision. A draft is not approval. Leave `Criteria hash:` blank and write no `ALIGN.approved.md`. Follow the `task-recording` skill for the folder.
 6. Write the criteria after the diagram. Start each with an action verb and name the end state item that proves it.
    - In both forms, write the Intention, one line on why the user wants the result, and the Don'ts: what stays out of scope and what must not happen even within scope.
+   - When the user stated a deadline, write it as `Deadline: YYYY-MM-DD` under the `Version` line. Do not ask whether there is one. Approval covers it with the rest of the plan.
+   - Write `# Later` for what the user agreed to but this task will not do. Leave it out when there is none.
 7. Break the work into fan-out todos using the todo spec in the [template](references/template.md), then write the stacked PR plan per the `pr` skill.
    - State what to achieve and how, step by step, so a subagent can run each todo with no other context.
    - Fan out independent work across parallel todos and subagents. Fix shared paths, names, and interfaces in the plan first so that work does not wait.
@@ -54,6 +56,7 @@ The goal is to agree with the user on an observable end state for any request, s
 10. Present the plan in the template format for its form. It opens with the end state items and ends with its Summary.
     - The diagram is the one `e2e-workflow` accepts. When the plan is already a file, run `e2e-workflow check <ALIGN.md>` from this skill's folder. Do not ask for approval when the check fails.
     - Ask only about an unsettled one-way door. Revise from the affected step until they approve the plan. Do not ask a two-way decision.
+   - Record each question left open as a `## Pending` root line in `STATUS.md` per the `task-recording` skill. Ask questions that share a root once.
 11. On approval, save the final `ALIGN.md` in the task folder following the `task-recording` skill, set its status to `approved by <who> on <date>`, then follow the `iterate` skill with it.
     - Run `e2e-workflow check <ALIGN.md>` from this skill's folder, then `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section. A failing check is not approval.
     - Copy that approved file to `ALIGN.approved.md` in the same folder. The copy freezes the diagram with the rest of the contract. Replace the copy only on a later approval.
