@@ -30,6 +30,7 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
 - Fan out independent todos. Fix shared paths, names, and interfaces in the plan first. Give todos that could share a file or stateful resource a dependency so they never run at once.
 - The Stack section is the PR plan per the `pr` skill. List each PR's branch, base, title, commits, body, and reviewers. The bottom PR targets the approved base. Each later PR is based on the previous PR's branch. A delivery todo carries out the Stack entry it names.
+- Save the plan as `ALIGN.md` with `Status: draft` before approval, so its progress is readable. Approval sets the status to `approved by <who> on <date>`. A draft has no `ALIGN.approved.md`.
 - On approval, run `e2e-workflow check <ALIGN.md>` from the `align` skill folder, then `criteria-hash <ALIGN.md>` from the `task-recording` skill folder. Write `Criteria hash: <digest>` outside the hashed section. Leave it blank until approval. Then copy the saved file to `ALIGN.approved.md`. That copy freezes the diagram with the rest of the contract. Replace that copy only on a later approval.
 - Cover both directions. Every end state item has one proof, is named by a criterion, and is built by a todo. Every criterion names an end state item. Every todo serves an end state item. Every `E2E:` proof names a node in a journey. Every file proof names a path in Files. Revise the plan when any direction has a gap or the check fails.
 
