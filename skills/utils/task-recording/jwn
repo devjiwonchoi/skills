@@ -17,11 +17,11 @@
 # root. An existing archive is merged. A path that exists and is not a
 # version 1 archive is refused.
 #
-# Merge adds files the destination lacks. preferences.md and rules.md,
-# at the root only, append source lines the destination does not already
-# have and do not change the destination's existing lines. Every other
-# differing file is a conflict: the destination bytes stay, and the path
-# is reported. Files that exist on only one side are not deleted.
+# Merge adds files the destination lacks. preferences.md, rules.md, and
+# checklist.md, at the root only, append source lines the destination does
+# not already have and do not change the destination's existing lines.
+# Every other differing file is a conflict: the destination bytes stay, and
+# the path is reported. Files that exist on only one side are not deleted.
 # Identical files are not reported.
 #
 # Archive format version 1. Newline is \n. Control lines may end in one CR.
@@ -324,7 +324,7 @@ has_path() {
 
 mergeable() {
   case $1 in
-    preferences.md|rules.md) return 0 ;;
+    preferences.md|rules.md|checklist.md) return 0 ;;
     *) return 1 ;;
   esac
 }

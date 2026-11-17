@@ -2,7 +2,7 @@
 
 Use only when Review receives `--cross`.
 
-1. Prepare `review_input` with only the context Review gives a reviewer. Copy user preferences, the factual summary, and check evidence stored elsewhere into it or `review_dir`, since the reviewer can read only the repository and `review_dir`. Point to the other sources and let the reviewer read them directly.
+1. Prepare `review_input` with only the context Review gives a reviewer. Copy the approved contract, review rules taken from the default branch or the frozen record-root copies, user preferences, the factual summary, and check evidence stored elsewhere into `review_dir`, since the reviewer can read only the repository and `review_dir`. Tell the reviewer to use those copies. Do not point it at the contract or review rules in the revision under test.
 2. Request one read-only pass with findings and coverage as JSON, including priorities, locations, evidence, failure scenarios, and coverage gaps. Require diff access before review. Tell the reviewer not to edit, delegate, invoke `--cross`, or retry denied operations.
 3. Run from the repository root with references on stdin and artifacts in an absolute `review_dir` outside the changeset. Set `review_input`, `review_output`, and `review_metadata` to absolute artifact paths. Set `review_effort` to `medium` for routine changes or `high` for complex contracts or validators.
    - In Codex, run Claude Code:

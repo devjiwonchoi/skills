@@ -33,6 +33,14 @@ Approved rules live in `rules.md`. The file starts with `# Rules`. Each rule is 
 
 `## Learned` bullets already in `preferences.md` stay in force. Append a new approved rule to `rules.md` and leave every other line as it is.
 
+Missed bugs live in `checklist.md` at the root. The file starts with `# Checklist`. Each entry is one bullet with a trigger visible in a diff, a check, and the original incident:
+
+```markdown
+- trigger: <visible in a diff> | check: <what to verify> | incident: <original incident>
+```
+
+Append a new entry and leave every other line as it is. Create the file with `# Checklist` when it is missing. An entry is not a rule.
+
 Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number. Read `retros/<YYYY>-W<ww>.md` when the `weeks/` file is absent. Write `weeks/` only.
 
 End state items are the numbered `##` headings under `# End state`, written `1 ·` or `1a ·`. Each names one proof: a command, a test, a screenshot, or a URL. Criteria are the numbered `##` headings under `# Criteria`. When `# End state` has no numbered headings, end state items are the `##` headings under `# Success criteria`, or in the light form each line matching `^- Done when:`. `REMEMBER.md` counts end state items. Verify judges exactly these items.
@@ -48,7 +56,7 @@ End state items are the numbered `##` headings under `# End state`, written `1 �
 
 All end state items are met when `end_state_items_met` equals `end_state_items_total`. Write the counts as integers and `delegated` as `true` or `false`.
 
-`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. On approval, Align copies the saved file to `ALIGN.approved.md` and replaces that copy only on a later approval. Verify compares the digest to the `Criteria hash:` line in that copy when the copy exists, otherwise to the line in `ALIGN.md`. Verify diffs the `# End state` and `# Criteria` sections against the copy and flags a difference. Verify does not rewrite the line or the copy.
+`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. On approval, Align copies the saved file to `ALIGN.approved.md` and replaces that copy only on a later approval. Verify compares the digest to the `Criteria hash:` line in that copy when the copy exists, otherwise to the line in `ALIGN.md`. Verify diffs the `# End state` and `# Criteria` sections against the copy and flags a difference. When the copy exists, Verify judges the end state items in it. Verify records `self-judging change` for an item whose judge the change modifies, and does not count that item met until 지원님 confirms it. Verify does not rewrite the line or the copy.
 
 ## Task ownership
 
@@ -68,7 +76,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | `ALIGN.md`  | Align                                                        | End state items and proofs, criteria, Mermaid, file tree, fan-out todos, stacked PR plan, goal, intention, Don'ts, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval |
 | `ALIGN.approved.md` | Align                                                 | Copy of `ALIGN.md` at approval. Written only on approval and replaced only by a later approval. Verify diffs end state items and criteria against it |
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
-| `VERIFY.md` | Verify                                                       | Checked revision, per-item pass, fail, or unresolved, proof evidence, drift flag, recomputed criteria hash, and gaps   |
+| `VERIFY.md` | Verify                                                       | Checked revision, per-item pass, fail, or unresolved, proof evidence, drift flag, self-judging change, recomputed criteria hash, and gaps |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
 | `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, proposed prevention, and human review comments under `## Review comments` |
 
@@ -96,4 +104,4 @@ Both commands print the changes and write nothing. Pass `--write` only after the
 
 The script accepts format version `1` only. It refuses a root or an archive whose version is not `1` and writes nothing.
 
-A merge adds files the destination lacks. For `preferences.md` and `rules.md`, it appends lines the destination does not already have and does not change the destination's existing lines. It leaves every other differing file untouched and reports a conflict. It does not delete files that exist on only one side.
+A merge adds files the destination lacks. For `preferences.md`, `rules.md`, and `checklist.md`, it appends lines the destination does not already have and does not change the destination's existing lines. It leaves every other differing file untouched and reports a conflict. It does not delete files that exist on only one side.
