@@ -11,7 +11,8 @@ description: Use when executing an aligned plan.
   - A fatal blocker is work that cannot continue, including a loop that makes no progress: a fix attempt leaves the same failure or finding and adds no new evidence.
   - A one-way door cannot be undone, such as buying, paying, sending, deleting, publishing, merging, or deploying. Run one only with the exact values `ALIGN.md` approved.
   - Make reversible (two-way door) decisions beyond the plan, record each in `STATUS.md`, and report them at the end. Do not pause for them.
-  - Re-align only when the end state itself must change: revise the affected `ALIGN.md` sections through the `align` skill and continue this run after approval. Never leave the end state silently. A new approval replaces `ALIGN.approved.md`. Until that approval, Verify flags the changed items or criteria.
+  - Re-align only when the end state itself must change, including the E2E workflow diagram: revise the affected `ALIGN.md` sections through the `align` skill and continue this run after approval. Never leave the end state silently. A new approval replaces `ALIGN.approved.md`. Until that approval, Verify flags the changed items, criteria, or diagram.
+  - Do not redraw the E2E workflow diagram. Read it from `ALIGN.approved.md`. Cite its node ids.
   - Do not ask again for anything the approved plan settles.
 - Subagents never ask the user. They make two-way door decisions and return those decisions, fatal blockers, and unapproved one-way door actions to the main agent, which records the decisions in `STATUS.md` and applies the stop rule.
 
@@ -22,7 +23,7 @@ Follow the `execution-recording` skill for every invocation, including standalon
 1. Read `ALIGN.md` and `STATUS.md` for the task.
    - Read `rules.md` and the `## Learned` rules in the preferences file per the `task-recording` skill before executing. Follow them in every todo. Give each subagent those rules with its todo. A missing `rules.md` adds no rules.
    - Run only an `ALIGN.md` whose status says approved.
-   - An end state item is a numbered `##` heading under `# End state`. When that section has none, it is a success criterion, or a `Done when` line in the light form.
+   - An end state item is a numbered `##` heading under `# End state`. The `## E2E workflow` heading is the diagram, not an item. When that section has no numbered headings, an item is a success criterion, or a `Done when` line in the light form.
    - Add findings supplied by the caller, such as CI failures, bot comments, or Ship corrections, as fix todos. CI or bot findings a caller passes in, including from Moniterate or standalone Ship, run within existing authorization without an `ALIGN.md`.
    - Follow the `align` skill only for new scope with no approved end state. Quick-impl may proceed only when the user's request itself is the spec.
 2. Execute: fan out the work. Run every unfinished todo whose dependencies are done, in parallel, each in its own subagent, with its todo spec, the rules read in step 1, the `ALIGN.md` path if one exists, otherwise the original request, and the rule that the subagent makes two-way door decisions and returns them instead of asking.

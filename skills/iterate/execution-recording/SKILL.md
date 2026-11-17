@@ -26,7 +26,7 @@ Record the diff base, HEAD, staged and unstaged changes, relevant untracked file
 
 Implementation identifies changed and affected behavior and reopens the corresponding checks and review. Retain unaffected coverage only with a supported reason. A changed revision invalidates completion for affected behavior, and unresolved findings survive.
 
-Verify records pass, fail, or unresolved for each end state item, with the proof, evidence paths, gaps, and any difference between the end state items or criteria and `ALIGN.approved.md`. Follow the `task-recording` skill for the criteria hash. Do not pass when the stored hash differs or that difference is present. Leave the stored line and the copy unchanged. Passing requires evidence for every end state item. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains unresolved.
+Verify records pass, fail, or unresolved for each end state item and each E2E workflow node id, with the proof, evidence paths, gaps, and any difference between the end state items, the E2E workflow diagram, or the criteria and `ALIGN.approved.md`. Follow the `task-recording` skill for the criteria hash and the `align` skill's `e2e-workflow` script for the diagram. Do not pass when the stored hash differs, the diagram drifted, or that difference is present. Leave the stored line, the diagram, and the copy unchanged. Passing requires evidence for every end state item and every node id. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains unresolved.
 
 ## Review history
 
