@@ -37,6 +37,29 @@ Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week
 
 End state items are the numbered `##` headings under `# End state`, written `1 ·` or `1a ·`. The unnumbered heading `## E2E workflow` in that section is the one diagram, not an item. Each item names one proof: `E2E: <node-id>`, a file, a command, a test, a screenshot, or a URL. Criteria are the numbered `##` headings under `# Criteria`. When `# End state` has no numbered headings, end state items are the `##` headings under `# Success criteria`, or in the light form each line matching `^- Done when:`. `REMEMBER.md` counts end state items. Verify judges exactly these items and each diagram node id from the approved contract, never from the working change.
 
+`VERIFY.md` holds one block per end state item, headed with that item's heading from the contract, then a line for each diagram node id:
+
+```markdown
+## 1 · The reply shows in the thread
+
+- Result: pass | fail | unresolved
+- Proof: <artifact paths: failing run, passing run, before and after screenshots, Playwright trace, or none where one does not apply>
+- Wanted: <the result the contract's proof requires>
+- Got: <what the run or diff showed, with the evidence path>
+```
+
+Result is exactly `pass`, `fail`, or `unresolved`. Missing evidence is `unresolved`, never `pass`. A block keeps the same four lines whatever the result, and `Got` states the gap when the result is not `pass`. A node line reads `- <node-id>: pass | fail | unresolved`. The checked revision, hash result, drift flags, and `changed proof` flags stay above the blocks.
+
+A pending question is one line under `## Pending` at the end of `STATUS.md`, after the `Stage:` and `State:` lines and the `| Todo | Result |` table, which stay as they are:
+
+```markdown
+- Root: <question> · one-way|two-way · open|covered by rules.md · <related tasks>
+```
+
+`Root` is the shared cause. Questions that share a root are settled by one decision, so write the same root text on each line and list the related tasks as `<repo>/<task>` names. A one-way question is asked, and a two-way question is decided and reported.
+
+`ALIGN.md` may carry a `# Later` section: what was agreed and deliberately left out of this task, one bullet each. It sits outside `# End state` and `# Criteria`, so it is not hashed and is not a Don't.
+
 `REMEMBER.md` starts with YAML front matter. These keys are required, and extra keys are allowed:
 
 - `interventions_after_approval` (int)
@@ -65,11 +88,11 @@ Read existing records before continuing, including a draft `ALIGN.md`. Record th
 | Document    | Owner                                                        | Contents                                                                                                                |
 | ----------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
 | `EXPLORE.md` | Explore                                                      | Chosen direction, rejected directions with reasons, and open questions                                                   |
-| `ALIGN.md`  | Align                                                        | End state items and proofs, the one E2E workflow diagram, criteria, files list, fan-out todos, stacked PR plan, goal, intention, Don'ts, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval. Saved as a draft before approval |
+| `ALIGN.md`  | Align                                                        | End state items and proofs, the one E2E workflow diagram, criteria, files list, fan-out todos, stacked PR plan, goal, intention, Don'ts, later, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval. Saved as a draft before approval |
 | `ALIGN.approved.md` | Align                                                 | Copy of `ALIGN.md` at approval, including the frozen diagram. Written only on approval and replaced only by a later approval. Verify reads the contract from this copy, or from the default branch copy when this file is missing or the checked change edits it |
-| `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
+| `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions as `## Pending` root lines, next action, and work history            |
 | `DECISIONS.md` | Iterate                                                  | Append-only decision log. Each entry states what, why, an evidence path, and the outcome. Earlier entries stay as written |
-| `VERIFY.md` | Verify                                                       | Checked revision, per-item and per-node pass, fail, or unresolved, artifact paths for the failing run, passing run, before and after screenshots, and Playwright trace, diagram result, drift flag, `changed proof` flags, recomputed criteria hash, and gaps |
+| `VERIFY.md` | Verify                                                       | Checked revision, one `Result`, `Proof`, `Wanted`, `Got` block per end state item, per-node pass, fail, or unresolved, diagram result, drift flag, `changed proof` flags, recomputed criteria hash, and gaps |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, coverage gaps, and a decision-log pass that flags only weak evidence or skipped verification |
 | `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, proposed prevention, and human review comments under `## Review comments` |
 

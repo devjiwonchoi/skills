@@ -6,11 +6,11 @@ Use this layout to present the plan and to save `ALIGN.md`.
 
 Size the plan to the task. Show a section only when it tells the reader something the other sections do not.
 
-- Light: use for a simple task. That means one or two work todos, no UI, no one-way door beyond the approved delivery, and an approach the end state items make clear. Show End state, Criteria, Todos, Stack when delivering a PR, Goal, Don'ts, Decisions when any exist, and Summary. Add Files when files change. Put all delivery in one todo and one Stack entry. List human checkpoints only when there are any.
+- Light: use for a simple task. That means one or two work todos, no UI, no one-way door beyond the approved delivery, and an approach the end state items make clear. Show End state, Criteria, Todos, Stack when delivering a PR, Goal, Don'ts, Later and Decisions when any exist, and Summary. Add Files when files change. Put all delivery in one todo and one Stack entry. List human checkpoints only when there are any.
 - Full: use for everything else. Show every section.
 - Both forms open with the End state items, then the E2E workflow diagram, then Criteria. Both show the Intention under Goal and the Don'ts section. Write `none` for a kind of Don't that does not apply.
 - When unsure, use full. Switch to full when revision grows the task past light.
-- When a section is shown, keep this order: End state, Criteria, Files, Todos, Stack, Goal, Don'ts, Decisions, Human checkpoints, Summary. The title and status lines stay above End state. The diagram stays inside End state.
+- When a section is shown, keep this order: End state, Criteria, Files, Todos, Stack, Goal, Don'ts, Later, Decisions, Human checkpoints, Summary. The title and status lines stay above End state. The diagram stays inside End state.
 
 ## Rules
 
@@ -26,6 +26,7 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Mark each todo `(subagent)` or `(main agent)`. Use main agent for todos that need tools, grants, or a screen that subagents lack.
 - Keep the Intention to one line on why the user wants the result. When the end state proves impossible or contradictory, use it to recommend a re-align, never to change the end state alone.
 - Start each Don't with `Out of scope:` for what this task does not build, or `Must not happen:` for a result to avoid even within scope.
+- Later lists what was agreed and deliberately left out of this task, one bullet each. Show it only when there is any. It is not a Don't: a Don't says what must not happen, a Later says what comes next. It sits outside the hashed sections.
 - Write everything else as normal text.
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
 - Fan out independent todos. Fix shared paths, names, and interfaces in the plan first. Give todos that could share a file or stateful resource a dependency so they never run at once.
@@ -163,6 +164,12 @@ Intention: <why the user wants this, in one line>
 
 ---
 
+# Later
+
+- <agreed, but not done in this task>
+
+---
+
 # Decisions
 
 1. <Reported or approved decision> · two-way | one-way · <reported choice, approved exact values, or allowed by preferences>
@@ -265,6 +272,12 @@ Intention: <why the user wants this, in one line>
 
 - Out of scope: <what this task does not build>
 - Must not happen: <a result to avoid even within scope, such as a regression>
+
+---
+
+# Later
+
+- <agreed, but not done in this task>
 
 ---
 
