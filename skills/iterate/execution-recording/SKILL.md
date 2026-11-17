@@ -9,9 +9,10 @@ Follow the `task-recording` skill for where records live, task ownership, Markdo
 
 ## Stage ownership
 
-Read `STATUS.md`, `ALIGN.md` when available, and relevant verification and review before acting. Initialize missing documents for the requested stage only. Record the caller, requested scope, current changes, and next action so recovery preserves standalone boundaries.
+Read `STATUS.md`, `DECISIONS.md`, `ALIGN.md` when available, and relevant verification and review before acting. Initialize missing documents for the requested stage only. Record the caller, requested scope, current changes, and next action so recovery preserves standalone boundaries.
 
 - Iterate records each todo's result (done, re-run, or failed), fix todos in the same spec, deviations, blockers, and next action in `STATUS.md`. `ALIGN.md` stays as approved.
+- Iterate appends each decision and each useful stop to `DECISIONS.md`. An entry states what, why, the evidence path, and the outcome. Earlier entries are not rewritten.
 - Quick-impl records implementation outcomes and unverified work in `STATUS.md`.
 - Verify appends results and evidence to `VERIFY.md`.
 - Review maintains findings and pass history in `REVIEW.md`.
@@ -38,7 +39,7 @@ Append a pass entry identifying the reviewed changes, selected mode, covered sec
 
 ## Recovery and completion
 
-After context loss, read `STATUS.md`, `ALIGN.md`, `VERIFY.md`, and `REVIEW.md`. Restore actual approvals, unfinished todos, incomplete checks, unresolved findings, and covered or reopened behavior. Inspect actual files before using prior results. Resume an interrupted round rather than inventing a successful outcome or starting another task.
+After context loss, read `STATUS.md`, `ALIGN.md`, `DECISIONS.md`, `VERIFY.md`, and `REVIEW.md`. Restore actual approvals, unfinished todos, incomplete checks, unresolved findings, and covered or reopened behavior. Inspect actual files before using prior results. Resume an interrupted round rather than inventing a successful outcome or starting another task.
 
 Standalone stages stop after their requested work. Quick-impl does not verify or review. Impl continues from successful implementation to Verify. Approved Align continues through Iterate, which follows Ship and Moniterate within the approved delivery. Check the delivery authorization in `ALIGN.md` before publishing. These transitions do not authorize merge, deployment, or messaging by themselves. Irreversible actions approved with exact values in `ALIGN.md` are authorized.
 
