@@ -12,7 +12,7 @@ description: Use when executing an aligned plan.
   - A one-way door cannot be undone, such as buying, paying, sending, deleting, publishing, merging, or deploying. Run one only with the exact values `ALIGN.md` approved.
   - Make reversible (two-way door) decisions beyond the plan, record each in `STATUS.md`, and report them at the end. Do not pause for them.
   - Re-align only when the end state itself must change, including the E2E workflow diagram: revise the affected `ALIGN.md` sections through the `align` skill and continue this run after approval. Never leave the end state silently. A new approval replaces `ALIGN.approved.md`. Until that approval, Verify flags the changed items, criteria, or diagram.
-  - Do not redraw the E2E workflow diagram. Read it from `ALIGN.approved.md`. Cite its node ids.
+  - Do not redraw the E2E workflow diagram. Read it from the approved contract, `ALIGN.approved.md` or the default branch copy, never from the working change. Cite its node ids.
   - Do not ask again for anything the approved plan settles.
 - Subagents never ask the user. They make two-way door decisions and return those decisions, fatal blockers, and unapproved one-way door actions to the main agent, which records the decisions in `STATUS.md` and applies the stop rule.
 
@@ -34,7 +34,7 @@ Follow the `execution-recording` skill for every invocation, including standalon
    - Re-run a todo with its failure evidence until its done-when passes.
    - Run irreversible actions only with their approved values.
 3. Review: check every end state item with the `verify` skill, except those served only by held delivery todos. Ship proves those.
-   - The verifier is a separate subagent. It receives only `ALIGN.md`, `ALIGN.approved.md` when that copy exists, and the artifacts.
+   - The verifier is a separate subagent. It receives the approved contract and the artifacts. The contract is `ALIGN.approved.md`, or the default branch copy when that file is missing or the checked change edits it. It may see the working `ALIGN.md` only to flag drift.
    - When files changed, also follow the `review` skill once for the current revision.
 4. Repeat: turn failed end state items and validated P0–P2 findings into fix todos and return to step 2.
    - Review the fix delta and affected behavior.
