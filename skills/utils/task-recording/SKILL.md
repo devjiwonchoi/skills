@@ -17,7 +17,7 @@ The root is `$JWN_HOME` when that environment variable is set, and `~/.jwn` othe
 
 `VERSION` contains `1`.
 
-Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `ALIGN.approved.md`, `STATUS.md`, `VERIFY.md`, `REVIEW.md`, and `REMEMBER.md`. Read `RETRO.md` when `REMEMBER.md` is absent. Write `REMEMBER.md` and leave an existing `RETRO.md` in place.
+Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `ALIGN.approved.md`, `STATUS.md`, `DECISIONS.md`, `VERIFY.md`, `REVIEW.md`, and `REMEMBER.md`. Read `RETRO.md` when `REMEMBER.md` is absent. Write `REMEMBER.md` and leave an existing `RETRO.md` in place.
 
 `<repo>` is `owner/name` from the `origin` remote URL. Take the last two path segments of `https://host/owner/name` or `git@host:owner/name`, after removing a trailing `.git`. When `origin` is missing or those segments cannot be read, resolve `git rev-parse --git-common-dir` to an absolute path and use the basename of its parent directory. Outside a Git checkout, use the working directory name.
 
@@ -68,8 +68,9 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | `ALIGN.md`  | Align                                                        | End state items and proofs, the one E2E workflow diagram, criteria, files list, fan-out todos, stacked PR plan, goal, intention, Don'ts, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval |
 | `ALIGN.approved.md` | Align                                                 | Copy of `ALIGN.md` at approval, including the frozen diagram. Written only on approval and replaced only by a later approval. Verify reads the contract from this copy, or from the default branch copy when this file is missing or the checked change edits it |
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
+| `DECISIONS.md` | Iterate                                                  | Append-only decision log. Each entry states what, why, an evidence path, and the outcome. Earlier entries stay as written |
 | `VERIFY.md` | Verify                                                       | Checked revision, per-item and per-node pass, fail, or unresolved, artifact paths for the failing run, passing run, before and after screenshots, and Playwright trace, diagram result, drift flag, `changed proof` flags, recomputed criteria hash, and gaps |
-| `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
+| `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, coverage gaps, and a decision-log pass that flags only weak evidence or skipped verification |
 | `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, proposed prevention, and human review comments under `## Review comments` |
 
 Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.

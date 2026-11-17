@@ -9,6 +9,15 @@ description: Use when reviewing development changes.
 - With `--cross`, follow [cross-model review](references/cross.md) for one pass by the other model instead.
 - Without subagents, review in the current session and record the pass as a self-review.
 
+## Decision-log pass
+
+Use this pass only when Iterate asks for it. Do not run the steps below, and do not use `--cross`.
+
+- A fresh reviewer on a different harness reads `DECISIONS.md`. Claude Code, Codex, and Grok are the harnesses. The reviewer must not be the harness that did the work. Codex may review Claude Code's work, Claude Code may review Codex's work, and Grok may review either.
+- Give the reviewer `DECISIONS.md`, `VERIFY.md`, and the approved contract. Do not pass the implementation conversation, reasoning, or self-assessment.
+- The reviewer flags weak evidence or skipped verification and nothing else. Weak evidence is a missing evidence path, or a path that does not show the stated outcome. Skipped verification is a claimed check that `VERIFY.md` does not record.
+- The reviewer does not edit files. The caller records the pass in `REVIEW.md`. When no other harness can run, record the pass incomplete. Do not substitute the same harness.
+
 ## Steps
 
 Follow the `execution-recording` skill for every invocation, including standalone use.
