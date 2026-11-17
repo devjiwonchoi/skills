@@ -21,7 +21,17 @@ Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are
 
 `<repo>` is `owner/name` from the `origin` remote URL. Take the last two path segments of `https://host/owner/name` or `git@host:owner/name`, after removing a trailing `.git`. When `origin` is missing or those segments cannot be read, resolve `git rev-parse --git-common-dir` to an absolute path and use the basename of its parent directory. Outside a Git checkout, use the working directory name.
 
+Name a task `<repo>/<task>`.
+
 User preferences and learned rules live in `preferences.md`.
+
+Approved rules live in `rules.md`. The file starts with `# Rules`. Each rule is one bullet:
+
+```markdown
+- YYYY-MM-DD <repo>/<task>: <wording>
+```
+
+`## Learned` bullets already in `preferences.md` stay in force. Append a new approved rule to `rules.md` and leave every other line as it is.
 
 Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number. Read `retros/<YYYY>-W<ww>.md` when the `weeks/` file is absent. Write `weeks/` only.
 
@@ -59,7 +69,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
 | `VERIFY.md` | Verify                                                       | Checked changes, criterion results, the recomputed criteria hash, commands or scenarios, evidence, and gaps             |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
-| `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, and proposed prevention            |
+| `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, proposed prevention, and human review comments under `## Review comments` |
 
 Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.
 
