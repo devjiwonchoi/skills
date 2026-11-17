@@ -35,7 +35,7 @@ Approved rules live in `rules.md`. The file starts with `# Rules`. Each rule is 
 
 Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number. Read `retros/<YYYY>-W<ww>.md` when the `weeks/` file is absent. Write `weeks/` only.
 
-End state items are the numbered `##` headings under `# End state`, written `1 ·` or `1a ·`. Each names one proof: a command, a test, a screenshot, or a URL. Criteria are the numbered `##` headings under `# Criteria`. When `# End state` has no numbered headings, end state items are the `##` headings under `# Success criteria`, or in the light form each line matching `^- Done when:`. `REMEMBER.md` counts end state items. Verify judges exactly these items.
+End state items are the numbered `##` headings under `# End state`, written `1 ·` or `1a ·`. The unnumbered heading `## E2E workflow` in that section is the one diagram, not an item. Each item names one proof: `E2E: <node-id>`, a file, a command, a test, a screenshot, or a URL. Criteria are the numbered `##` headings under `# Criteria`. When `# End state` has no numbered headings, end state items are the `##` headings under `# Success criteria`, or in the light form each line matching `^- Done when:`. `REMEMBER.md` counts end state items. Verify judges exactly these items, and it also judges each node id in the diagram.
 
 `REMEMBER.md` starts with YAML front matter. These keys are required, and extra keys are allowed:
 
@@ -48,7 +48,7 @@ End state items are the numbered `##` headings under `# End state`, written `1 �
 
 All end state items are met when `end_state_items_met` equals `end_state_items_total`. Write the counts as integers and `delegated` as `true` or `false`.
 
-`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. On approval, Align copies the saved file to `ALIGN.approved.md` and replaces that copy only on a later approval. Verify compares the digest to the `Criteria hash:` line in that copy when the copy exists, otherwise to the line in `ALIGN.md`. Verify diffs the `# End state` and `# Criteria` sections against the copy and flags a difference. Verify does not rewrite the line or the copy.
+`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. The `## E2E workflow` diagram is inside `# End state`, so the hash covers it. On approval, Align copies the saved file to `ALIGN.approved.md` and replaces that copy only on a later approval. That copy freezes the diagram with the rest of the contract. Verify compares the digest to the `Criteria hash:` line in that copy when the copy exists, otherwise to the line in `ALIGN.md`. Verify diffs the `# End state` and `# Criteria` sections against the copy and flags a difference. Verify runs `e2e-workflow diff` from the `align` skill against the copy and flags a drifted diagram. It judges each node id from the approved diagram. Verify does not rewrite the line, the diagram, or the copy.
 
 ## Task ownership
 
@@ -65,10 +65,10 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | Document    | Owner                                                        | Contents                                                                                                                |
 | ----------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
 | `EXPLORE.md` | Explore                                                      | Chosen direction, rejected directions with reasons, and open questions                                                   |
-| `ALIGN.md`  | Align                                                        | End state items and proofs, criteria, Mermaid, file tree, fan-out todos, stacked PR plan, goal, intention, Don'ts, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval |
-| `ALIGN.approved.md` | Align                                                 | Copy of `ALIGN.md` at approval. Written only on approval and replaced only by a later approval. Verify diffs end state items and criteria against it |
+| `ALIGN.md`  | Align                                                        | End state items and proofs, the one E2E workflow diagram, criteria, files list, fan-out todos, stacked PR plan, goal, intention, Don'ts, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval |
+| `ALIGN.approved.md` | Align                                                 | Copy of `ALIGN.md` at approval, including the frozen diagram. Written only on approval and replaced only by a later approval. Verify diffs end state items, the E2E workflow diagram, and criteria against it |
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
-| `VERIFY.md` | Verify                                                       | Checked revision, per-item pass, fail, or unresolved, proof evidence, drift flag, recomputed criteria hash, and gaps   |
+| `VERIFY.md` | Verify                                                       | Checked revision, per-item and per-node pass, fail, or unresolved, proof evidence, diagram result, drift flag, recomputed criteria hash, and gaps |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
 | `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, proposed prevention, and human review comments under `## Review comments` |
 

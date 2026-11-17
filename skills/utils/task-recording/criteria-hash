@@ -4,7 +4,9 @@
 # Align and Verify run this script. Nothing else defines the hash.
 #
 # When a "# Criteria" heading is present outside a fence, hash the
-# "# End state" body and the "# Criteria" body, in file order. Each body
+# "# End state" body and the "# Criteria" body, in file order. The align
+# template puts the "## E2E workflow" diagram in the end state body, so
+# that diagram is part of the hash. Each body
 # runs from the line after its heading until the next "^# " line outside
 # a fence. Both sections must contain a non-blank line.
 # A fence opens on three or more ` or ~ and closes only on at least that

@@ -9,7 +9,7 @@ description: Use when explaining current context or results.
 - Keep visuals compact and readable.
 - For proposed changes, help the user picture the result and how they will use it.
 
-For file changes, show the expected file tree with a short comment explaining each change's purpose. Exclude internal workflow records. Use [code flow](references/code-flow.md) when behavior needs explanation.
+For file changes, list the paths with a short comment explaining each change's purpose. Exclude internal workflow records. Use [code flow](references/code-flow.md) when behavior needs explanation.
 
 ## Steps
 
@@ -17,7 +17,8 @@ For file changes, show the expected file tree with a short comment explaining ea
    - Lead with the main point, then include only the background, cause, and consequence needed to understand it.
    - Use familiar words and a concrete example when helpful.
 2. Choose the views needed to understand or decide. Omit inapplicable views.
-   - Use Mermaid for meaningful structure, relationships, or work sequences. Keep essential nodes, connections, and plain-language labels.
+   - When the task has an E2E workflow diagram in `ALIGN.md`, do not draw another workflow, logic, or files diagram. Cite that diagram's node ids.
+   - Use Mermaid for other structure that the task diagram does not already show. Keep essential nodes, connections, and plain-language labels.
    - For frontend or UI changes, preview the proposed interface. Show screenshots when the actual result matters.
    - Use HTML or interactive visualization only when it adds useful understanding. Follow the available visualization skill when using it.
    - Show visuals in chat and label proposed or unverified examples.
