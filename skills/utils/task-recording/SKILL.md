@@ -1,6 +1,6 @@
 ---
 name: task-recording
-description: Use when recording a task under the jwn record root.
+description: Use when recording, exporting, or importing the jwn record root.
 ---
 
 # Task recording
@@ -86,3 +86,13 @@ Missing, conflicting, or unreadable records do not establish approval or complet
 Old JSONL-only tasks are outside this workflow's recovery support. Preserve their files without parsing, converting, or inferring authorization. Report that context is unavailable and establish the current task from the user's request before creating separate Markdown records. Do not silently restart an old task or select another directory.
 
 While the host prohibits writes, keep the current plan and pending record updates in conversation. Save them when writes become allowed without inventing earlier approvals or results.
+
+## Export and import
+
+Run `jwn` from this skill's folder when the user asks to export or import the record root. `jwn export <file>` packs the root into `<file>`. `jwn import <file>` merges `<file>` into the root. The script is the only pack and unpack.
+
+Both commands print the changes and write nothing. Pass `--write` only after the user approves those changes.
+
+The script accepts format version `1` only. It refuses a root or an archive whose version is not `1` and writes nothing.
+
+A merge adds files the destination lacks. For `preferences.md` and `rules.md`, it appends lines the destination does not already have and does not change the destination's existing lines. It leaves every other differing file untouched and reports a conflict. It does not delete files that exist on only one side.
