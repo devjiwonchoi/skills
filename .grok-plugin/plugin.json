@@ -1,0 +1,17 @@
+{
+  "name": "jwn",
+  "version": "0.0.0",
+  "description": "Turn todos into reviewable PRs",
+  "author": {
+    "name": "devjiwonchoi"
+  },
+  "repository": "https://github.com/devjiwonchoi/skills",
+  "skills": [
+    "./skills/explore",
+    "./skills/align",
+    "./skills/iterate",
+    "./skills/ship",
+    "./skills/remember",
+    "./skills/utils"
+  ]
+}
