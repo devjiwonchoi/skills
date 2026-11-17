@@ -33,7 +33,12 @@ description: Use when reviewing a finished jwn task, the weekly delegation recor
    - `review_change_requests` is the number of distinct changes a human asked for on the task's pull request. Leave the agent's own findings, bots, and approvals out of this count. Keep each counted comment's request for `## Review comments`.
 3. Check the task for each failure above and for other friction, such as duplicate recording or late previews. Cite the actual request, outcome, or artifact as the signal, and the responsible jwn instruction when known. Mark a failure not found, or not yet observable when its signals come later, such as edits after acceptance.
 4. Apply the `delete` skill to seek removal or simplification before adding rules. Consolidate proposals with the same cause and read existing proposals in `REMEMBER.md`, or in `RETRO.md` when `REMEMBER.md` is absent, before adding duplicates. Do not turn an isolated complaint into a universal requirement.
-5. For each found failure or friction, prefer prevention in this order: structure that makes it impossible, then types, lint, tests, and written instructions last. Record the observed case, cause and confidence, affected instruction, specific removal or replacement, expected effect, and how to check that effect, preferring a check that fails on the observed case. State when evidence is insufficient instead of inventing a fix.
+5. For each missed bug, move the lesson up this ladder and stop at the first rung that holds.
+   - First ask whether a structure or API can make the bug impossible.
+   - Then a type, CI, or e2e check.
+   - Only then a short rule. It needs a trigger visible in the diff, and the same miss must have recurred in 2 or more PRs. Keep the stage skill short by tightening existing text.
+   - For other friction, prefer removal before a new instruction.
+   - Record the observed case, cause and confidence, affected instruction, specific removal or replacement, expected effect, and how to check that effect, preferring a check that fails on the observed case. State when evidence is insufficient instead of inventing a fix.
 6. Save the front matter, evidence, and proposals in `REMEMBER.md`. Do not write `RETRO.md`. Under `## Review comments`, quote each counted human review comment as one bullet. When that comment's text cannot be read, write `unavailable` for that bullet and do not invent the request. Write `None` when the count is 0. Run `sh delegation-rate` from this skill's folder on that file, and correct the front matter until the script exits 0. Present the smallest useful changes. Propose each learned rule for the preferences file per the `task-recording` skill. Stop at proposals. Keep the owning workflow's stage and next action intact. No observed problem is a valid result.
 
 ## Weekly steps
@@ -54,7 +59,7 @@ description: Use when reviewing a finished jwn task, the weekly delegation recor
    - Apply the `delete` skill.
    - Join proposals that share a cause.
    - Skip a requirement already in `rules.md` or under `## Learned`.
-   - Leave a one-off patch request out.
+   - Use the same ladder. Propose a rule only when a structure, API, type, CI check, or e2e check cannot hold the miss, the trigger is visible in the diff, and the miss recurred in 2 or more PRs. Keep that stage-skill edit short. A one-off patch request is not a rule.
    - No proposal is a valid result.
 3. Present each proposal as the approved-rule bullet. Cite the comment or record it came from. Stop until the user approves that bullet's wording.
 4. Append each approved bullet under `# Rules` in `rules.md`.
