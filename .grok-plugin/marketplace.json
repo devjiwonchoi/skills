@@ -1,0 +1,17 @@
+{
+  "name": "jwn",
+  "description": "Turn todos into reviewable PRs",
+  "owner": {
+    "name": "devjiwonchoi"
+  },
+  "plugins": [
+    {
+      "name": "jwn",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/devjiwonchoi/skills.git"
+      },
+      "description": "Turn todos into reviewable PRs"
+    }
+  ]
+}
