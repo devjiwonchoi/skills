@@ -20,11 +20,12 @@ description: Use when executing an aligned plan.
 Follow the `execution-recording` skill for every invocation, including standalone use.
 
 1. Read `ALIGN.md` and `STATUS.md` for the task.
+   - Read `rules.md` and the `## Learned` rules in the preferences file per the `task-recording` skill before executing. Follow them in every todo. Give each subagent those rules with its todo. A missing `rules.md` adds no rules.
    - Run only an `ALIGN.md` whose status says approved.
    - An end state item is a numbered `##` heading under `# End state`. When that section has none, it is a success criterion, or a `Done when` line in the light form.
    - Add findings supplied by the caller, such as CI failures, bot comments, or Ship corrections, as fix todos. CI or bot findings a caller passes in, including from Moniterate or standalone Ship, run within existing authorization without an `ALIGN.md`.
    - Follow the `align` skill only for new scope with no approved end state. Quick-impl may proceed only when the user's request itself is the spec.
-2. Execute: fan out the work. Run every unfinished todo whose dependencies are done, in parallel, each in its own subagent, with its todo spec, the `ALIGN.md` path if one exists, otherwise the original request, and the rule that the subagent makes two-way door decisions and returns them instead of asking.
+2. Execute: fan out the work. Run every unfinished todo whose dependencies are done, in parallel, each in its own subagent, with its todo spec, the rules read in step 1, the `ALIGN.md` path if one exists, otherwise the original request, and the rule that the subagent makes two-way door decisions and returns them instead of asking.
    - Hold delivery todos, such as commit, push, PR, and Moniterate, for step 5, where Ship runs them.
    - Go to step 3 when only held todos remain.
    - Run main-agent todos in the session. Without subagents, run every todo in the session in dependency order.

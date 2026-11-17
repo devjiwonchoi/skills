@@ -1,0 +1,692 @@
+#!/bin/sh
+# Pack and unpack the jwn record root.
+#
+# Usage: jwn export [--write] <file>
+#        jwn import [--write] <file>
+#
+# The record root is $JWN_HOME when that variable is set, and $HOME/.jwn
+# otherwise. An empty JWN_HOME is an error. Format version 1 is the only
+# version this script reads or writes. VERSION in the root, and the archive
+# version line, must be 1. A missing or different version writes nothing.
+#
+# Both commands print the changes and write nothing unless --write is
+# present. --dry-run is accepted and is the default. --write together
+# with --dry-run is an error.
+#
+# Export's destination is the archive. Import's destination is the record
+# root. An existing archive is merged. A path that exists and is not a
+# version 1 archive is refused.
+#
+# Merge adds files the destination lacks. preferences.md and rules.md,
+# at the root only, append source lines the destination does not already
+# have and do not change the destination's existing lines. Every other
+# differing file is a conflict: the destination bytes stay, and the path
+# is reported. Files that exist on only one side are not deleted.
+# Identical files are not reported.
+#
+# Archive format version 1. Newline is \n. Control lines may end in one CR.
+#   JWNARCH1\n
+#   1\n
+#   <count>\n
+#   repeated <count> times, paths in C byte order:
+#     <relative path>\n
+#     payload as lowercase hex, 64 digits a line, shorter last line
+#     .\n
+# Zero bytes are a path line followed by ".\n".
+# Paths use "/" and no empty, "." or ".." component.
+# The archive contains a VERSION member whose text is 1.
+# This script is the only pack and unpack.
+
+set -efu
+LC_ALL=C
+export LC_ALL
+
+work=
+temps_file=
+
+cleanup() {
+  if [ -n "${temps_file:-}" ] && [ -f "$temps_file" ]; then
+    while IFS= read -r tmp || [ -n "$tmp" ]; do
+      [ -n "$tmp" ] || continue
+      rm -f -- "$tmp"
+    done < "$temps_file"
+  fi
+  if [ -n "${work:-}" ] && [ -d "$work" ]; then
+    rm -rf -- "$work"
+  fi
+}
+
+die() {
+  printf 'jwn: %s\n' "$1" >&2
+  exit 1
+}
+
+usage() {
+  printf 'usage: jwn export [--write] <file>\n' >&2
+  printf '       jwn import [--write] <file>\n' >&2
+  exit 2
+}
+
+tab=$(printf '\t')
+
+physical_dir() {
+  (CDPATH= cd -P -- "$1" && pwd -P)
+}
+
+valid_rel() {
+  rel=$1
+  [ -n "$rel" ] || return 1
+  [ "${#rel}" -le 4096 ] || return 1
+  case $rel in
+    /*|*\\*) return 1 ;;
+  esac
+  printf '%s' "$rel" | awk 'index($0, "\n") { exit 1 } { if ($0 ~ /[\001-\037]/) exit 1 }' || return 1
+  rest=$rel
+  while [ -n "$rest" ]; do
+    case $rest in
+      */*)
+        comp=${rest%%/*}
+        rest=${rest#*/}
+        ;;
+      *)
+        comp=$rest
+        rest=
+        ;;
+    esac
+    case $comp in
+      ""|.|..) return 1 ;;
+    esac
+  done
+  return 0
+}
+
+require_version_text() {
+  label=$1
+  ver_file=$2
+  if [ ! -f "$ver_file" ]; then
+    die "$label is missing"
+  fi
+  if ! ver=$(awk '
+    NR == 1 { line = $0 }
+    NR > 1 { exit 1 }
+    END {
+      if (NR != 1) exit 1
+      sub(/\r$/, "", line)
+      printf "%s", line
+    }
+  ' "$ver_file"); then
+    die "$label is not 1"
+  fi
+  [ "$ver" = "1" ] || die "$label is $ver, want 1"
+}
+
+list_tree() {
+  list_root=$1
+  raw=$2
+  out=$3
+  if ! find -H "$list_root" -type f -print0 > "$raw"; then
+    die "cannot read $list_root"
+  fi
+  prefix=$list_root/
+  awk -v prefix="$prefix" '
+    BEGIN { RS = "\0" }
+    {
+      if ($0 == "") next
+      if (index($0, prefix) != 1) next
+      rel = substr($0, length(prefix) + 1)
+      if (rel == "" || index(rel, "\n") > 0) {
+        printf "jwn: filename contains a newline\n" > "/dev/stderr"
+        exit 1
+      }
+      print rel
+    }
+  ' "$raw" | LC_ALL=C sort > "$out"
+}
+
+encode_hex() {
+  src=$1
+  if [ ! -f "$src" ]; then
+    die "cannot read $src"
+  fi
+  if [ ! -s "$src" ]; then
+    return 0
+  fi
+  od -An -tx1 -v "$src" > "$work/hex.in" || die "cannot read $src"
+  awk '
+    {
+      for (i = 1; i <= NF; i++) {
+        printf "%s", tolower($i)
+        n++
+        if (n % 32 == 0) printf "\n"
+      }
+    }
+    END {
+      if (n % 32 != 0) printf "\n"
+    }
+  ' "$work/hex.in" || die "cannot encode $src"
+}
+
+write_archive() {
+  tree=$1
+  list=$2
+  dest=$3
+  count=$(awk 'END { print NR + 0 }' "$list")
+  {
+    printf 'JWNARCH1\n'
+    printf '1\n'
+    printf '%s\n' "$count"
+    while IFS= read -r rel || [ -n "$rel" ]; do
+      printf '%s\n' "$rel"
+      encode_hex "$tree/$rel"
+      printf '.\n'
+    done < "$list"
+  } > "$dest"
+}
+
+parse_archive() {
+  archive=$1
+  outdir=$2
+  [ -f "$archive" ] || die "cannot read archive"
+  [ -L "$archive" ] && die "refusing to follow symlink $archive"
+  mkdir -p -- "$outdir"
+  awk -v outdir="$outdir" '
+    function fail(msg) {
+      printf "jwn: %s\n", msg > "/dev/stderr"
+      bad = 1
+      exit 1
+    }
+
+    function strip_cr(s) {
+      sub(/\r$/, "", s)
+      return s
+    }
+
+    function hexval(pair,    h, i, v, d) {
+      h = "0123456789abcdef"
+      v = 0
+      for (i = 1; i <= 2; i++) {
+        d = index(h, substr(pair, i, 1))
+        if (d < 1) return -1
+        v = v * 16 + (d - 1)
+      }
+      return v
+    }
+
+    function valid_path(p,    n, i, parts, c) {
+      if (p == "" || length(p) > 4096) return 0
+      if (p ~ /^\//) return 0
+      if (p ~ /\\/) return 0
+      if (p ~ /[\001-\037]/) return 0
+      n = split(p, parts, "/")
+      for (i = 1; i <= n; i++) {
+        c = parts[i]
+        if (c == "" || c == "." || c == "..") return 0
+      }
+      return 1
+    }
+
+    BEGIN {
+      bad = 0
+      phase = ""
+      need = -1
+      got = 0
+      for (i = 0; i < 256; i++) byte[i] = sprintf("%c", i)
+      manifest = outdir "/manifest"
+      if (outdir == "") fail("internal: no output directory")
+    }
+
+    NR == 1 {
+      if (strip_cr($0) != "JWNARCH1") fail("not a jwn archive")
+      next
+    }
+    NR == 2 {
+      line = strip_cr($0)
+      if (line != "1") fail("archive version is " line ", want 1")
+      next
+    }
+    NR == 3 {
+      line = strip_cr($0)
+      if (line !~ /^(0|[1-9][0-9]*)$/) fail("archive count is invalid")
+      need = line + 0
+      got = 0
+      if (need == 0) phase = "done"
+      else phase = "path"
+      next
+    }
+    {
+      line = strip_cr($0)
+      if (phase == "done") fail("trailing data in archive")
+      if (phase == "path") {
+        if (!valid_path(line)) fail("archive path is unsafe: " line)
+        if (seen[line] == 1) fail("duplicate archive path: " line)
+        seen[line] = 1
+        got++
+        cur = line
+        blob = outdir "/blob." got
+        phase = "hex"
+        next
+      }
+      if (line == ".") {
+        close(blob)
+        printf "%d\t%s\n", got, cur >> manifest
+        if (got == need) phase = "done"
+        else phase = "path"
+        next
+      }
+      if (line !~ /^[0-9a-fA-F]+$/) fail("bad archive payload for " cur)
+      if (length(line) > 64 || length(line) % 2 != 0) fail("bad archive payload for " cur)
+      low = tolower(line)
+      for (i = 1; i <= length(low); i += 2) {
+        v = hexval(substr(low, i, 2))
+        if (v < 0) fail("bad archive payload for " cur)
+        printf "%s", byte[v] >> blob
+      }
+    }
+    END {
+      if (bad) exit 1
+      if (NR < 3) fail("not a jwn archive")
+      if (phase != "done" || got != need) fail("truncated archive")
+    }
+  ' "$archive"
+}
+
+materialize() {
+  manifest=$1
+  blobs=$2
+  tree=$3
+  mkdir -p -- "$tree"
+  [ -f "$manifest" ] || return 0
+  while IFS= read -r line || [ -n "$line" ]; do
+    [ -n "$line" ] || continue
+    n=${line%%"$tab"*}
+    path=${line#*"$tab"}
+    valid_rel "$path" || die "archive path is unsafe: $path"
+    case $n in
+      ""|*[!0-9]*) die "archive path is unsafe: $path" ;;
+    esac
+    mkdir -p -- "$(dirname -- "$tree/$path")"
+    if [ -f "$blobs/blob.$n" ]; then
+      cp -- "$blobs/blob.$n" "$tree/$path"
+    else
+      : > "$tree/$path"
+    fi
+  done < "$manifest"
+}
+
+require_archive_version() {
+  tree=$1
+  require_version_text "archive VERSION" "$tree/VERSION"
+}
+
+has_path() {
+  grep -F -x -q -- "$2" "$1"
+}
+
+mergeable() {
+  case $1 in
+    preferences.md|rules.md) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+has_nul() {
+  awk 'BEGIN { RS = "\0" } END { exit (NR > 1 ? 0 : 1) }' "$1"
+}
+
+added_lines() {
+  awk -v dest="$1" -v src="$2" -v out="$3" '
+    function load(file, arr, seen,    n, line) {
+      n = 0
+      while ((getline line < file) > 0) {
+        n++
+        arr[n] = line
+        seen[line] = 1
+      }
+      close(file)
+      return n
+    }
+    BEGIN {
+      load(dest, d, have)
+      ns = load(src, s, unused)
+      m = 0
+      for (i = 1; i <= ns; i++) {
+        if (have[s[i]] != 1) {
+          have[s[i]] = 1
+          m++
+          add[m] = s[i]
+        }
+      }
+      if (m == 0) exit 1
+      for (i = 1; i <= m; i++) print add[i] > out
+      close(out)
+    }
+  ' 
+}
+
+compose_merge() {
+  dest=$1
+  added=$2
+  out=$3
+  if [ -s "$dest" ]; then
+    last=$(tail -c 1 "$dest" | od -An -tu1 | awk '{ print $1 + 0 }')
+    if [ "$last" -eq 10 ]; then
+      cat -- "$dest" "$added" > "$out"
+    else
+      {
+        cat -- "$dest"
+        printf '\n'
+        cat -- "$added"
+      } > "$out"
+    fi
+  else
+    cat -- "$added" > "$out"
+  fi
+}
+
+check_dest_components() {
+  base=$1
+  rel=$2
+  cur=$base
+  rest=$rel
+  while [ -n "$rest" ]; do
+    case $rest in
+      */*)
+        comp=${rest%%/*}
+        rest=${rest#*/}
+        last=0
+        ;;
+      *)
+        comp=$rest
+        rest=
+        last=1
+        ;;
+    esac
+    cur=$cur/$comp
+    if [ -L "$cur" ]; then
+      die "refusing to follow symlink $rel"
+    fi
+    if [ ! -e "$cur" ]; then
+      return 0
+    fi
+    if [ "$last" -eq 0 ]; then
+      [ -d "$cur" ] || die "$rel is not a file"
+    else
+      [ -f "$cur" ] || die "$rel is not a file"
+    fi
+  done
+}
+
+stage_file() {
+  path=$1
+  src=$2
+  mkdir -p -- "$(dirname -- "$work/stage/$path")"
+  cp -- "$src" "$work/stage/$path"
+}
+
+plan_merge() {
+  pm_src=$1
+  pm_dst=$2
+  pm_live=$3
+  list_tree "$pm_src" "$work/src.raw" "$work/src.list"
+  list_tree "$pm_dst" "$work/dst.raw" "$work/dst.list"
+  cat "$work/src.list" "$work/dst.list" | LC_ALL=C sort -u > "$work/union.list"
+  : > "$work/plan"
+  mkdir -p -- "$work/stage" "$work/plus"
+  while IFS= read -r path || [ -n "$path" ]; do
+    [ -n "$path" ] || continue
+    valid_rel "$path" || die "path is unsafe: $path"
+    src_has=0
+    dst_has=0
+    if has_path "$work/src.list" "$path"; then
+      src_has=1
+    fi
+    if has_path "$work/dst.list" "$path"; then
+      dst_has=1
+    fi
+    if [ "$src_has" -eq 0 ]; then
+      continue
+    fi
+    src_file=$pm_src/$path
+    dst_file=$pm_dst/$path
+    if [ -n "$pm_live" ]; then
+      check_dest_components "$pm_live" "$path"
+    fi
+    if [ "$dst_has" -eq 0 ]; then
+      stage_file "$path" "$src_file"
+      printf '%s\t%s\n' "$path" "add" >> "$work/plan"
+      continue
+    fi
+    status=0
+    cmp -s -- "$src_file" "$dst_file" || status=$?
+    if [ "$status" -eq 0 ]; then
+      continue
+    fi
+    if [ "$status" -ne 1 ]; then
+      die "cannot compare $path"
+    fi
+    if mergeable "$path"; then
+      if has_nul "$src_file" || has_nul "$dst_file"; then
+        printf '%s\t%s\n' "$path" "conflict" >> "$work/plan"
+        continue
+      fi
+      plus=$work/plus/$path
+      mkdir -p -- "$(dirname -- "$plus")"
+      if added_lines "$dst_file" "$src_file" "$plus"; then
+        mkdir -p -- "$(dirname -- "$work/stage/$path")"
+        compose_merge "$dst_file" "$plus" "$work/stage/$path"
+        printf '%s\t%s\n' "$path" "merge" >> "$work/plan"
+      fi
+      continue
+    fi
+    printf '%s\t%s\n' "$path" "conflict" >> "$work/plan"
+  done < "$work/union.list"
+}
+
+show_plan() {
+  if [ "$write" -eq 1 ]; then
+    printf 'write\n'
+  else
+    printf 'dry-run\n'
+  fi
+  printf 'version: 1\n'
+  if [ ! -s "$work/plan" ]; then
+    printf 'no changes\n'
+    return
+  fi
+  while IFS= read -r line || [ -n "$line" ]; do
+    [ -n "$line" ] || continue
+    path=${line%%"$tab"*}
+    action=${line#*"$tab"}
+    printf '%s %s\n' "$action" "$path"
+    if [ "$action" = "merge" ]; then
+      while IFS= read -r added || [ -n "$added" ]; do
+        printf '+ %s\n' "$added"
+      done < "$work/plus/$path"
+    fi
+  done < "$work/plan"
+}
+
+copy_tree() {
+  from=$1
+  to=$2
+  list_tree "$from" "$work/copy.raw" "$work/copy.list"
+  while IFS= read -r rel || [ -n "$rel" ]; do
+    [ -n "$rel" ] || continue
+    mkdir -p -- "$(dirname -- "$to/$rel")"
+    cp -- "$from/$rel" "$to/$rel"
+  done < "$work/copy.list"
+}
+
+build_export_result() {
+  result=$work/result
+  rm -rf -- "$result"
+  mkdir -p -- "$result"
+  copy_tree "$dst_root" "$result"
+  if [ -d "$work/stage" ]; then
+    copy_tree "$work/stage" "$result"
+  fi
+}
+
+install_plan() {
+  : > "$work/moves"
+  while IFS= read -r line || [ -n "$line" ]; do
+    [ -n "$line" ] || continue
+    path=${line%%"$tab"*}
+    action=${line#*"$tab"}
+    case $action in
+      add|merge) ;;
+      *) continue ;;
+    esac
+    check_dest_components "$root" "$path"
+    parent=$(dirname -- "$root/$path")
+    mkdir -p -- "$parent" || die "cannot create $parent"
+    tmp=$(mktemp "$parent/.jwn-write.XXXXXX") || die "cannot create temp file"
+    printf '%s\n' "$tmp" >> "$temps_file"
+    cat -- "$work/stage/$path" > "$tmp" || die "cannot write $path"
+    printf '%s\t%s\n' "$tmp" "$root/$path" >> "$work/moves"
+  done < "$work/plan"
+  while IFS= read -r line || [ -n "$line" ]; do
+    [ -n "$line" ] || continue
+    tmp=${line%%"$tab"*}
+    dest=${line#*"$tab"}
+    mv -f -- "$tmp" "$dest" || die "cannot replace $dest"
+  done < "$work/moves"
+}
+
+abs_file() {
+  parent=$(dirname -- "$1")
+  base=$(basename -- "$1")
+  [ -d "$parent" ] || die "parent directory does not exist: $parent"
+  parent_abs=$(physical_dir "$parent") || die "parent directory does not exist: $parent"
+  case $parent_abs in
+    /) printf '/%s\n' "$base" ;;
+    *) printf '%s/%s\n' "$parent_abs" "$base" ;;
+  esac
+}
+
+root_spec() {
+  if [ "${JWN_HOME+x}" = x ]; then
+    [ -n "$JWN_HOME" ] || die "JWN_HOME is empty"
+    printf '%s\n' "$JWN_HOME"
+  else
+    [ -n "${HOME-}" ] || die "HOME is not set"
+    printf '%s\n' "$HOME/.jwn"
+  fi
+}
+
+parse_args() {
+  [ "$#" -ge 1 ] || usage
+  cmd=$1
+  shift
+  case $cmd in
+    export|import) ;;
+    *) usage ;;
+  esac
+  write=0
+  dry=0
+  while [ "$#" -gt 0 ]; do
+    case $1 in
+      --write)
+        write=1
+        shift
+        ;;
+      --dry-run)
+        dry=1
+        shift
+        ;;
+      --)
+        shift
+        break
+        ;;
+      -*)
+        usage
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
+  if [ "$write" -eq 1 ] && [ "$dry" -eq 1 ]; then
+    usage
+  fi
+  [ "$#" -eq 1 ] || usage
+  file=$1
+}
+
+do_import() {
+  [ -f "$file" ] || die "cannot read archive"
+  parse_archive "$file" "$work/arch"
+  materialize "$work/arch/manifest" "$work/arch" "$work/src"
+  require_archive_version "$work/src"
+  root=$(root_spec)
+  live=
+  if [ -e "$root" ] || [ -L "$root" ]; then
+    [ -d "$root" ] || die "record root is not a directory"
+    root=$(physical_dir "$root") || die "record root does not exist"
+    require_version_text "VERSION" "$root/VERSION"
+    dst_root=$root
+    live=$root
+  else
+    dst_root=$work/empty-dst
+    mkdir -p -- "$dst_root"
+  fi
+  plan_merge "$work/src" "$dst_root" "$live"
+  show_plan
+  if [ "$write" -eq 1 ] && [ -s "$work/plan" ]; then
+    if [ -z "$live" ]; then
+      mkdir -p -- "$root" || die "cannot create record root"
+      root=$(physical_dir "$root") || die "record root does not exist"
+    fi
+    install_plan
+  fi
+}
+
+main_setup() {
+  work=$(mktemp -d "${TMPDIR:-/tmp}/jwn.XXXXXX") || exit 1
+  temps_file=$work/temps
+  : > "$temps_file"
+  trap cleanup EXIT HUP INT TERM
+}
+
+do_export() {
+  root=$(root_spec)
+  [ -d "$root" ] || die "record root does not exist"
+  root=$(physical_dir "$root") || die "record root does not exist"
+  require_version_text "VERSION" "$root/VERSION"
+  archive_abs=$(abs_file "$file")
+  case $archive_abs in
+    "$root"|"$root"/*) die "archive path is inside the record root" ;;
+  esac
+  if [ -L "$file" ]; then
+    die "refusing to follow symlink $file"
+  fi
+  if [ -e "$file" ]; then
+    [ -f "$file" ] || die "archive path is not a file"
+    parse_archive "$file" "$work/arch"
+    materialize "$work/arch/manifest" "$work/arch" "$work/dst"
+    require_archive_version "$work/dst"
+    dst_root=$work/dst
+  else
+    dst_root=$work/empty-dst
+    mkdir -p -- "$dst_root"
+  fi
+  plan_merge "$root" "$dst_root" ""
+  show_plan
+  if [ "$write" -eq 1 ] && [ -s "$work/plan" ]; then
+    build_export_result
+    require_version_text "VERSION" "$work/result/VERSION"
+    list_tree "$work/result" "$work/result.raw" "$work/result.list"
+    parent=$(dirname -- "$archive_abs")
+    tmp=$(mktemp "$parent/.jwn-archive.XXXXXX") || die "cannot create archive"
+    printf '%s\n' "$tmp" >> "$temps_file"
+    write_archive "$work/result" "$work/result.list" "$tmp"
+    mv -f -- "$tmp" "$archive_abs" || die "cannot replace archive"
+  fi
+}
+
+parse_args "$@"
+main_setup
+case $cmd in
+  export) do_export ;;
+  import) do_import ;;
+esac

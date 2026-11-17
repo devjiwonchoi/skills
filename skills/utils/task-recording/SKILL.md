@@ -1,6 +1,6 @@
 ---
 name: task-recording
-description: Use when recording a task under the jwn record root.
+description: Use when recording, exporting, or importing the jwn record root.
 ---
 
 # Task recording
@@ -21,7 +21,17 @@ Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are
 
 `<repo>` is `owner/name` from the `origin` remote URL. Take the last two path segments of `https://host/owner/name` or `git@host:owner/name`, after removing a trailing `.git`. When `origin` is missing or those segments cannot be read, resolve `git rev-parse --git-common-dir` to an absolute path and use the basename of its parent directory. Outside a Git checkout, use the working directory name.
 
+Name a task `<repo>/<task>`.
+
 User preferences and learned rules live in `preferences.md`.
+
+Approved rules live in `rules.md`. The file starts with `# Rules`. Each rule is one bullet:
+
+```markdown
+- YYYY-MM-DD <repo>/<task>: <wording>
+```
+
+`## Learned` bullets already in `preferences.md` stay in force. Append a new approved rule to `rules.md` and leave every other line as it is.
 
 Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number. Read `retros/<YYYY>-W<ww>.md` when the `weeks/` file is absent. Write `weeks/` only.
 
@@ -60,7 +70,7 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
 | `VERIFY.md` | Verify                                                       | Checked revision, per-item pass, fail, or unresolved, proof evidence, drift flag, recomputed criteria hash, and gaps   |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
-| `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, and proposed prevention            |
+| `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, proposed prevention, and human review comments under `## Review comments` |
 
 Use headings, lists, and tables as useful. Preserve earlier approvals, results, and finding history rather than replacing them with a latest-success summary. Link detailed logs and artifacts instead of copying them into every document. Keep secrets and unrelated history out of records.
 
@@ -77,3 +87,13 @@ Missing, conflicting, or unreadable records do not establish approval or complet
 Old JSONL-only tasks are outside this workflow's recovery support. Preserve their files without parsing, converting, or inferring authorization. Report that context is unavailable and establish the current task from the user's request before creating separate Markdown records. Do not silently restart an old task or select another directory.
 
 While the host prohibits writes, keep the current plan and pending record updates in conversation. Save them when writes become allowed without inventing earlier approvals or results.
+
+## Export and import
+
+Run `jwn` from this skill's folder when the user asks to export or import the record root. `jwn export <file>` packs the root into `<file>`. `jwn import <file>` merges `<file>` into the root. The script is the only pack and unpack.
+
+Both commands print the changes and write nothing. Pass `--write` only after the user approves those changes.
+
+The script accepts format version `1` only. It refuses a root or an archive whose version is not `1` and writes nothing.
+
+A merge adds files the destination lacks. For `preferences.md` and `rules.md`, it appends lines the destination does not already have and does not change the destination's existing lines. It leaves every other differing file untouched and reports a conflict. It does not delete files that exist on only one side.

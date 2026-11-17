@@ -10,6 +10,7 @@ The goal is to agree with the user on an observable end state for any request, s
 1. Read the request, the preferences file, and existing task records per the `task-recording` skill.
    - When `EXPLORE.md` is in the task folder, start from it.
    - If the preferences file is missing, no one-way door is already allowed.
+   - Read `rules.md` and the `## Learned` rules in the preferences file. Follow them in the plan. When a rule and the request disagree, settle that with the user before approval. A missing `rules.md` adds no rules.
    - If the goal or approach is unsettled and there is no `EXPLORE.md`, follow the `explore` skill first.
 2. Research only what the end state still needs, with the `research` skill.
    - Research the topic or inspect the brownfield repository, fanning out subagents for wide searches.
