@@ -1,6 +1,6 @@
 ---
 name: align
-description: Use when planning or starting a task.
+description: Use when planning or starting a task, or when an approved end state must change.
 ---
 
 The goal is to agree with the user on an observable end state for any request, such as research, brainstorm, build, fix, debug, or computer-use tasks, and how each part will be proven, settle every one-way door, then hand off to Iterate.
@@ -59,8 +59,34 @@ The goal is to agree with the user on an observable end state for any request, s
    - Record each question left open as a `## Pending` root line in `STATUS.md` per the `task-recording` skill. Ask questions that share a root once.
 11. On approval, save the final `ALIGN.md` in the task folder following the `task-recording` skill, set its status to `approved by <who> on <date>`, then follow the `iterate` skill with it.
     - Run `e2e-workflow check <ALIGN.md>` from this skill's folder, then `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section. A failing check is not approval.
-    - Copy that approved file to `ALIGN.approved.md` in the same folder. The copy freezes the diagram with the rest of the contract. Replace the copy only on a later approval.
+    - Copy that approved file to `ALIGN.approved.md` in the same folder. The copy freezes the diagram with the rest of the contract. Replace the copy only on a later approval, or on a small edit under Re-align.
     - Later stages read that diagram and do not redraw it.
     - Approval settles every choice the plan states, including reported two-way decisions, the branch, commits, push, PR, and one-way values. Do not ask for them again.
     - Continue in the current context. Do not force compaction.
     - While host plan mode blocks writes, keep the plan in conversation and save it once writes are allowed. Write the check, the hash, and the approved copy in that same save.
+
+## Re-align
+
+Use this mode instead of Steps 1 through 10 when the task has an approved `ALIGN.md` and its end state items, diagram, or criteria must change. Iterate, the user, or a Verify flag can start it. Start from the approved copy and ask only about what changes. Do not redo explore or research for what stays.
+
+### Small edit or direction change
+
+Decide which one it is before touching the file.
+
+- A small edit keeps what "done" means. It changes the wording of an item, criterion, or diagram label, or a threshold or expected value that the user would not call a different result. The set of items, each item's proof and its target, the diagram's nodes and edges, the `Deadline:` line, the one-way doors, and the Don'ts stay as they are.
+- A direction change adds, removes, splits, or merges an item, changes what an item proves, changes a proof's kind or target, adds or removes a diagram node or edge, adds, removes, or changes the `Deadline:` line, or touches a one-way door or a Don't.
+- Treat an edit as a direction change when it loosens a proof, when it follows a failing verification of that same item, when the verifier or a reviewer proposed it, or when it is unclear which it is.
+
+### Small edit
+
+No new approval. Edit `ALIGN.md`, run `e2e-workflow check` and `criteria-hash` as in Step 11, and write the new `Criteria hash:`. Add one to `Version`. Add a `# Decisions` line that names the item, what changed, and `small edit, no new approval, v<old> to v<new>`. Append the same to `DECISIONS.md`. Replace `ALIGN.approved.md` with the edited file so the contract and the working file match. Keep the approval line and name the edit in the next report. Verify flags a `changed proof` as before.
+
+### Direction change
+
+1. Read `ALIGN.approved.md`, `STATUS.md`, `DECISIONS.md`, and `VERIFY.md`. Ask what changes and why. Keep every item, criterion, todo, Don't, and decision the user does not change. Do not ask again for anything already settled. Ask a changed or new one-way door with exact values.
+2. Save the new plan as `ALIGN.md` with `Status: draft` and the approved `Version`. Leave `ALIGN.approved.md` as it is. Iterate stops and reports until approval.
+3. Show the comparison before asking for approval:
+   - End state items in four lists: kept, modified (before and after, with the proof), removed, and added. Add the `Deadline:` before and after when it changes.
+   - The E2E workflow diagram before, from `ALIGN.approved.md`, and after. Show both in the conversation only. `ALIGN.md` keeps its one diagram.
+4. On approval, add one to `Version`, set the status to `approved by <who> on <date>`, run `e2e-workflow check` and `criteria-hash`, write `Criteria hash:`, and replace `ALIGN.approved.md` with the saved file. Record the reason under `# Decisions` and append the reason and the four lists, without the diagrams, to `DECISIONS.md`.
+5. Continue with the `iterate` skill. Evidence for kept items holds only while their proof and the files it covers are unchanged. Reopen modified and added items, and drop removed ones from the counts.

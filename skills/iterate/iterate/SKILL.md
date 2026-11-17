@@ -14,7 +14,7 @@ description: Use when executing an aligned plan.
   - Stop when the next action is high risk. A one-way door cannot be undone, such as buying, paying, sending, deleting, publishing, merging, or deploying. Run one only with the exact values the contract approved.
   - Make reversible (two-way door) decisions beyond the plan and append each to `DECISIONS.md`. Do not pause for them.
   - `DECISIONS.md` is append-only. Each entry states what, why, the evidence path, and the outcome. Do not rewrite an earlier entry.
-  - Re-align only when the user approves a new end state, including the E2E workflow diagram. A new approval replaces `ALIGN.approved.md`. Until that approval, stop and report. Do not leave the end state silently, and do not keep implementing outside the contract. Verify flags the changed items, criteria, or diagram.
+  - Change the end state only through the Re-align mode of the `align` skill. A small edit keeps the run going. Report it in the next report. A direction change needs the user's approval of the new end state, including the E2E workflow diagram, and approval replaces `ALIGN.approved.md`. Until that approval, stop and report. Do not leave the end state silently, and do not keep implementing outside the contract. Verify flags the changed items, criteria, or diagram.
   - Do not redraw the E2E workflow diagram. Read it from the approved contract, `ALIGN.approved.md` or the default branch copy, never from the working change. Cite its node ids.
   - Do not ask again for anything the approved plan settles.
 - Subagents never ask the user. They make two-way door decisions and return those decisions and any stop to the main agent, which appends them to `DECISIONS.md` and applies the stop rule.
@@ -28,7 +28,7 @@ Follow the `execution-recording` skill for every invocation, including standalon
    - Run only an `ALIGN.md` whose status says approved.
    - An end state item is a numbered `##` heading under `# End state`. The `## E2E workflow` heading is the diagram, not an item. When that section has no numbered headings, an item is a success criterion, or a `Done when` line in the light form.
    - Add findings supplied by the caller, such as CI failures, bot comments, or Ship corrections, as fix todos. CI or bot findings a caller passes in, including from Moniterate or standalone Ship, run within existing authorization without an `ALIGN.md`.
-   - Follow the `align` skill only for new scope with no approved end state. Quick-impl may proceed only when the user's request itself is the spec.
+   - Follow the `align` skill for new scope with no approved end state, and its Re-align mode when the approved end state must change. Quick-impl may proceed only when the user's request itself is the spec.
 2. Execute: fan out the work. Run every unfinished todo whose dependencies are done, in parallel, each in its own subagent, with its todo spec, the rules read in step 1, the `ALIGN.md` path if one exists, otherwise the original request, and the rule that the subagent makes two-way door decisions, returns them and any stop, and does not ask.
    - Hold delivery todos, such as commit, push, PR, and Moniterate, for step 5, where Ship runs them.
    - Go to step 3 when only held todos remain.
