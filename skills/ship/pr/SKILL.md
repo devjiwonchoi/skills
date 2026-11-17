@@ -6,6 +6,13 @@ description: Always use when handling PRs.
 ## Rules
 
 - Before creating or updating PRs, follow the `commit` skill to establish or reconcile the commit structure.
+- Before opening a PR, run the cheap checks the repository already defines.
+  - Run its type check and its lint.
+  - Run its build when that build is quick. Skip a slow build.
+  - Run the e2e journeys the diff touches and the e2e journeys that prove end-state items.
+  - Skip a check the repository does not define.
+  - Do not open the PR when one of these checks fails or a selected check cannot be run. Report the evidence.
+  - A slow build you skipped, or a check the repository does not define, does not block opening.
 - Map commits to review contexts and independently reviewable outcomes.
 - Keep new shared code with its first real caller when the caller is needed to understand its purpose or assess its contract. Use separate commits within that PR.
 - Give each independently reviewable outcome its own PR, and ship those PRs as one stack. The bottom PR targets the approved base. Each later PR's branch is based on the previous PR's branch, in dependency order, and its base is that branch.

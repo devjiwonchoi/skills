@@ -11,7 +11,7 @@ Follow the `task-recording` skill for where records live, task ownership, Markdo
 
 Read `STATUS.md`, `ALIGN.md` when available, and relevant verification and review before acting. Initialize missing documents for the requested stage only. Record the caller, requested scope, current changes, and next action so recovery preserves standalone boundaries.
 
-- Iterate records each todo's result (done, re-run, or failed), fix todos in the same spec, deviations, blockers, and next action in `STATUS.md`. `ALIGN.md` stays as approved.
+- Iterate records each todo's result (done, re-run, or failed), the fix-attempt count for each failing check, fix todos in the same spec, deviations, blockers, and next action in `STATUS.md`. `ALIGN.md` stays as approved.
 - Quick-impl records implementation outcomes and unverified work in `STATUS.md`.
 - Verify appends results and evidence to `VERIFY.md`.
 - Review maintains findings and pass history in `REVIEW.md`.
@@ -26,7 +26,7 @@ Record the diff base, HEAD, staged and unstaged changes, relevant untracked file
 
 Implementation identifies changed and affected behavior and reopens the corresponding checks and review. Retain unaffected coverage only with a supported reason. A changed revision invalidates completion for affected behavior, and unresolved findings survive.
 
-Verify records pass, fail, or unresolved for each end state item, with the proof, evidence paths, gaps, and any difference between the end state items or criteria and `ALIGN.approved.md`. Follow the `task-recording` skill for the criteria hash. Do not pass when the stored hash differs or that difference is present. Leave the stored line and the copy unchanged. Passing requires evidence for every end state item. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains unresolved.
+Verify records pass, fail, or unresolved for each end state item, with the proof, evidence paths, gaps, any difference between the end state items or criteria and `ALIGN.approved.md`, and a `self-judging change` when the `verify` skill flags one. An unconfirmed self-judging item is not a pass. Follow the `task-recording` skill for the criteria hash. Do not pass when the stored hash differs, that difference is present, or a self-judging item awaits confirmation. Leave the stored line and the copy unchanged. Passing requires evidence for every end state item. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains unresolved.
 
 ## Review history
 

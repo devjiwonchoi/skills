@@ -8,8 +8,9 @@ description: Use when reviewing a finished jwn task, the weekly delegation recor
 - Run the per-task steps when Iterate finishes a task or when invoked for a task. Run the weekly steps when the user asks for the weekly record. Run the retro steps when the user asks for the weekly retro.
 - Propose changes without editing skills, messaging other sessions, committing, publishing, or scheduling work. Do not edit a skill to store a rule.
 - Use observed workflow evidence. Distinguish user preferences, implementation defects, and defects in jwn instructions. Label unverified causes as hypotheses.
-- Follow the `task-recording` skill for the record root, task folder, preferences file, rules file, and weekly file.
-- Append a learned rule only after the user approves that wording. A per-task approval uses the approved-rule bullet in the template, under `## Learned` in the preferences file. Add that heading at the end when it is missing, and leave every other line as it is. The weekly retro writes an approved rule to `rules.md` per the retro steps. Name the task per the `task-recording` skill.
+- Follow the `task-recording` skill for the record root, task folder, preferences file, rules file, checklist file, and weekly file.
+- Append a learned rule only after 지원님 approves that wording. A per-task approval uses the approved-rule bullet in the template, under `## Learned` in the preferences file. Add that heading at the end when it is missing, and leave every other line as it is. The weekly retro writes an approved rule to `rules.md` per the retro steps. Name the task per the `task-recording` skill.
+- Record a missed bug as a checklist entry. Propose a rule from that entry only after the same miss occurred in 2 or more PRs. Apply it only after 지원님 approves that wording, through the approval flow above.
 - Set `delegated` to true only when `interventions_after_approval` is 0 and `end_state_items_met` equals `end_state_items_total`. `review_change_requests` does not change it.
 - `end_state_items_total` is at least 1. `end_state_items_met` is not greater than the total.
 - Weeks are local-time ISO weeks. Copy `week`, `week_start`, `week_end`, `tasks`, `delegated`, and `delegation_rate` from the `delegation-rate` script in this skill's folder. That script is the only calculation.
@@ -29,12 +30,15 @@ description: Use when reviewing a finished jwn task, the weekly delegation recor
 2. Fill the front matter in the template from evidence. `date` is the local task finish date, `YYYY-MM-DD`. Other keys are allowed.
    - Count `interventions_after_approval` as user messages, interruptions, and manual commits after the ALIGN approval. The approval itself is not an intervention. A manual commit is a commit the user made by hand. Count one event once when it fits more than one of these. When `ALIGN.md` records no approval, count those events across the whole task.
    - `end_state_items_total` is the number of end state items in `ALIGN.md`. End state items are the numbered `##` headings under `# End state`. When that section has no numbered headings, they are the `##` headings under `# Success criteria`, or the Done-when lines in the light form.
-   - `end_state_items_met` is how many of those items `VERIFY.md` records as met. An item without that result is unmet.
+   - `end_state_items_met` is how many of those items `VERIFY.md` records as met. An item without that result is unmet. An item recorded as `self-judging change` is unmet until that file records 지원님's confirmation of it.
    - `review_change_requests` is the number of distinct changes a human asked for on the task's pull request. Leave the agent's own findings, bots, and approvals out of this count. Keep each counted comment's request for `## Review comments`.
 3. Check the task for each failure above and for other friction, such as duplicate recording or late previews. Cite the actual request, outcome, or artifact as the signal, and the responsible jwn instruction when known. Mark a failure not found, or not yet observable when its signals come later, such as edits after acceptance.
 4. Apply the `delete` skill to seek removal or simplification before adding rules. Consolidate proposals with the same cause and read existing proposals in `REMEMBER.md`, or in `RETRO.md` when `REMEMBER.md` is absent, before adding duplicates. Do not turn an isolated complaint into a universal requirement.
 5. For each found failure or friction, prefer prevention in this order: structure that makes it impossible, then types, lint, tests, and written instructions last. Record the observed case, cause and confidence, affected instruction, specific removal or replacement, expected effect, and how to check that effect, preferring a check that fails on the observed case. State when evidence is insufficient instead of inventing a fix.
-6. Save the front matter, evidence, and proposals in `REMEMBER.md`. Do not write `RETRO.md`. Under `## Review comments`, quote each counted human review comment as one bullet. When that comment's text cannot be read, write `unavailable` for that bullet and do not invent the request. Write `None` when the count is 0. Run `sh delegation-rate` from this skill's folder on that file, and correct the front matter until the script exits 0. Present the smallest useful changes. Propose each learned rule for the preferences file per the `task-recording` skill. Stop at proposals. Keep the owning workflow's stage and next action intact. No observed problem is a valid result.
+   - A missed bug is a defect in the delivered change that verification and review did not catch. A human review comment, a revert, a user correction, or an incident can show it.
+   - Record a missed bug as a checklist entry when its trigger can be read from a diff. The trigger names what the diff must show for the check to apply. The entry is the trigger, the check, and the original incident. Name the task per the `task-recording` skill, and the PR when there is one. Do not invent a trigger. Append it to `checklist.md` per the `task-recording` skill, and leave every other line as it is. When the same miss is already listed, keep that entry and record this occurrence in `REMEMBER.md`. For a missed bug, this entry is the prevention to record.
+   - Propose a rule from a checklist entry only when that miss occurred in 2 or more PRs. Count PRs, not notes on one PR. A single PR stays an entry. Apply the rule only after 지원님 approves the wording.
+6. Save the front matter, evidence, and proposals in `REMEMBER.md`. Do not write `RETRO.md`. Under `## Review comments`, quote each counted human review comment as one bullet. When that comment's text cannot be read, write `unavailable` for that bullet and do not invent the request. Write `None` when the count is 0. Run `sh delegation-rate` from this skill's folder on that file, and correct the front matter until the script exits 0. Present the smallest useful changes. Propose each learned rule for the preferences file per the `task-recording` skill. A missed bug seen in fewer than 2 PRs is a checklist entry, not a rule proposal. Stop at proposals. Keep the owning workflow's stage and next action intact. No observed problem is a valid result.
 
 ## Weekly steps
 
@@ -45,23 +49,24 @@ description: Use when reviewing a finished jwn task, the weekly delegation recor
 
 ## Retro steps
 
-1. Select the week's files with weekly step 1. Read each counted task's `REVIEW.md` when it exists.
+1. Select the week's files with weekly step 1. Read each counted task's `REVIEW.md` when it exists, and read `checklist.md` when it exists.
    - Human review comments are the changes a person asked for on that task's pull request.
    - Read them from `## Review comments` in `REMEMBER.md`, from comments quoted in `REVIEW.md`, and from the pull request when the task records name one and the host can read it.
    - Do not depend on a particular hosting tool.
    - Ignore comments from the agent and from bots, and ignore approvals.
 2. Propose a rule when a human review comment or a `REMEMBER.md` proposal states a requirement a later task could miss.
+   - A missed bug is a checklist entry. Propose a rule from it only when that miss occurred in 2 or more PRs. A single PR stays an entry.
    - Apply the `delete` skill.
    - Join proposals that share a cause.
    - Skip a requirement already in `rules.md` or under `## Learned`.
    - Leave a one-off patch request out.
    - No proposal is a valid result.
-3. Present each proposal as the approved-rule bullet. Cite the comment or record it came from. Stop until the user approves that bullet's wording.
+3. Present each proposal as the approved-rule bullet. Cite the comment or record it came from. Stop until 지원님 approves that bullet's wording.
 4. Append each approved bullet under `# Rules` in `rules.md`.
    - Create `rules.md` with that heading when the file is missing.
    - Add the heading at the end when it is missing.
    - Leave every other line as it is.
-   - Append nothing the user did not approve.
+   - Append only a bullet 지원님 approved.
    - Use the local date. Name the task per the `task-recording` skill. When a proposal joins more than one task, use the earliest date and any one of those tasks.
    - Re-read `rules.md` and `## Learned` immediately before appending. Skip a bullet whose wording, the text after `<repo>/<task>:`, is already present.
 
@@ -84,6 +89,12 @@ Approved rule:
 
 ```markdown
 - YYYY-MM-DD <repo>/<task>: <approved wording>
+```
+
+Checklist entry, in `checklist.md`:
+
+```markdown
+- trigger: <visible in a diff> | check: <what to verify> | incident: <original incident>
 ```
 
 Review comments:
