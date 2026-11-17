@@ -33,6 +33,7 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - The Stack section is the PR plan per the `pr` skill. List each PR's branch, base, title, commits, body, and reviewers. The bottom PR targets the approved base. Each later PR is based on the previous PR's branch. A delivery todo carries out the Stack entry it names.
 - Save the plan as `ALIGN.md` with `Status: draft` before approval, so its progress is readable. Approval sets the status to `approved by <who> on <date>`. A draft has no `ALIGN.approved.md`.
 - On approval, run `e2e-workflow check <ALIGN.md>` from the `align` skill folder, then `criteria-hash <ALIGN.md>` from the `task-recording` skill folder. Write `Criteria hash: <digest>` outside the hashed section. Leave it blank until approval. Then copy the saved file to `ALIGN.approved.md`. That copy freezes the diagram with the rest of the contract. Replace that copy only on a later approval.
+- `Deadline: YYYY-MM-DD` is an optional line under the `Version` line. Write it only when the owner stated a deadline, and leave the line out otherwise. Never ask for one. It is part of what the owner approves. The criteria hash does not cover it, so Verify compares it with the approved copy.
 - Cover both directions. Every end state item has one proof, is named by a criterion, and is built by a todo. Every criterion names an end state item. Every todo serves an end state item. Every `E2E:` proof names a node in a journey. Every file proof names a path in Files. Revise the plan when any direction has a gap or the check fails.
 
 ## E2E workflow
@@ -67,6 +68,7 @@ flowchart LR
 # ALIGN: Reply in a thread
 
 Version: <n> · Status: draft | approved by <who> on <date>
+Deadline: <YYYY-MM-DD>
 Criteria hash: <digest>
 
 # End state
@@ -197,6 +199,7 @@ Intention: <why the user wants this, in one line>
 # ALIGN: Reply in a thread
 
 Version: <n> · Status: draft | approved by <who> on <date>
+Deadline: <YYYY-MM-DD>
 Criteria hash: <digest>
 
 # End state

@@ -34,6 +34,7 @@ The goal is to agree with the user on an observable end state for any request, s
    - Save the opening as `ALIGN.md` with `Status: draft` once it is written, and save again after each revision. A draft is not approval. Leave `Criteria hash:` blank and write no `ALIGN.approved.md`. Follow the `task-recording` skill for the folder.
 6. Write the criteria after the diagram. Start each with an action verb and name the end state item that proves it.
    - In both forms, write the Intention, one line on why the user wants the result, and the Don'ts: what stays out of scope and what must not happen even within scope.
+   - When the user stated a deadline, write it as `Deadline: YYYY-MM-DD` under the `Version` line. Do not ask whether there is one. Approval covers it with the rest of the plan.
    - Write `# Later` for what the user agreed to but this task will not do. Leave it out when there is none.
 7. Break the work into fan-out todos using the todo spec in the [template](references/template.md), then write the stacked PR plan per the `pr` skill.
    - State what to achieve and how, step by step, so a subagent can run each todo with no other context.
