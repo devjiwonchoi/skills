@@ -9,6 +9,7 @@ The goal is to agree with the user on an observable end state for any request, s
 
 1. Read the request, the preferences file, and existing task records per the `task-recording` skill.
    - When `EXPLORE.md` is in the task folder, start from it.
+   - When the task folder has a draft `ALIGN.md`, resume it rather than starting over.
    - If the preferences file is missing, no one-way door is already allowed.
    - Read `rules.md` and the `## Learned` rules in the preferences file. Follow them in the plan. When a rule and the request disagree, settle that with the user before approval. A missing `rules.md` adds no rules.
    - If the goal or approach is unsettled and there is no `EXPLORE.md`, follow the `explore` skill first.
@@ -30,6 +31,7 @@ The goal is to agree with the user on an observable end state for any request, s
    - An `E2E:` proof names a node id in a journey, such as `E2E: reply-in-thread`. A file proof names a path in the files list.
    - Do not add a logic diagram, a file-tree diagram, or a second diagram. A throwaway HTML prototype stays out of `ALIGN.md`. A todo may build one when UI is involved.
    - In the light form, keep the same opening, including the one diagram. Add the files list when code changes.
+   - Save the opening as `ALIGN.md` with `Status: draft` once it is written, and save again after each revision. A draft is not approval. Leave `Criteria hash:` blank and write no `ALIGN.approved.md`. Follow the `task-recording` skill for the folder.
 6. Write the criteria after the diagram. Start each with an action verb and name the end state item that proves it.
    - In both forms, write the Intention, one line on why the user wants the result, and the Don'ts: what stays out of scope and what must not happen even within scope.
 7. Break the work into fan-out todos using the todo spec in the [template](references/template.md), then write the stacked PR plan per the `pr` skill.
@@ -52,7 +54,7 @@ The goal is to agree with the user on an observable end state for any request, s
 10. Present the plan in the template format for its form. It opens with the end state items and ends with its Summary.
     - The diagram is the one `e2e-workflow` accepts. When the plan is already a file, run `e2e-workflow check <ALIGN.md>` from this skill's folder. Do not ask for approval when the check fails.
     - Ask only about an unsettled one-way door. Revise from the affected step until they approve the plan. Do not ask a two-way decision.
-11. On approval, save `ALIGN.md` in the task folder following the `task-recording` skill, then follow the `iterate` skill with it.
+11. On approval, save the final `ALIGN.md` in the task folder following the `task-recording` skill, set its status to `approved by <who> on <date>`, then follow the `iterate` skill with it.
     - Run `e2e-workflow check <ALIGN.md>` from this skill's folder, then `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section. A failing check is not approval.
     - Copy that approved file to `ALIGN.approved.md` in the same folder. The copy freezes the diagram with the rest of the contract. Replace the copy only on a later approval.
     - Later stages read that diagram and do not redraw it.
