@@ -6,21 +6,21 @@ Use this layout to present the plan and to save `ALIGN.md`.
 
 Size the plan to the task. Show a section only when it tells the reader something the other sections do not.
 
-- Light: use for a simple task. That means one or two work todos, no UI, no one-way door beyond the approved delivery, and an approach the end state makes clear. Show End state, Goal, Decisions when any exist, Todos, and Summary. Fold success criteria into each todo's `Done when`, put a short file tree in the End state when files change, list files in each todo's `Files`, put all delivery in one todo, and list human checkpoints only when there are any.
+- Light: use for a simple task. That means one or two work todos, no UI, no one-way door beyond the approved delivery, and an approach the end state items make clear. Show End state, Criteria, Todos, Stack when delivering a PR, Goal, Don'ts, Decisions when any exist, and Summary. Add Flow only when the items do not make the flow clear. Add a file tree when files change. Put all delivery in one todo and one Stack entry. List human checkpoints only when there are any.
 - Full: use for everything else. Show every section.
-- Both forms show the End state first, the Intention under Goal, and the Don'ts section. Write `none` for a kind of Don't that does not apply.
+- Both forms open with the End state items, then Criteria. Both show the Intention under Goal and the Don'ts section. Write `none` for a kind of Don't that does not apply.
 - When unsure, use full. Switch to full when revision grows the task past light.
-- A light plan may add any full section that helps, such as a Mermaid walkthrough when the short end state does not make the flow clear.
+- When a section is shown, keep this order: End state, Criteria, Flow, File tree, Todos, Stack, Goal, Don'ts, Decisions, Human checkpoints, Summary. The title and status lines stay above End state.
 
 ## Rules
 
-- Put the End state section first in both forms, before Goal. The light End state is one short section.
-- Number only success criteria and todos, as `##` headings with `1 ·` or `1a ·`, never `1.`. Sections and End state views get no number.
-- Give each End state view its own `##` heading. Never use `###`. The light End state has no view headings.
-- Show End state behavior in Mermaid only, never code or pseudo code.
-- End state items are the success criteria. In the light form they are the `Done when` lines. Each names its proof, the observable check that shows it is met.
-- Start each success criterion with an action verb.
-- Mark each decision `two-way` or `one-way`. Mark each todo with `Door`. A two-way door is reversible: decide it and report the choice afterward. A one-way door is irreversible: record approved exact values, or the preference that allows it.
+- The first section is End state. Each item is one observable outcome under its own `##` heading.
+- Each item names one proof, and that proof is a command, a test, a screenshot, or a URL. Write the command or test to run, the screenshot to compare, or the URL to open, and the result that passes.
+- Criteria follow the items. Start each criterion with an action verb and name the end state item that proves it.
+- Flow is a Mermaid walkthrough of the behavior, never code or pseudo code. Put a throwaway HTML prototype in Flow only when UI is involved.
+- The file tree comments why each file is created, modified, or deleted.
+- Number end state items, criteria, and todos as `##` headings with `1 ·` or `1a ·`, never `1.`. Other sections get no number. Never use `###`.
+- Mark each decision `two-way` or `one-way`. Mark each todo with `Door`. A two-way door is reversible: decide it and report the choice. Do not ask. A one-way door is irreversible: ask unless a preference already allows it, then record the approved exact values or the preference.
 - Mark each todo `(subagent)` or `(main agent)`. Use main agent for todos that need tools, grants, or a screen that subagents lack.
 - Keep the Intention to one line on why the user wants the result. When the end state proves impossible or contradictory, use it to recommend a re-align, never to change the end state alone.
 - Start each Don't with `Out of scope:` for what this task does not build, or `Must not happen:` for a result to avoid even within scope.
@@ -28,9 +28,9 @@ Size the plan to the task. Show a section only when it tells the reader somethin
 - Quote Mermaid labels that contain punctuation and check each diagram parses before presenting.
 - Number and letter todos only as a reading aid. `Depends on` drives scheduling.
 - Fan out independent todos. Fix shared paths, names, and interfaces in the plan first. Give todos that could share a file or stateful resource a dependency so they never run at once.
-- Plan PRs as a stack per the `pr` skill.
-- On approval, run `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section. Leave it blank until approval.
-- Cover both directions. Every end state item is met by the end state, built by a todo, and proven by its named check. Every todo serves an end state item. Revise the plan when either direction has a gap. In the light form, every `Done when` line proves the end state.
+- The Stack section is the PR plan per the `pr` skill. List each PR's branch, base, title, commits, body, and reviewers. The bottom PR targets the approved base. Each later PR is based on the previous PR's branch. A delivery todo carries out the Stack entry it names.
+- On approval, run `criteria-hash <ALIGN.md>` from the `task-recording` skill folder for either form, and write `Criteria hash: <digest>` outside the hashed section. Leave it blank until approval. Then copy the saved file to `ALIGN.approved.md`. Replace that copy only on a later approval.
+- Cover both directions. Every end state item has one proof, is named by a criterion, and is built by a todo. Every criterion names an end state item. Every todo serves an end state item. Revise the plan when any direction has a gap.
 
 ## Full form
 
@@ -42,22 +42,75 @@ Criteria hash: <digest>
 
 # End state
 
-## <Flow name>
+## 1 · <observable outcome>
+
+- Proof: command `<command and the result that passes>` | test `<test and the result that passes>` | screenshot <what the image must show> | URL <url and what it must show>
+
+---
+
+# Criteria
+
+## 1 · <Action verb and outcome>
+
+- Met by: <todos>
+- Item: 1
+
+---
+
+# Flow
 
 ```mermaid
 flowchart TD
   A["<Step>"] --> B["<Step>"]
 ```
 
-## Prototype
-
 <Throwaway HTML prototype, only if UI is involved.>
 
-## File tree
+---
+
+# File tree
 
 ```text
 <path>    # NEW | MODIFIED | DELETED: <why>
 ```
+
+---
+
+# Todos
+
+## 2a · <title>        (subagent)
+- Door: two-way | one-way · <approved exact values, or allowed by preferences>
+- Depends on: 1a
+- Serves: end state item 1
+- Goal: what is true when it's done
+- Files: exact paths to create, modify, or delete
+- How: numbered concrete steps
+- Done when: the proof of end state item 1
+
+## 3 · Deliver        (subagent)
+- Door: one-way · approved: the Stack
+- Depends on: 2a
+- Serves: end state item 1
+- Goal: the Stack is open
+- How: deliver each Stack entry per the `commit` and `pr` skills, then Moniterate
+- Done when: each PR is open against its base
+
+---
+
+# Stack
+
+`<branch>` → `<base>` · <title>
+- Commits: `<message>`
+- Body: <why and how>
+- Reviewers: <names>
+- Later fixes: <how they land on this PR>
+
+`<branch>` → `<previous branch>` · <title>
+- Stacked on the PR above.
+- Commits: `<message>`
+- Body: <why and how>
+- Reviewers: <names>
+- Later fixes: <how they land on this PR>
 
 ---
 
@@ -78,16 +131,7 @@ Intention: <why the user wants this, in one line>
 
 # Decisions
 
-1. <Settled decision> · two-way | one-way · <approved exact values, or allowed by preferences>
-
----
-
-# Success criteria
-
-## 1 · <Action verb and outcome>
-
-- Met by: <todos>
-- Proven by: <observable check>
+1. <Reported or approved decision> · two-way | one-way · <reported choice, approved exact values, or allowed by preferences>
 
 ---
 
@@ -97,26 +141,13 @@ Intention: <why the user wants this, in one line>
 
 ---
 
-# Todos
-
-## 2a · <title>        (subagent)
-- Door: two-way | one-way · <approved exact values, or allowed by preferences>
-- Depends on: 1a
-- Serves: end state items 3, 5
-- Goal: what is true when it's done
-- Files: exact paths to create, modify, or delete
-- How: numbered concrete steps
-- Done when: observable checks
-
----
-
 # Summary
 
 - What: <outcome>
 - Size: <todos, files, or time>
 - Key choices: <decisions that shape the result>
 - When you are needed: <checkpoints left, or none>
-- Approval authorizes: <every action, including one-way values>
+- Approval authorizes: <every action, including reported two-way choices and one-way values>
 ````
 
 ## Light form
@@ -129,11 +160,55 @@ Criteria hash: <digest>
 
 # End state
 
-<Observable result.>
+## 1 · <observable outcome>
+
+- Proof: command `<command and the result that passes>` | test `<test and the result that passes>` | screenshot <what the image must show> | URL <url and what it must show>
+
+---
+
+# Criteria
+
+## 1 · <Action verb and outcome>
+
+- Met by: 2
+- Item: 1
+
+---
+
+# File tree
 
 ```text
 <path>    # NEW | MODIFIED | DELETED: <why, when files change>
 ```
+
+---
+
+# Todos
+
+## 2 · <title>        (subagent)
+- Door: two-way | one-way · <approved exact values, or allowed by preferences>
+- Serves: end state item 1
+- Goal: what is true when it's done
+- Files: exact paths to create, modify, or delete
+- How: numbered concrete steps
+- Done when: the proof of end state item 1
+
+## 3 · Deliver        (subagent)
+- Door: one-way · approved: the Stack
+- Depends on: 2
+- Serves: end state item 1
+- How: deliver the Stack, then Moniterate
+- Done when: the PR is open against its base
+
+---
+
+# Stack
+
+`<branch>` → `<base>` · <title>
+- Commits: `<message>`
+- Body: <why and how>
+- Reviewers: <names>
+- Later fixes: <how they land on this PR>
 
 ---
 
@@ -152,26 +227,9 @@ Intention: <why the user wants this, in one line>
 
 ---
 
-# Todos
-
-## 1 · <title>        (subagent)
-- Door: two-way | one-way · <approved exact values, or allowed by preferences>
-- Goal: what is true when it's done
-- Files: exact paths to create, modify, or delete
-- How: numbered concrete steps
-- Done when: observable checks that prove the end state
-
-## 2 · Deliver        (subagent)
-- Door: one-way · approved: <branch, base, commit message, PR title, and body>
-- Depends on: 1
-- How: commit `<message>` on `<branch>`, push, open PR `<title>` against `<base>` with <description> and <reviewers>, then Moniterate
-- Done when: <PR is open and checks pass>
-
----
-
 # Summary
 
 - What: <outcome>
 - When you are needed: <checkpoints left, or none>
-- Approval authorizes: <every action, including one-way values>
+- Approval authorizes: <every action, including reported two-way choices and one-way values>
 ````

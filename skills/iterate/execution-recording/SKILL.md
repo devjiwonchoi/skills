@@ -26,7 +26,7 @@ Record the diff base, HEAD, staged and unstaged changes, relevant untracked file
 
 Implementation identifies changed and affected behavior and reopens the corresponding checks and review. Retain unaffected coverage only with a supported reason. A changed revision invalidates completion for affected behavior, and unresolved findings survive.
 
-Verify records passed, failed, or incomplete with criterion results, commands or scenarios, evidence paths, and gaps. Follow the `task-recording` skill for the criteria hash. Do not pass when the stored hash differs, and leave the stored line unchanged. Passing requires evidence for every required criterion. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains incomplete.
+Verify records pass, fail, or unresolved for each end state item, with the proof, evidence paths, gaps, and any difference between the end state items or criteria and `ALIGN.approved.md`. Follow the `task-recording` skill for the criteria hash. Do not pass when the stored hash differs or that difference is present. Leave the stored line and the copy unchanged. Passing requires evidence for every end state item. Implementation and verification do not close review findings. Missing or environment-blocked evidence remains unresolved.
 
 ## Review history
 
@@ -42,4 +42,4 @@ After context loss, read `STATUS.md`, `ALIGN.md`, `VERIFY.md`, and `REVIEW.md`. 
 
 Standalone stages stop after their requested work. Quick-impl does not verify or review. Impl continues from successful implementation to Verify. Approved Align continues through Iterate, which follows Ship and Moniterate within the approved delivery. Check the delivery authorization in `ALIGN.md` before publishing. These transitions do not authorize merge, deployment, or messaging by themselves. Irreversible actions approved with exact values in `ALIGN.md` are authorized.
 
-Only Iterate reports execution complete after every success criterion passes current verification, required review coverage is complete, no validated P0–P2 findings remain unresolved, and actual files still match the checked changes. P3 nits do not restart implementation.
+Only Iterate reports execution complete after every end state item passes current verification, required review coverage is complete, no validated P0–P2 findings remain unresolved, and actual files still match the checked changes. P3 nits do not restart implementation.
