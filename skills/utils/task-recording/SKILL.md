@@ -17,7 +17,7 @@ The root is `$JWN_HOME` when that environment variable is set, and `~/.jwn` othe
 
 `VERSION` contains `1`.
 
-Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `STATUS.md`, `VERIFY.md`, `REVIEW.md`, and `REMEMBER.md`. Read `RETRO.md` when `REMEMBER.md` is absent. Write `REMEMBER.md` and leave an existing `RETRO.md` in place.
+Each task lives in `<repo>/<task>/`. `<task>` is the task ID. The task files are `EXPLORE.md`, `ALIGN.md`, `ALIGN.approved.md`, `STATUS.md`, `VERIFY.md`, `REVIEW.md`, and `REMEMBER.md`. Read `RETRO.md` when `REMEMBER.md` is absent. Write `REMEMBER.md` and leave an existing `RETRO.md` in place.
 
 `<repo>` is `owner/name` from the `origin` remote URL. Take the last two path segments of `https://host/owner/name` or `git@host:owner/name`, after removing a trailing `.git`. When `origin` is missing or those segments cannot be read, resolve `git rev-parse --git-common-dir` to an absolute path and use the basename of its parent directory. Outside a Git checkout, use the working directory name.
 
@@ -25,7 +25,7 @@ User preferences and learned rules live in `preferences.md`.
 
 Weekly files live in `weeks/<YYYY>-W<ww>.md`. `<ww>` is the zero-padded ISO week number. Read `retros/<YYYY>-W<ww>.md` when the `weeks/` file is absent. Write `weeks/` only.
 
-End state items are the success criteria items. Each `##` heading under `# Success criteria` is one item. In the light form, each line matching `^- Done when:` is one item. `REMEMBER.md` counts these items. Verify judges exactly these items.
+End state items are the numbered `##` headings under `# End state`, written `1 ·` or `1a ·`. Each names one proof: a command, a test, a screenshot, or a URL. Criteria are the numbered `##` headings under `# Criteria`. When `# End state` has no numbered headings, end state items are the `##` headings under `# Success criteria`, or in the light form each line matching `^- Done when:`. `REMEMBER.md` counts end state items. Verify judges exactly these items.
 
 `REMEMBER.md` starts with YAML front matter. These keys are required, and extra keys are allowed:
 
@@ -38,7 +38,7 @@ End state items are the success criteria items. Each `##` heading under `# Succe
 
 All end state items are met when `end_state_items_met` equals `end_state_items_total`. Write the counts as integers and `delegated` as `true` or `false`.
 
-`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. Verify does not rewrite the line.
+`ALIGN.md` carries a line `Criteria hash: <sha256>`. The line may appear anywhere outside the hashed section. Align and Verify both run this skill's `criteria-hash` script, as `criteria-hash <ALIGN.md>`, and use the hex digest it prints. Nothing else defines the hash. On approval, Align copies the saved file to `ALIGN.approved.md` and replaces that copy only on a later approval. Verify compares the digest to the `Criteria hash:` line in that copy when the copy exists, otherwise to the line in `ALIGN.md`. Verify diffs the `# End state` and `# Criteria` sections against the copy and flags a difference. Verify does not rewrite the line or the copy.
 
 ## Task ownership
 
@@ -55,9 +55,10 @@ Read existing records before continuing. Record the goal, owning chat, and calle
 | Document    | Owner                                                        | Contents                                                                                                                |
 | ----------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
 | `EXPLORE.md` | Explore                                                      | Chosen direction, rejected directions with reasons, and open questions                                                   |
-| `ALIGN.md`  | Align                                                        | Goal, intention, Don'ts, decisions, end state, success criteria, `Criteria hash: <sha256>`, human checkpoints, todos, summary, and actual approval |
+| `ALIGN.md`  | Align                                                        | End state items and proofs, criteria, Mermaid, file tree, fan-out todos, stacked PR plan, goal, intention, Don'ts, decisions, `Criteria hash: <sha256>`, human checkpoints, summary, and actual approval |
+| `ALIGN.approved.md` | Align                                                 | Copy of `ALIGN.md` at approval. Written only on approval and replaced only by a later approval. Verify diffs end state items and criteria against it |
 | `STATUS.md` | Active stage                                                 | Current stage and state, implementation outcomes, blockers, pending decisions, next action, and work history            |
-| `VERIFY.md` | Verify                                                       | Checked changes, criterion results, the recomputed criteria hash, commands or scenarios, evidence, and gaps             |
+| `VERIFY.md` | Verify                                                       | Checked revision, per-item pass, fail, or unresolved, proof evidence, drift flag, recomputed criteria hash, and gaps   |
 | `REVIEW.md` | Review                                                       | Stable finding IDs, statuses, evidence, reviewed changes, pass history, and coverage gaps                               |
 | `REMEMBER.md` | Remember                                                     | Front matter defined above, then failures and workflow problems found, their signals, and proposed prevention            |
 

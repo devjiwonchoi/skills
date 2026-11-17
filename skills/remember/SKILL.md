@@ -16,7 +16,7 @@ description: Use when reviewing a finished jwn task or the weekly delegation rec
 
 ## Failures
 
-1. End state not reached: a success criterion fails, the task is cancelled, or the user finishes it by hand.
+1. End state not reached: an end state item fails, the task is cancelled, or the user finishes it by hand.
 2. Result rejected: the user edits, reverts, or requests changes to an accepted result, a sign the end state was misaligned.
 3. Process rejected: the user interrupts, repeats a request, or changes permissions or settings mid-run, a sign the system, permissions, or preferences failed.
 4. Needless ask: the user's answer matches the recommended option, or they approve without change where no approval was required, a sign the question was not needed. Plan approval and approval of irreversible actions never count.
@@ -28,7 +28,7 @@ description: Use when reviewing a finished jwn task or the weekly delegation rec
 1. Read the current session, this task's records per the `task-recording` skill, and material the user supplied. Do not choose another task by recency or include secrets and unrelated history.
 2. Fill the front matter in the template from evidence. `date` is the local task finish date, `YYYY-MM-DD`. Other keys are allowed.
    - Count `interventions_after_approval` as user messages, interruptions, and manual commits after the ALIGN approval. The approval itself is not an intervention. A manual commit is a commit the user made by hand. Count one event once when it fits more than one of these. When `ALIGN.md` records no approval, count those events across the whole task.
-   - `end_state_items_total` is the number of end state items in `ALIGN.md`. End state items are the success criteria items, or the Done-when lines in the light form.
+   - `end_state_items_total` is the number of end state items in `ALIGN.md`. End state items are the numbered `##` headings under `# End state`. When that section has no numbered headings, they are the `##` headings under `# Success criteria`, or the Done-when lines in the light form.
    - `end_state_items_met` is how many of those items `VERIFY.md` records as met. An item without that result is unmet.
    - `review_change_requests` is the number of distinct changes a human asked for on the task's pull request. Leave the agent's own findings, bots, and approvals out of this count.
 3. Check the task for each failure above and for other friction, such as duplicate recording or late previews. Cite the actual request, outcome, or artifact as the signal, and the responsible jwn instruction when known. Mark a failure not found, or not yet observable when its signals come later, such as edits after acceptance.
