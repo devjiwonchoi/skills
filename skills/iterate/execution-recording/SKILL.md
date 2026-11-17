@@ -20,7 +20,7 @@ Read `STATUS.md`, `DECISIONS.md`, `ALIGN.md` when available, and relevant verifi
 - Impl passes implementation and verification outcomes to its caller.
 - Only the main agent writes task records. Subagents return their results to it.
 
-Keep correction rounds in the same task and retain finding IDs. Return changes in intent or approved decisions to Align. Preserve actual authorization and previous results when `ALIGN.md` changes. Do not silently reuse evidence for a changed scope.
+Keep correction rounds in the same task and retain finding IDs. Return changes in intent or approved decisions to Align's Re-align mode. Preserve actual authorization and previous results when `ALIGN.md` changes. Do not silently reuse evidence for a changed scope.
 
 ## Revisions and verification
 
