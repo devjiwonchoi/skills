@@ -17,6 +17,7 @@ description: Use when executing an aligned plan.
   - Change the end state only through the Re-align mode of the `align` skill. A small edit keeps the run going. Report it in the next report. A direction change needs the user's approval of the new end state, including the E2E workflow diagram, and approval replaces `ALIGN.approved.md`. Until that approval, stop and report. Do not leave the end state silently, and do not keep implementing outside the contract. Verify flags the changed items, criteria, or diagram.
   - Do not redraw the E2E workflow diagram. Read it from the approved contract, `ALIGN.approved.md` or the default branch copy, never from the working change. Cite its node ids.
   - Do not ask again for anything the approved plan settles.
+- Never call Iterate finished without `REVIEW.md` and `VERIFY.md` for the current head.
 - Subagents never ask the user. They make two-way door decisions and return those decisions and any stop to the main agent, which appends them to `DECISIONS.md` and applies the stop rule.
 
 ## Steps
@@ -39,9 +40,15 @@ Follow the `execution-recording` skill for every invocation, including standalon
 3. Review: check every end state item with the `verify` skill, except those served only by held delivery todos. Ship proves those.
    - The verifier is a separate subagent. It receives the approved contract and the artifacts. The contract is `ALIGN.approved.md`, or the default branch copy when that file is missing or the checked change edits it. It may see the working `ALIGN.md` only to flag drift.
    - When files changed, also follow the `review` skill once for the current revision.
+   - Write the head commit SHA on the first line of `REVIEW.md` and `VERIFY.md`, as `Head: <sha>`. Step 5 checks it.
 4. Repeat: turn failed end state items and validated P0–P2 findings into fix todos and return to step 2.
    - Each return counts as one fix attempt for that item. After 3 failed attempts, stop and report. Do not return again.
    - Review the fix delta and affected behavior.
-5. Finish: when a stop rule applies, report that useful outcome with its reason, attempts, and evidence, and skip delivery. When delivery todos exist and no stop applies, follow the `ship` skill for them unless the caller owns delivery, then record them done. Otherwise report each end state item as pass or fail with evidence, including the decisions in `DECISIONS.md`.
+   - After each fix push, mark `REVIEW.md` and `VERIFY.md` stale. Change their first line to `Head: stale`. The next report needs a fresh review and verify of the fix.
+5. Finish: first check `REVIEW.md` and `VERIFY.md` in the task folder. Do this before reporting any result, asking to merge, or running Ship.
+   - Both files must exist. Both first lines must name the current head commit.
+   - When either is missing, stale, or names an older commit, go back to step 3.
+   - Green CI, bot checks, and security scans do not count as a review or a verify.
+   - Then, when a stop rule applies, report that useful outcome with its reason, attempts, and evidence, and skip delivery. When delivery todos exist and no stop applies, follow the `ship` skill for them unless the caller owns delivery, then record them done. Otherwise report each end state item as pass or fail with evidence, including the decisions in `DECISIONS.md`.
 6. Decision-log review: follow the decision-log pass in the `review` skill. Report its flags. Do not start another fix attempt from this pass.
 7. Remember: after that pass, follow the `remember` skill for this task, then ask any closing question Ship returned. Skip it when Moniterate or Ship invoked this run.
